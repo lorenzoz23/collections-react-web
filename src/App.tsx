@@ -6,14 +6,30 @@ import {
   Heading,
   Grommet,
   Layer,
-  ResponsiveContext
+  ResponsiveContext,
+  Footer,
+  Text,
+  Anchor,
+  Clock,
+  Avatar,
+  Menu,
+  TextInput
 } from "grommet";
-import { FormClose, Notification } from "grommet-icons";
+import {
+  FormClose,
+  Menu as MenuIcon,
+  Multimedia,
+  User,
+  Filter,
+  Search
+} from "grommet-icons";
 
 const theme = {
   global: {
     colors: {
-      brand: "#228BE6"
+      header: "#228BE6",
+      home: "#213444",
+      sidebar: "neutral-3" //"#1766A8"
     },
     font: {
       family: "Roboto",
@@ -29,9 +45,8 @@ const AppBar = (props: any) => (
     direction="row"
     align="center"
     justify="between"
-    background="brand"
-    pad={{ left: "medium", right: "small", vertical: "small" }}
-    elevation="medium"
+    background="header"
+    pad={{ left: "medium", right: "medium", vertical: "small" }}
     style={{ zIndex: "1" }}
     {...props}
   />
@@ -39,7 +54,7 @@ const AppBar = (props: any) => (
 
 class App extends Component {
   state = {
-    showSidebar: false
+    showSidebar: true
   };
   render() {
     const { showSidebar } = this.state;
@@ -49,31 +64,70 @@ class App extends Component {
           {(size) => (
             <Box fill>
               <AppBar>
-                <Heading level="3" margin="none">
-                  my collection
-                </Heading>
-                <Button
-                  icon={<Notification />}
-                  onClick={() =>
-                    this.setState({ showSidebar: !this.state.showSidebar })
-                  }
-                />
+                <Box direction="row" gap="medium">
+                  <Heading level="3" margin="none">
+                    <Anchor title="home" color="light-1" href="/">
+                      my collection
+                    </Anchor>
+                  </Heading>
+                  <Box alignSelf="center">
+                    <TextInput
+                      suggestions={["portrait of a lady on fire", "parasite"]}
+                      placeholder="search your collection"
+                      icon={<Search />}
+                    />
+                  </Box>
+                </Box>
+
+                <Box
+                  round
+                  background={this.state.showSidebar ? "brand" : "neutral-3"}
+                >
+                  <Button
+                    title="menu"
+                    icon={<MenuIcon />}
+                    onClick={() =>
+                      this.setState({ showSidebar: !this.state.showSidebar })
+                    }
+                  />
+                </Box>
               </AppBar>
-              <Box direction="row" flex overflow={{ horizontal: "hidden" }}>
+              <Box
+                direction="row"
+                flex
+                overflow={{ horizontal: "hidden" }}
+                background="home"
+              >
                 <Box flex align="center" justify="center">
                   app body
                 </Box>
+
                 {!showSidebar || size !== "small" ? (
                   <Collapsible direction="horizontal" open={showSidebar}>
                     <Box
                       flex
-                      width="medium"
-                      background="light-2"
-                      elevation="small"
+                      width="xsmall"
+                      background="sidebar"
                       align="center"
-                      justify="center"
+                      justify="between"
+                      pad="small"
                     >
-                      sidebar
+                      <Box>
+                        <Menu
+                          title="filter by tags"
+                          dropAlign={{ right: "left", top: "bottom" }}
+                          icon={<Filter />}
+                          items={[
+                            { label: "blu ray", onClick: () => {} },
+                            { label: "dvd", onClick: () => {} }
+                          ]}
+                        />
+                      </Box>
+                      <Box>
+                        <Avatar background="accent-2">
+                          <User color="accent-1" />
+                        </Avatar>
+                      </Box>
                     </Box>
                   </Collapsible>
                 ) : (
@@ -92,7 +146,7 @@ class App extends Component {
                     </Box>
                     <Box
                       fill
-                      background="light-2"
+                      background="sidebar"
                       align="center"
                       justify="center"
                     >
@@ -101,6 +155,22 @@ class App extends Component {
                   </Layer>
                 )}
               </Box>
+              <Footer
+                pad="medium"
+                background="brand"
+                justify="between"
+                height="10px"
+              >
+                <Box>
+                  <Clock type="digital" alignSelf="center" size="small" />
+                </Box>
+                <Box direction="row" gap="small" align="center">
+                  <Multimedia />
+                  <Text size="small">
+                    Movie data provided by The Movie Database (tMDB)
+                  </Text>
+                </Box>
+              </Footer>
             </Box>
           )}
         </ResponsiveContext.Consumer>
