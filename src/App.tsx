@@ -1,6 +1,11 @@
 import React, { Component } from 'react';
 import { Box, Grommet } from 'grommet';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Route,
+  Redirect,
+  Switch
+} from 'react-router-dom';
 
 import Login from './components/Login';
 import HomePage from './components/HomePage';
@@ -26,8 +31,11 @@ export default class App extends Component {
       <Router>
         <Grommet theme={theme} full>
           <Box fill>
-            <Route exact path="/" component={Login} />
-            <Route path="/home" component={HomePage} />
+            <Switch>
+              <Route exact path="/" component={Login} />
+              <Route path="/home" component={HomePage} />
+              <Redirect to="/" from="/*" />
+            </Switch>
           </Box>
         </Grommet>
       </Router>
