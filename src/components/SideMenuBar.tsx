@@ -1,7 +1,8 @@
-import React, { Component } from 'react';
-import { Collapsible, Box, Menu, Avatar } from 'grommet';
-import { Filter, User } from 'grommet-icons';
-import Settings from './Settings';
+import React, { Component } from "react";
+import { Collapsible, Box, Menu, Avatar, ResponsiveContext } from "grommet";
+import { Filter, User } from "grommet-icons";
+import Settings from "./Settings";
+import AddTitle from "./AddTitle";
 
 interface SideMenuBarProps {
   loggedIn: boolean;
@@ -31,40 +32,49 @@ export default class SideMenuBar extends Component<SideMenuBarProps> {
 
   render() {
     return (
-      <Collapsible direction="horizontal" open={this.props.showSidebar}>
-        <Box
-          flex
-          width="xsmall"
-          background="sidebar"
-          align="center"
-          justify="between"
-          pad="small"
-        >
-          <Box>
-            <Menu
-              title="filter by tags"
-              dropAlign={{ right: 'left', top: 'bottom' }}
-              icon={<Filter />}
-              items={[
-                { label: 'blu ray', onClick: () => {} },
-                { label: 'dvd', onClick: () => {} }
-              ]}
-            />
-          </Box>
-          <Box>
-            <Avatar background="accent-2" onClick={this.enterSettings}>
-              <User color="accent-1" />
-            </Avatar>
-          </Box>
-        </Box>
-        {this.state.showSettings && (
-          <Settings
-            loggedIn={this.props.loggedIn}
-            exitSettings={this.exitSettings}
-            logOut={this.props.logOut}
-          />
+      <ResponsiveContext.Consumer>
+        {(size) => (
+          <Collapsible direction="horizontal" open={this.props.showSidebar}>
+            <Box
+              flex
+              width={size === "small" ? "60px" : "xsmall"}
+              background="sidebar"
+              align="center"
+              justify="between"
+              pad="small"
+            >
+              <Box>
+                <Menu
+                  title="filter by tags"
+                  dropAlign={{ right: "left", top: "bottom" }}
+                  icon={<Filter />}
+                  items={[
+                    { label: "blu ray", onClick: () => {} },
+                    { label: "dvd", onClick: () => {} }
+                  ]}
+                />
+              </Box>
+              {size === "small" ? (
+                <Box>
+                  <AddTitle />
+                </Box>
+              ) : null}
+              <Box>
+                <Avatar background="accent-2" onClick={this.enterSettings}>
+                  <User color="accent-1" />
+                </Avatar>
+              </Box>
+            </Box>
+            {this.state.showSettings && (
+              <Settings
+                loggedIn={this.props.loggedIn}
+                exitSettings={this.exitSettings}
+                logOut={this.props.logOut}
+              />
+            )}
+          </Collapsible>
         )}
-      </Collapsible>
+      </ResponsiveContext.Consumer>
     );
   }
 }

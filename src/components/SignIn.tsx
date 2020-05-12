@@ -1,5 +1,12 @@
-import React, { Component } from 'react';
-import { Form, FormField, TextInput, Box, Button } from 'grommet';
+import React, { Component } from "react";
+import {
+  Form,
+  FormField,
+  TextInput,
+  Box,
+  Button,
+  ResponsiveContext
+} from "grommet";
 
 interface SignInProps {
   handleLogin(): void;
@@ -14,38 +21,47 @@ export default class SignIn extends Component<SignInProps> {
 
   render() {
     return (
-      <Box pad="medium">
-        <Form
-          value={this.state}
-          onSubmit={this.props.handleLogin}
-          onChange={(nextFormValue: {}) => this.setState(nextFormValue)}
-        >
-          <FormField label="username" required name="username">
-            <TextInput
-              name="username"
-              size="xlarge"
-              value={this.state.username}
-              onChange={(e: any) => {
-                this.setState({ username: e.target.value });
-              }}
-            />
-          </FormField>
-          <FormField label="password" required name="password">
-            <TextInput
-              name="password"
-              size="xlarge"
-              type="password"
-              value={this.state.password}
-              onChange={(e: any) => {
-                this.setState({ password: e.target.value });
-              }}
-            />
-          </FormField>
-          <Box direction="row" justify="center" pad="small">
-            <Button label="log in" type="submit" primary />
+      <ResponsiveContext.Consumer>
+        {(size) => (
+          <Box pad="medium">
+            <Form
+              value={this.state}
+              onSubmit={this.props.handleLogin}
+              onChange={(nextFormValue: {}) => this.setState(nextFormValue)}
+            >
+              <FormField label="username" required name="username">
+                <TextInput
+                  name="username"
+                  size={size === "small" ? "medium" : "xlarge"}
+                  value={this.state.username}
+                  onChange={(e: any) => {
+                    this.setState({ username: e.target.value });
+                  }}
+                />
+              </FormField>
+              <FormField label="password" required name="password">
+                <TextInput
+                  name="password"
+                  size={size === "small" ? "medium" : "xlarge"}
+                  type="password"
+                  value={this.state.password}
+                  onChange={(e: any) => {
+                    this.setState({ password: e.target.value });
+                  }}
+                />
+              </FormField>
+              <Box direction="row" justify="center" pad="medium" align="center">
+                <Button
+                  label="log in"
+                  type="submit"
+                  primary
+                  size={size === "small" ? "small" : "medium"}
+                />
+              </Box>
+            </Form>
           </Box>
-        </Form>
-      </Box>
+        )}
+      </ResponsiveContext.Consumer>
     );
   }
 }

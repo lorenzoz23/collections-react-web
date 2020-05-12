@@ -1,21 +1,21 @@
-import React, { Component } from 'react';
-import { ResponsiveContext, Box, Heading, Tabs, Tab } from 'grommet';
+import React, { Component } from "react";
+import { ResponsiveContext, Box, Heading, Tabs, Tab } from "grommet";
 import {
   BrowserRouter as Router,
   Redirect,
   Switch,
   Route
-} from 'react-router-dom';
-import SignIn from './SignIn';
-import SignUp from './SignUp';
-import HomePage from './HomePage';
+} from "react-router-dom";
+import SignIn from "./SignIn";
+import SignUp from "./SignUp";
+import HomePage from "./HomePage";
 
 export default class Login extends Component {
   state = {
-    username: '',
-    password: '',
-    secondPassword: '',
-    name: '',
+    username: "",
+    password: "",
+    secondPassword: "",
+    name: "",
     valid: false
   };
 
@@ -50,8 +50,8 @@ export default class Login extends Component {
                 <Box
                   align="center"
                   justify="center"
-                  width="large"
-                  height="xxlarge"
+                  width={size !== "small" ? "large" : "medium"}
+                  height={size !== "small" ? "xxlarge" : "large"}
                 >
                   <Heading>collections</Heading>
                   <Tabs>
