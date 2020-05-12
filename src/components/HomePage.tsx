@@ -47,7 +47,7 @@ export default class HomePage extends Component {
             <AppBar>
               <Box direction="row" gap="medium" align="center">
                 <Heading level="3" margin="none" alignSelf="center">
-                  <Anchor title="home" color="light-1" href="/">
+                  <Anchor title="home" color="light-1" href="/home">
                     my collection
                   </Anchor>
                 </Heading>

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ResponsiveContext, Box, Heading, Text, Tabs, Tab } from 'grommet';
+import { ResponsiveContext, Box, Heading, Tabs, Tab } from 'grommet';
 import {
   BrowserRouter as Router,
   Redirect,
@@ -42,31 +42,18 @@ export default class Login extends Component {
             ) : (
               <Box
                 fill
-                direction="row"
                 flex
-                background="neutral-4"
-                justify="evenly"
+                background="radial-gradient(circle, rgba(27,50,163,1) 0%, rgba(143,38,59,1) 100%)"
+                justify="center"
                 align="center"
               >
                 <Box
-                  justify="center"
                   align="center"
-                  height="medium"
+                  justify="center"
                   width="large"
-                  background="status-warning"
-                  pad={{ bottom: 'large', right: 'large', left: 'large' }}
-                  border={{
-                    color: 'dark-1',
-                    size: 'large',
-                    style: 'solid',
-                    side: 'all'
-                  }}
+                  height="xxlarge"
                 >
                   <Heading>collections</Heading>
-                  <Text>your entire film collection at your fingertips</Text>
-                </Box>
-                <Box align="center" justify="center" width="medium">
-                  <Heading>login</Heading>
                   <Tabs>
                     <Tab title="sign in">
                       <SignIn
