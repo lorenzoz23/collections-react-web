@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component } from 'react';
 import {
   Layer,
   Box,
@@ -9,8 +9,8 @@ import {
   Text,
   ResponsiveContext,
   Anchor
-} from "grommet";
-import { CircleQuestion, FormClose } from "grommet-icons";
+} from 'grommet';
+import { CircleQuestion, FormClose } from 'grommet-icons';
 
 interface SettingsProps {
   logOut(): void;
@@ -41,10 +41,10 @@ export default class Settings extends Component<SettingsProps> {
                   <Text>status</Text>
                   <RadioButtonGroup
                     name="status"
-                    value={this.state.loggedIn ? "logged in" : "log out"}
+                    value={this.state.loggedIn ? 'logged in' : 'log out'}
                     onChange={this.logOut}
                     direction="row"
-                    options={["logged in", "log out"]}
+                    options={['logged in', 'log out']}
                   />
                 </Box>
                 <Box align="center">
@@ -61,7 +61,8 @@ export default class Settings extends Component<SettingsProps> {
                 <Box align="center" gap="xsmall">
                   <Text>choose your own style</Text>
                   <Select
-                    options={["mystic river blue"]}
+                    focusIndicator={size === 'small' ? false : true}
+                    options={['mystic river blue']}
                     placeholder="select a visual theme..."
                     onChange={() => {}}
                   />

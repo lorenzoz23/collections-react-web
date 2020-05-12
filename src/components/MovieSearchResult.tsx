@@ -1,43 +1,44 @@
-import React, { Component } from "react";
-import { Layer, Box, Heading, Button, Text } from "grommet";
-import { FormClose } from "grommet-icons";
+import React, { Component } from 'react';
+import { Box, Heading, Button, Text } from 'grommet';
+import Movie from '../classes/Movie';
+import { StatusGood, StatusCritical } from 'grommet-icons';
 
-export default class MovieSearchResult extends Component {
+interface MovieSearchResultProps {
+  search: string;
+  close(): void;
+}
+
+export default class MovieSearchResult extends Component<
+  MovieSearchResultProps
+> {
   state = {
-    visible: false
+    movie: new Movie()
   };
   render() {
     return (
-      <Box>
-        <Button
-          label="go"
-          onClick={() => this.setState({ visible: !this.state.visible })}
-        />
-        {this.state.visible ? (
-          <Layer
-            position="center"
-            onClickOutside={() =>
-              this.setState({ visible: !this.state.visible })
-            }
-          >
-            <Box justify="center" align="center" pad="medium">
-              <Heading level="2">movie title</Heading>
-              <Box gap="medium">
-                <Text>plot synopsis</Text>
-                <Button
-                  title="close"
-                  alignSelf="center"
-                  size="small"
-                  icon={<FormClose />}
-                  primary
-                  onClick={() =>
-                    this.setState({ visible: !this.state.visible })
-                  }
-                />
-              </Box>
-            </Box>
-          </Layer>
-        ) : null}
+      <Box
+        flex
+        pad="medium"
+        width="medium"
+        background="light-2"
+        align="center"
+        justify="center"
+        overflow="auto"
+        round
+      >
+        <Heading level="3">{this.props.search}</Heading>
+        <Box justify="center" align="center">
+          <Text>plot synopsis</Text>
+          <Text>year</Text>
+        </Box>
+        <Box direction="row" pad="medium">
+          <Button icon={<StatusGood color="status-ok" />} title="add film" />
+          <Button
+            title="cancel"
+            icon={<StatusCritical color="status-error" />}
+            onClick={() => this.props.close()}
+          />
+        </Box>
       </Box>
     );
   }

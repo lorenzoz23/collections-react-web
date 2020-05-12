@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component } from 'react';
 import {
   Box,
   Heading,
@@ -6,19 +6,19 @@ import {
   TextInput,
   Button,
   ResponsiveContext
-} from "grommet";
-import { Search, Menu as MenuIcon } from "grommet-icons";
-import AddTitle from "./AddTitle";
-import Collection from "./Collection";
-import SideMenuBar from "./SideMenuBar";
-import FooterComponent from "./FooterComponent";
+} from 'grommet';
+import { Search, Menu as MenuIcon } from 'grommet-icons';
+import AddTitle from './AddTitle';
+import Collection from './Collection';
+import SideMenuBar from './SideMenuBar';
+import FooterComponent from './FooterComponent';
 import {
   Redirect,
   BrowserRouter as Router,
   Switch,
   Route
-} from "react-router-dom";
-import Login from "./Login";
+} from 'react-router-dom';
+import Login from './Login';
 
 const AppBar = (props: any) => (
   <Box
@@ -27,8 +27,7 @@ const AppBar = (props: any) => (
     align="center"
     justify="between"
     background="header"
-    pad={{ left: "medium", right: "medium", vertical: "small" }}
-    style={{ zIndex: "1" }}
+    style={{ zIndex: '1' }}
     {...props}
   />
 );
@@ -56,12 +55,12 @@ export default class HomePage extends Component {
               <Box fill>
                 <AppBar
                   pad={
-                    size === "small"
-                      ? { right: "small", left: "medium", vertical: "small" }
-                      : ""
+                    size === 'small'
+                      ? { right: 'small', left: 'medium', vertical: 'small' }
+                      : { left: 'medium', right: 'medium', vertical: 'small' }
                   }
                 >
-                  {size !== "small" ? (
+                  {size !== 'small' ? (
                     <Box direction="row" gap="medium" align="center">
                       <Heading level="3" margin="none" alignSelf="center">
                         <Anchor title="home" color="light-1" href="/home">
@@ -82,6 +81,7 @@ export default class HomePage extends Component {
                   ) : (
                     <Box direction="row" gap="none" align="center">
                       <TextInput
+                        focusIndicator={false}
                         placeholder="my collection"
                         icon={<Search />}
                         suggestions={["it's never too late to start"]}
@@ -91,15 +91,15 @@ export default class HomePage extends Component {
                   <Box
                     round
                     background={
-                      size !== "small"
+                      size !== 'small'
                         ? this.state.showSidebar
-                          ? "brand"
-                          : "neutral-3"
-                        : ""
+                          ? 'brand'
+                          : 'neutral-3'
+                        : ''
                     }
                   >
                     <Button
-                      focusIndicator={size === "small" ? false : true}
+                      focusIndicator={size === 'small' ? false : true}
                       title="menu"
                       icon={<MenuIcon />}
                       onClick={() =>
@@ -111,7 +111,7 @@ export default class HomePage extends Component {
                 <Box
                   flex
                   direction="row"
-                  overflow={{ horizontal: "hidden" }}
+                  overflow={{ horizontal: 'hidden' }}
                   background="home"
                 >
                   <Collection />
