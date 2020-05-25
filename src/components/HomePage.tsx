@@ -1,24 +1,27 @@
-import React, { Component } from "react";
+import React, { Component } from 'react';
 import {
   Box,
   Heading,
   Anchor,
   TextInput,
-  Button,
-  ResponsiveContext
-} from "grommet";
-import { Search, Menu as MenuIcon, Close } from "grommet-icons";
-import AddTitle from "./AddTitle";
-import Collection from "./Collection";
-import SideMenuBar from "./SideMenuBar";
-import FooterComponent from "./FooterComponent";
+  ResponsiveContext,
+  Menu,
+  Avatar
+} from 'grommet';
+import { Search, Filter, User } from 'grommet-icons';
+import AddTitle from './AddTitle';
+import Collection from './Collection';
+import FooterComponent from './FooterComponent';
 import {
   Redirect,
   BrowserRouter as Router,
   Switch,
   Route
-} from "react-router-dom";
-import Login from "./Login";
+} from 'react-router-dom';
+import { Scrollbars } from 'react-custom-scrollbars';
+
+import Login from './Login';
+import Settings from './Settings';
 
 const AppBar = (props: any) => (
   <Box
@@ -27,7 +30,7 @@ const AppBar = (props: any) => (
     align="center"
     justify="between"
     background="header"
-    style={{ zIndex: "1" }}
+    style={{ zIndex: '1' }}
     {...props}
   />
 );
@@ -36,7 +39,8 @@ export default class HomePage extends Component {
   state = {
     showSidebar: true,
     loggedIn: true,
-    movies: []
+    movies: [],
+    showSettings: false
   };
 
   logOut = () => {
@@ -44,6 +48,19 @@ export default class HomePage extends Component {
       loggedIn: false
     });
   };
+
+  exitSettings = () => {
+    this.setState({
+      showSettings: false
+    });
+  };
+
+  enterSettings = () => {
+    this.setState({
+      showSettings: true
+    });
+  };
+
   render() {
     return (
       <Router>
@@ -52,15 +69,15 @@ export default class HomePage extends Component {
         ) : (
           <ResponsiveContext.Consumer>
             {(size) => (
-              <Box>
+              <Box fill>
                 <AppBar
                   pad={
-                    size === "small"
-                      ? { right: "small", left: "medium", vertical: "small" }
-                      : { left: "medium", right: "medium", vertical: "small" }
+                    size === 'small'
+                      ? { right: 'small', left: 'medium', vertical: 'small' }
+                      : { left: 'medium', right: 'medium', vertical: 'small' }
                   }
                 >
-                  {size !== "small" ? (
+                  {size !== 'small' ? (
                     <Box direction="row" gap="medium" align="center">
                       <Heading level="3" margin="none" alignSelf="center">
                         <Anchor title="home" color="light-1" href="/home">
@@ -69,13 +86,23 @@ export default class HomePage extends Component {
                       </Heading>
                       <Box direction="row" align="center" gap="small">
                         <TextInput
-                          suggestions={["it's never too late to start"]}
+                          title="search your collection!"
                           placeholder={`search ${this.state.movies.length} films...`}
                           icon={<Search />}
                         />
                         <Box>
                           <AddTitle />
                         </Box>
+                        <Menu
+                          title="filter by tags"
+                          dropAlign={{ top: 'bottom', left: 'right' }}
+                          icon={<Filter />}
+                          items={[
+                            { label: 'blu ray', onClick: () => {} },
+                            { label: 'dvd', onClick: () => {} },
+                            { label: '4k', onClick: () => {} }
+                          ]}
+                        />
                       </Box>
                     </Box>
                   ) : (
@@ -84,47 +111,41 @@ export default class HomePage extends Component {
                         focusIndicator={false}
                         placeholder="my collection"
                         icon={<Search />}
-                        suggestions={["it's never too late to start"]}
+                        suggestions={[
+                          `search ${this.state.movies.length} films...`
+                        ]}
                       />
+                      <AddTitle />
                     </Box>
                   )}
-                  <Box
-                    round
-                    background={
-                      size !== "small"
-                        ? this.state.showSidebar
-                          ? "brand"
-                          : "neutral-3"
-                        : ""
-                    }
-                  >
-                    <Button
-                      focusIndicator={size === "small" ? false : true}
-                      title="menu"
-                      icon={this.state.showSidebar ? <Close /> : <MenuIcon />}
-                      onClick={() =>
-                        this.setState({ showSidebar: !this.state.showSidebar })
-                      }
-                    />
+                  <Box>
+                    <Avatar
+                      background="accent-2"
+                      onClick={this.enterSettings}
+                      title="settings"
+                    >
+                      <User color="accent-1" />
+                    </Avatar>
                   </Box>
                 </AppBar>
-                <Box
-                  flex
-                  direction="row"
-                  overflow={{ horizontal: "hidden" }}
-                  background="home"
-                >
-                  <Collection />
-                  <SideMenuBar
-                    loggedIn={this.state.loggedIn}
-                    showSidebar={this.state.showSidebar}
-                    changeSideBar={(visibility) =>
-                      this.setState({ showSidebar: visibility })
-                    }
-                    logOut={this.logOut}
-                  />
-                </Box>
+                <Scrollbars style={{ width: '100%', height: '100%' }} autoHide>
+                  <Box
+                    flex
+                    direction="row"
+                    overflow={{ horizontal: 'hidden' }}
+                    background="home"
+                  >
+                    <Collection />
+                  </Box>
+                </Scrollbars>
                 <FooterComponent />
+                {this.state.showSettings ? (
+                  <Settings
+                    loggedIn={this.state.loggedIn}
+                    logOut={this.logOut}
+                    exitSettings={this.exitSettings}
+                  />
+                ) : null}
               </Box>
             )}
           </ResponsiveContext.Consumer>

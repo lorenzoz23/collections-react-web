@@ -34,9 +34,9 @@ export default class Settings extends Component<SettingsProps> {
       <ResponsiveContext.Consumer>
         {(size) => (
           <Layer position="center" onClickOutside={this.props.exitSettings}>
-            <Box justify="center" align="center" pad="medium">
+            <Box justify="center" align="center" pad="small">
               <Heading level="2">settings</Heading>
-              <Box gap="large" align="center">
+              <Box gap="medium" align="center">
                 <Box gap="xsmall" align="center">
                   <Text>status</Text>
                   <RadioButtonGroup
@@ -49,14 +49,17 @@ export default class Settings extends Component<SettingsProps> {
                 </Box>
                 <Box align="center">
                   <Box direction="row" align="center">
-                    <Text>import data</Text>
+                    <Text>import/export data</Text>
                     <Button
                       title="click for a deeper understanding"
                       icon={<CircleQuestion color="brand" />}
                       focusIndicator={false}
                     />
                   </Box>
-                  <Button label="select a file" size="small" />
+                  <Box gap="small" direction="row">
+                    <Button label="import" size="small" />
+                    <Button label="export" size="small" />
+                  </Box>
                 </Box>
                 <Box align="center" gap="xsmall">
                   <Text>choose your own style</Text>
