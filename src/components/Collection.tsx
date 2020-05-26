@@ -56,9 +56,9 @@ export default class Collection extends Component {
     let i: number = 0;
     for (i = 0; i < numRows; i++) {
       if (size === 'small') {
-        rows.push('flex');
+        rows.push('xsmall');
       } else {
-        rows.push('auto');
+        rows.push('small');
       }
     }
 
@@ -107,8 +107,8 @@ export default class Collection extends Component {
         gap={size !== 'small' ? 'large' : 'medium'}
         margin="small"
         columns={columns[size]}
-        //rows={this.getRows(size)}
-        rows={size !== 'small' ? 'medium' : 'small'}
+        rows={this.getRows(size)}
+        //rows={size !== 'small' ? 'medium' : 'small'}
         areas={undefined}
         fill="vertical"
       >
