@@ -10,7 +10,7 @@ export default class FooterComponent extends Component {
           <Footer
             pad="medium"
             gap="medium"
-            background="brand"
+            background="footer"
             justify={size !== 'small' ? 'between' : 'center'}
             height="10px"
           >

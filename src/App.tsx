@@ -15,7 +15,7 @@ const theme = {
     colors: {
       header: '#228BE6',
       home: '#213444',
-      sidebar: 'neutral-3' //"#1766A8"
+      footer: 'brand'
     },
     font: {
       family: 'Roboto',

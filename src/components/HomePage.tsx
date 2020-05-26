@@ -106,7 +106,7 @@ export default class HomePage extends Component {
                       </Box>
                     </Box>
                   ) : (
-                    <Box direction="row" gap="none" align="center">
+                    <Box direction="row" gap="small" align="center">
                       <TextInput
                         focusIndicator={false}
                         placeholder="my collection"
@@ -116,6 +116,16 @@ export default class HomePage extends Component {
                         ]}
                       />
                       <AddTitle />
+                      <Menu
+                        title="filter by tags"
+                        dropAlign={{ top: 'bottom', left: 'right' }}
+                        icon={<Filter />}
+                        items={[
+                          { label: 'blu ray', onClick: () => {} },
+                          { label: 'dvd', onClick: () => {} },
+                          { label: '4k', onClick: () => {} }
+                        ]}
+                      />
                     </Box>
                   )}
                   <Box>
@@ -123,12 +133,25 @@ export default class HomePage extends Component {
                       background="accent-2"
                       onClick={this.enterSettings}
                       title="settings"
+                      align="center"
+                      size={size === 'small' ? '40px' : 'medium'}
                     >
-                      <User color="accent-1" />
+                      <User
+                        color="accent-1"
+                        size={size === 'small' ? '20px' : 'medium'}
+                      />
                     </Avatar>
                   </Box>
                 </AppBar>
-                <Scrollbars style={{ width: '100%', height: '100%' }} autoHide>
+                <Scrollbars
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    overflowX: 'hidden',
+                    flex: 1
+                  }}
+                  autoHide
+                >
                   <Box
                     flex
                     direction="row"

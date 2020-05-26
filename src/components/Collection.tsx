@@ -1,18 +1,33 @@
 import React, { Component } from 'react';
-import { Box, Text, ResponsiveContext, Grid, Heading } from 'grommet';
+import { Box, Text, ResponsiveContext, Grid } from 'grommet';
 
 type movie = { name: string; plot: string; rating: string; year: number };
 
-// columns, rows and areas are for Grid with a known number of contents / boxes.
-
-// If the size is small, we only see 1 column
-// If the size is medium, we only see 2 columns
-// If the size is either large or xlarge, we see 3 columns
 const columns: Record<string, string[]> = {
   small: ['auto', 'auto', 'auto', 'auto'],
   medium: ['auto', 'auto', 'auto', 'auto', 'auto', 'auto'],
-  large: ['auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto'],
-  xlarge: ['auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto']
+  large: [
+    'auto',
+    'auto',
+    'auto',
+    'auto',
+    'auto',
+    'auto',
+    'auto',
+    'auto',
+    'auto'
+  ],
+  xlarge: [
+    'auto',
+    'auto',
+    'auto',
+    'auto',
+    'auto',
+    'auto',
+    'auto',
+    'auto',
+    'auto'
+  ]
 };
 
 export default class Collection extends Component {
@@ -40,7 +55,11 @@ export default class Collection extends Component {
 
     let i: number = 0;
     for (i = 0; i < numRows; i++) {
-      rows.push('small');
+      if (size === 'small') {
+        rows.push('flex');
+      } else {
+        rows.push('auto');
+      }
     }
 
     return rows;
@@ -63,24 +82,20 @@ export default class Collection extends Component {
   };
 
   // Create box for each movie
-  listMovieBoxes = () => {
+  listMovieBoxes = (size: string) => {
     let boxArr = [];
     boxArr = this.state.movies.map((movie) => (
       <Box
         key={movie.name}
         background="light-2"
-        flex={false}
-        justify="center"
+        justify="start"
         align="center"
         pad="small"
         round="small"
+        width={size === 'small' ? '55px' : '125px'}
+        height={size === 'small' ? 'xsmall' : 'small'}
         onClick={() => {}}
-      >
-        <Heading level={2}>{movie.name}</Heading>
-        <Text>{movie.plot}</Text>
-        <Text>{movie.rating}</Text>
-        <Text>year</Text>
-      </Box>
+      />
     ));
 
     return boxArr;
@@ -89,13 +104,15 @@ export default class Collection extends Component {
   movieCollection = (size: string) => {
     return (
       <Grid
-        gap="large"
+        gap={size !== 'small' ? 'large' : 'medium'}
         margin="small"
         columns={columns[size]}
-        rows={this.getRows(size)}
+        //rows={this.getRows(size)}
+        rows={size !== 'small' ? 'medium' : 'small'}
         areas={undefined}
+        fill="vertical"
       >
-        {this.listMovieBoxes()}
+        {this.listMovieBoxes(size)}
       </Grid>
     );
   };
@@ -104,7 +121,7 @@ export default class Collection extends Component {
     return (
       <ResponsiveContext.Consumer>
         {(size) => (
-          <Box flex justify="start" align="center">
+          <Box flex justify="start" align="center" fill>
             {this.state.movies.length === 0
               ? this.movieCollection(size)
               : this.movieCollection(size)}
