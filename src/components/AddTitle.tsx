@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
-import { Box, Button, Heading, TextInput, Layer } from 'grommet';
-import { Add, FormNextLink, BlockQuote } from 'grommet-icons';
+import { Box, Button, Heading, TextInput, Layer, FormField } from 'grommet';
+import { Add, FormNextLink } from 'grommet-icons';
 import MovieSearchResult from './MovieSearchResult';
 
 export default class AddTitle extends Component {
   state = {
     visible: false,
-    searchValue: '',
+    searchTitle: '',
+    searchYear: '',
     searched: false
   };
 
@@ -16,10 +17,19 @@ export default class AddTitle extends Component {
     });
   };
 
-  close = () => {
+  closeAddTitle = () => {
     this.setState({
       visible: false,
-      searchValue: '',
+      searchTitle: '',
+      searchYear: '',
+      searched: false
+    });
+  };
+
+  closeMovieSearchResult = () => {
+    this.setState({
+      searchTitle: '',
+      searchYear: '',
       searched: false
     });
   };
@@ -28,6 +38,8 @@ export default class AddTitle extends Component {
     return (
       <Box title="add a film!" align="center">
         <Button
+          style={{ borderRadius: 100 }}
+          hoverIndicator="accent-1"
           onClick={() => {
             this.setState({ visible: true });
           }}
@@ -35,20 +47,23 @@ export default class AddTitle extends Component {
         />
         {this.state.visible ? (
           <Layer
+            style={{ borderRadius: 30 }}
             position="center"
             onClickOutside={() => this.setState({ visible: false })}
           >
             {this.state.searched ? (
               <MovieSearchResult
-                search={this.state.searchValue}
-                close={this.close}
+                title={this.state.searchTitle}
+                year={this.state.searchYear}
+                closeAdd={this.closeAddTitle}
+                closeResult={this.closeMovieSearchResult}
               />
             ) : (
               <Box
                 flex
                 pad="medium"
                 width="medium"
-                background="light-2"
+                background="radial-gradient(circle, rgba(255,226,163,1) 0%, rgba(163,255,231,1) 100%)"
                 align="center"
                 justify="center"
                 overflow="auto"
@@ -57,25 +72,41 @@ export default class AddTitle extends Component {
                 <Heading textAlign="center" level="3">
                   search a film to add!
                 </Heading>
-                <TextInput
-                  icon={<BlockQuote />}
-                  placeholder="type the title of the film here..."
-                  value={this.state.searchValue}
-                  onChange={(e) => {
-                    this.setState({
-                      searchValue: e.target.value
-                    });
-                  }}
-                />
+                <Box gap="small">
+                  <FormField label="title">
+                    <TextInput
+                      placeholder="parasite"
+                      value={this.state.searchTitle}
+                      onChange={(e) => {
+                        this.setState({
+                          searchTitle: e.target.value
+                        });
+                      }}
+                    />
+                  </FormField>
+                  <FormField label="year">
+                    <TextInput
+                      title="recommended for better results"
+                      placeholder="2019"
+                      value={this.state.searchYear}
+                      onChange={(e) => {
+                        this.setState({
+                          searchYear: e.target.value
+                        });
+                      }}
+                    />
+                  </FormField>
+                </Box>
                 <Box pad={{ top: 'medium' }}>
                   <Button
+                    style={{ borderRadius: 100 }}
                     size="small"
                     hoverIndicator={{
                       color: 'accent-1'
                     }}
                     primary
                     disabled={
-                      this.state.searchValue.length === 0 ? true : false
+                      this.state.searchTitle.length === 0 ? true : false
                     }
                     icon={<FormNextLink />}
                     onClick={() => {

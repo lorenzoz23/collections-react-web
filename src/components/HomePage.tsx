@@ -94,6 +94,8 @@ export default class HomePage extends Component {
                           <AddTitle />
                         </Box>
                         <Menu
+                          style={{ borderRadius: 100 }}
+                          hoverIndicator="accent-1"
                           title="filter by tags"
                           dropAlign={{ top: 'bottom', left: 'right' }}
                           icon={<Filter />}
@@ -130,6 +132,7 @@ export default class HomePage extends Component {
                   )}
                   <Box>
                     <Avatar
+                      hoverIndicator="brand"
                       background="accent-2"
                       onClick={this.enterSettings}
                       title="settings"
@@ -153,10 +156,9 @@ export default class HomePage extends Component {
                   autoHide
                 >
                   <Box
-                    flex
-                    direction="row"
                     overflow={{ horizontal: 'hidden' }}
                     background="home"
+                    fill
                   >
                     <Collection />
                   </Box>

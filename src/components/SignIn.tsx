@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component } from 'react';
 import {
   Form,
   FormField,
@@ -6,7 +6,8 @@ import {
   Box,
   Button,
   ResponsiveContext
-} from "grommet";
+} from 'grommet';
+import { Next } from 'grommet-icons';
 
 interface SignInProps {
   handleLogin(): void;
@@ -32,7 +33,7 @@ export default class SignIn extends Component<SignInProps> {
               <FormField label="username" required name="username">
                 <TextInput
                   name="username"
-                  size={size === "small" ? "medium" : "xlarge"}
+                  size={size === 'small' ? 'medium' : 'xlarge'}
                   value={this.state.username}
                   onChange={(e: any) => {
                     this.setState({ username: e.target.value });
@@ -42,7 +43,7 @@ export default class SignIn extends Component<SignInProps> {
               <FormField label="password" required name="password">
                 <TextInput
                   name="password"
-                  size={size === "small" ? "medium" : "xlarge"}
+                  size={size === 'small' ? 'medium' : 'xlarge'}
                   type="password"
                   value={this.state.password}
                   onChange={(e: any) => {
@@ -50,12 +51,18 @@ export default class SignIn extends Component<SignInProps> {
                   }}
                 />
               </FormField>
-              <Box direction="row" justify="center" pad="medium" align="center">
+              <Box
+                direction="row"
+                justify="center"
+                pad="medium"
+                align="center"
+                round
+              >
                 <Button
-                  label="log in"
+                  //label="log in"
+                  icon={<Next />}
                   type="submit"
-                  primary
-                  size={size === "small" ? "small" : "medium"}
+                  size={size === 'small' ? 'small' : 'medium'}
                 />
               </Box>
             </Form>

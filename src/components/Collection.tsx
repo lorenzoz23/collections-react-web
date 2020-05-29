@@ -41,7 +41,7 @@ export default class Collection extends Component {
 
   emptyState = () => {
     return (
-      <Box align="center">
+      <Box align="center" justify="center" flex>
         <Text>there is nothing</Text>
         <Text>in your collection.</Text>
       </Box>
@@ -66,19 +66,7 @@ export default class Collection extends Component {
   };
 
   getMovieCollection = () => {
-    let movies: movie[] = [];
-    let i = 0;
-    for (i = 0; i < 20; i++) {
-      movies.push({
-        name: 'film title',
-        plot: 'plot',
-        rating: 'rating',
-        year: 2019
-      });
-    }
-    this.setState({
-      movies: movies
-    });
+    //TODO
   };
 
   // Create box for each movie
@@ -121,9 +109,9 @@ export default class Collection extends Component {
     return (
       <ResponsiveContext.Consumer>
         {(size) => (
-          <Box flex justify="start" align="center" fill>
+          <Box flex justify="center" align="center" fill>
             {this.state.movies.length === 0
-              ? this.movieCollection(size)
+              ? this.emptyState()
               : this.movieCollection(size)}
           </Box>
         )}

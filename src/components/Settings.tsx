@@ -5,7 +5,6 @@ import {
   Heading,
   RadioButtonGroup,
   Button,
-  Select,
   Text,
   ResponsiveContext,
   Anchor
@@ -33,8 +32,18 @@ export default class Settings extends Component<SettingsProps> {
     return (
       <ResponsiveContext.Consumer>
         {(size) => (
-          <Layer position="center" onClickOutside={this.props.exitSettings}>
-            <Box justify="center" align="center" pad="small">
+          <Layer
+            position="center"
+            onClickOutside={this.props.exitSettings}
+            style={{ borderRadius: 30 }}
+          >
+            <Box
+              justify="center"
+              align="center"
+              pad="small"
+              round
+              border={{ color: 'accent-1', side: 'all', size: 'medium' }}
+            >
               <Heading level="2">settings</Heading>
               <Box gap="medium" align="center">
                 <Box gap="xsmall" align="center">
@@ -60,15 +69,6 @@ export default class Settings extends Component<SettingsProps> {
                     <Button label="import" size="small" />
                     <Button label="export" size="small" />
                   </Box>
-                </Box>
-                <Box align="center" gap="xsmall">
-                  <Text>choose your own style</Text>
-                  <Select
-                    focusIndicator={size === 'small' ? false : true}
-                    options={['mystic river blue']}
-                    placeholder="select a visual theme..."
-                    onChange={() => {}}
-                  />
                 </Box>
                 <Box align="center">
                   <Anchor label="refresh app" href="/home" />
