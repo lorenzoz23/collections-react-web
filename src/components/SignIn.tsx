@@ -7,16 +7,17 @@ import {
   Button,
   ResponsiveContext
 } from 'grommet';
-import { Next } from 'grommet-icons';
+import { Next, Previous } from 'grommet-icons';
 
 interface SignInProps {
   handleLogin(): void;
-  username: string;
+  goBack(): void;
+  email: string;
   password: string;
 }
 export default class SignIn extends Component<SignInProps> {
   state = {
-    username: this.props.username,
+    email: this.props.email,
     password: this.props.password
   };
 
@@ -30,13 +31,13 @@ export default class SignIn extends Component<SignInProps> {
               onSubmit={this.props.handleLogin}
               onChange={(nextFormValue: {}) => this.setState(nextFormValue)}
             >
-              <FormField label="username" required name="username">
+              <FormField label="email" required name="email">
                 <TextInput
-                  name="username"
+                  name="email"
                   size={size === 'small' ? 'medium' : 'xlarge'}
-                  value={this.state.username}
+                  value={this.state.email}
                   onChange={(e: any) => {
-                    this.setState({ username: e.target.value });
+                    this.setState({ email: e.target.value });
                   }}
                 />
               </FormField>
@@ -51,17 +52,21 @@ export default class SignIn extends Component<SignInProps> {
                   }}
                 />
               </FormField>
-              <Box
-                direction="row"
-                justify="center"
-                pad="medium"
-                align="center"
-                round
-              >
+              <Box direction="row" justify="between" pad="small" align="center">
                 <Button
-                  //label="log in"
+                  onClick={() => this.props.goBack()}
+                  icon={<Previous />}
+                  title="back"
+                  style={{ borderRadius: 30 }}
+                  hoverIndicator="accent-1"
+                  size={size === 'small' ? 'small' : 'medium'}
+                />
+                <Button
                   icon={<Next />}
                   type="submit"
+                  style={{ borderRadius: 30 }}
+                  title="continue"
+                  hoverIndicator="accent-1"
                   size={size === 'small' ? 'small' : 'medium'}
                 />
               </Box>

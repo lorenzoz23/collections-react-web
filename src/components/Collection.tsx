@@ -42,8 +42,7 @@ export default class Collection extends Component {
   emptyState = () => {
     return (
       <Box align="center" justify="center" flex>
-        <Text>there is nothing</Text>
-        <Text>in your collection.</Text>
+        <Text>there is nothing in your lot</Text>
       </Box>
     );
   };

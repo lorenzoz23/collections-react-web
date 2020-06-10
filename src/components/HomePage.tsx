@@ -35,15 +35,36 @@ const AppBar = (props: any) => (
   />
 );
 
+let firebase: any;
+
 export default class HomePage extends Component {
   state = {
-    showSidebar: true,
     loggedIn: true,
     movies: [],
     showSettings: false
   };
 
+  constructor(props: any) {
+    super(props);
+    this.state = {
+      loggedIn: true,
+      movies: [],
+      showSettings: false
+    };
+    firebase = props.match.params.firebase;
+  }
+
   logOut = () => {
+    firebase
+      .auth()
+      .signOut()
+      .then(() => {
+        // Sign-out successful.
+        console.log('success');
+      })
+      .catch((error: any) => {
+        console.log(error);
+      });
     this.setState({
       loggedIn: false
     });
@@ -81,12 +102,12 @@ export default class HomePage extends Component {
                     <Box direction="row" gap="medium" align="center">
                       <Heading level="3" margin="none" alignSelf="center">
                         <Anchor title="home" color="light-1" href="/home">
-                          my collection
+                          my lot
                         </Anchor>
                       </Heading>
                       <Box direction="row" align="center" gap="small">
                         <TextInput
-                          title="search your collection!"
+                          title="search your film lot!"
                           placeholder={`search ${this.state.movies.length} films...`}
                           icon={<Search />}
                         />

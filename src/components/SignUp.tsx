@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component } from 'react';
 import {
   Form,
   FormField,
@@ -6,22 +6,22 @@ import {
   Box,
   Button,
   ResponsiveContext
-} from "grommet";
+} from 'grommet';
 
 interface SignUpProps {
-  handleSignUp(username: string, password: string): void;
+  handleSignUp(email: string, password: string, name: string): void;
 }
 export default class SignUp extends Component<SignUpProps> {
   state = {
-    name: "",
-    username: "",
-    password: ""
+    name: '',
+    email: '',
+    password: ''
   };
 
   defaultState = {
-    name: "",
-    username: "",
-    password: ""
+    name: '',
+    email: '',
+    password: ''
   };
 
   render() {
@@ -33,29 +33,30 @@ export default class SignUp extends Component<SignUpProps> {
               onReset={() => this.setState(this.defaultState)}
               onSubmit={() =>
                 this.props.handleSignUp(
-                  this.state.username,
-                  this.state.password
+                  this.state.email,
+                  this.state.password,
+                  this.state.name
                 )
               }
               onChange={(nextFormValue: {}) => this.setState(nextFormValue)}
             >
-              <FormField label="name" name="name">
+              <FormField label="name" name="name" required>
                 <TextInput
                   name="name"
-                  size={size === "small" ? "small" : "large"}
+                  size={size === 'small' ? 'small' : 'large'}
                   value={this.state.name}
                   onChange={(e: any) => {
                     this.setState({ name: e.target.value });
                   }}
                 />
               </FormField>
-              <FormField label="username" required name="username">
+              <FormField label="email" required name="email">
                 <TextInput
-                  name="username"
-                  size={size === "small" ? "small" : "large"}
-                  value={this.state.username}
+                  name="email"
+                  size={size === 'small' ? 'small' : 'large'}
+                  value={this.state.email}
                   onChange={(e: any) => {
-                    this.setState({ username: e.target.value });
+                    this.setState({ email: e.target.value });
                   }}
                 />
               </FormField>
@@ -63,24 +64,24 @@ export default class SignUp extends Component<SignUpProps> {
                 <TextInput
                   name="password"
                   type="password"
-                  size={size === "small" ? "small" : "large"}
+                  size={size === 'small' ? 'small' : 'large'}
                   value={this.state.password}
                   onChange={(e: any) => {
                     this.setState({ password: e.target.value });
                   }}
                 />
               </FormField>
-              <Box pad="medium" justify="center" gap="small" align="center">
+              <Box pad="small" justify="between" align="center" direction="row">
                 <Button
                   label="submit"
                   type="submit"
                   primary
-                  size={size === "small" ? "small" : "medium"}
+                  size={size === 'small' ? 'small' : 'medium'}
                 />
                 <Button
                   label="reset"
                   type="reset"
-                  size={size === "small" ? "small" : "medium"}
+                  size={size === 'small' ? 'small' : 'medium'}
                 />
               </Box>
             </Form>
