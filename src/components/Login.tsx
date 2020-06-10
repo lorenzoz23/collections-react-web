@@ -53,7 +53,7 @@ export default class Login extends Component {
                 flex
                 background="radial-gradient(circle, rgba(27,50,163,1) 0%, rgba(143,38,59,1) 100%)"
                 align="center"
-                margin={{ top: 'medium', bottom: 'medium' }}
+                margin={{ top: 'large', bottom: 'large' }}
                 overflow="hidden"
               >
                 <Box alignSelf="start" pad={{ left: 'medium' }}>
