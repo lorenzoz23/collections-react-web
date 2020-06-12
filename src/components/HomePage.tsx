@@ -9,9 +9,8 @@ import {
   Avatar
 } from 'grommet';
 import { Search, Filter, User } from 'grommet-icons';
-import AddTitle from './AddTitle';
-import Collection from './Collection';
-import FooterComponent from './FooterComponent';
+import * as firebase from 'firebase/app';
+import 'firebase/auth';
 import {
   Redirect,
   BrowserRouter as Router,
@@ -22,6 +21,9 @@ import { Scrollbars } from 'react-custom-scrollbars';
 
 import Login from './Login';
 import Settings from './Settings';
+import AddTitle from './AddTitle';
+import Collection from './Collection';
+import FooterComponent from './FooterComponent';
 
 const AppBar = (props: any) => (
   <Box
@@ -34,8 +36,6 @@ const AppBar = (props: any) => (
     {...props}
   />
 );
-
-let firebase: any;
 
 export default class HomePage extends Component {
   state = {
@@ -51,7 +51,6 @@ export default class HomePage extends Component {
       movies: [],
       showSettings: false
     };
-    firebase = props.match.params.firebase;
   }
 
   logOut = () => {

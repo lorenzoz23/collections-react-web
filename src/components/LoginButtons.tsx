@@ -16,37 +16,7 @@ export default class LoginButtons extends Component<LoginButtonProps> {
     email: '',
     password: '',
     name: '',
-    activeIndex: 0,
     show: false
-  };
-
-  handleLogin = () => {
-    this.props.firebase
-      .auth()
-      .signInWithEmailAndPassword(this.state.email, this.state.password)
-      .then(() => this.props.handleLogin())
-      .catch((error: any) => {
-        const errorMessage = error.message;
-        console.log(errorMessage);
-      });
-  };
-
-  handleSignUp = (email: string, password: string, name: string) => {
-    this.props.firebase
-      .auth()
-      .createUserWithEmailAndPassword(email, password)
-      .then(() =>
-        this.setState({
-          email: email,
-          password: password,
-          name: name,
-          activeIndex: 0
-        })
-      )
-      .catch((error: any) => {
-        const errorMessage = error.message;
-        console.log(errorMessage);
-      });
   };
 
   goBack = () => {
@@ -62,11 +32,9 @@ export default class LoginButtons extends Component<LoginButtonProps> {
           <Box>
             {this.state.show ? (
               <LoginEmail
+                firebase={firebase}
                 goBack={this.goBack}
                 handleLogin={this.props.handleLogin}
-                handleSignUp={(email: string, password: string, name: string) =>
-                  this.handleSignUp(email, password, name)
-                }
               />
             ) : (
               <Box gap="medium">

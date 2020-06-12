@@ -28,7 +28,7 @@ export default class SignUp extends Component<SignUpProps> {
     return (
       <ResponsiveContext.Consumer>
         {(size) => (
-          <Box pad="medium">
+          <Box>
             <Form
               onReset={() => this.setState(this.defaultState)}
               onSubmit={() =>
@@ -40,10 +40,10 @@ export default class SignUp extends Component<SignUpProps> {
               }
               onChange={(nextFormValue: {}) => this.setState(nextFormValue)}
             >
-              <FormField label="name" name="name" required>
+              <FormField label="name" name="name">
                 <TextInput
                   name="name"
-                  size={size === 'small' ? 'small' : 'large'}
+                  size={size === 'small' ? 'medium' : 'xlarge'}
                   value={this.state.name}
                   onChange={(e: any) => {
                     this.setState({ name: e.target.value });
@@ -53,7 +53,7 @@ export default class SignUp extends Component<SignUpProps> {
               <FormField label="email" required name="email">
                 <TextInput
                   name="email"
-                  size={size === 'small' ? 'small' : 'large'}
+                  size={size === 'small' ? 'medium' : 'xlarge'}
                   value={this.state.email}
                   onChange={(e: any) => {
                     this.setState({ email: e.target.value });
@@ -64,7 +64,7 @@ export default class SignUp extends Component<SignUpProps> {
                 <TextInput
                   name="password"
                   type="password"
-                  size={size === 'small' ? 'small' : 'large'}
+                  size={size === 'small' ? 'medium' : 'xlarge'}
                   value={this.state.password}
                   onChange={(e: any) => {
                     this.setState({ password: e.target.value });

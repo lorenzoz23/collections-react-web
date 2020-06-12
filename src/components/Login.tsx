@@ -28,11 +28,23 @@ firebase.auth().useDeviceLanguage();
 
 export default class Login extends Component {
   state = {
-    email: '',
-    password: '',
-    secondPassword: '',
-    name: '',
-    valid: false
+    uid: '',
+    valid: false,
+    width: 0,
+    height: 0
+  };
+
+  updateWindowDimensions = () => {
+    this.setState({ width: window.innerWidth, height: window.innerHeight });
+  };
+
+  componentDidMount = () => {
+    this.updateWindowDimensions();
+    window.addEventListener('resize', this.updateWindowDimensions);
+  };
+
+  componentWillUnmount = () => {
+    window.removeEventListener('resize', this.updateWindowDimensions);
   };
 
   handleLogin = () => {
@@ -42,37 +54,46 @@ export default class Login extends Component {
   };
 
   render() {
+    const url: string = '/home/' + this.state.uid;
     return (
       <ResponsiveContext.Consumer>
         {(size) => (
           <Router>
             {this.state.valid ? (
-              <Redirect exact to="/home" />
+              <Redirect exact to={url} />
             ) : (
               <Box
                 flex
                 background="radial-gradient(circle, rgba(27,50,163,1) 0%, rgba(143,38,59,1) 100%)"
                 align="center"
-                margin={{ top: 'large', bottom: 'large' }}
+                margin={
+                  size !== 'small'
+                    ? { top: 'large', bottom: 'large' }
+                    : 'medium'
+                }
                 overflow="hidden"
+                justify="between"
+                round={size === 'small' ? true : false}
               >
-                <Box alignSelf="start" pad={{ left: 'medium' }}>
+                <Box
+                  alignSelf={this.state.width < 500 ? 'center' : 'start'}
+                  pad={{ left: 'medium' }}
+                >
                   <Heading color="#FF6C88">cinelot</Heading>
                 </Box>
-                <Box
-                  align="center"
-                  justify="center"
-                  width={size !== 'small' ? 'large' : 'medium'}
-                  height="large"
-                >
+                <Box align="center" justify="center">
                   <LoginButtons
                     firebase={firebase}
                     handleLogin={this.handleLogin}
                   />
                 </Box>
                 <Box
-                  alignSelf="end"
-                  pad={{ right: 'medium', bottom: 'medium' }}
+                  alignSelf={this.state.width < 500 ? 'center' : 'end'}
+                  pad={
+                    this.state.width < 500
+                      ? { right: 'none' }
+                      : { right: 'medium' }
+                  }
                 >
                   <Heading color="#FF6C88" level="2">
                     your film collection on the go
@@ -81,7 +102,7 @@ export default class Login extends Component {
               </Box>
             )}
             <Switch>
-              <Route exact path="/home" component={HomePage} />
+              <Route exact path={url} component={HomePage} />
             </Switch>
           </Router>
         )}

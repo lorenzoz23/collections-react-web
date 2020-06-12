@@ -5,8 +5,8 @@ import SignUp from './SignUp';
 
 interface LoginEmailProps {
   handleLogin(): void;
-  handleSignUp(email: string, password: string, name: string): void;
   goBack(): void;
+  firebase: any;
 }
 
 export default class LoginEmail extends Component<LoginEmailProps> {
@@ -15,15 +15,41 @@ export default class LoginEmail extends Component<LoginEmailProps> {
     password: '',
     name: '',
     activeIndex: 0,
-    show: false
+    created: false
   };
 
-  handleSignUp = () => {
-    this.props.handleSignUp(
-      this.state.email,
-      this.state.password,
-      this.state.name
-    );
+  handleLogin = (email: string, password: string) => {
+    if (this.state.created) {
+      this.props.handleLogin();
+    } else {
+      this.props.firebase
+        .auth()
+        .signInWithEmailAndPassword(email, password)
+        .then(() => this.props.handleLogin())
+        .catch((error: any) => {
+          const errorMessage = error.message;
+          console.log(errorMessage);
+        });
+    }
+  };
+
+  handleSignUp = (email: string, password: string, name: string) => {
+    this.props.firebase
+      .auth()
+      .createUserWithEmailAndPassword(email, password)
+      .then(() =>
+        this.setState({
+          email: email,
+          password: password,
+          name: name,
+          activeIndex: 0,
+          created: true
+        })
+      )
+      .catch((error: any) => {
+        const errorMessage = error.message;
+        console.log(errorMessage);
+      });
   };
 
   render() {
@@ -40,13 +66,21 @@ export default class LoginEmail extends Component<LoginEmailProps> {
               <Tab title="sign in">
                 <SignIn
                   goBack={this.props.goBack}
-                  handleLogin={this.props.handleLogin}
+                  handleLogin={(email: string, password: string) =>
+                    this.handleLogin(email, password)
+                  }
                   email={this.state.email}
                   password={this.state.password}
                 />
               </Tab>
               <Tab title="sign up">
-                <SignUp handleSignUp={this.handleSignUp} />
+                <SignUp
+                  handleSignUp={(
+                    email: string,
+                    password: string,
+                    name: string
+                  ) => this.handleSignUp(email, password, name)}
+                />
               </Tab>
             </Tabs>
           </Box>

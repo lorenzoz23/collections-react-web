@@ -10,7 +10,7 @@ import {
 import { Next, Previous } from 'grommet-icons';
 
 interface SignInProps {
-  handleLogin(): void;
+  handleLogin(email: string, password: string): void;
   goBack(): void;
   email: string;
   password: string;
@@ -25,10 +25,12 @@ export default class SignIn extends Component<SignInProps> {
     return (
       <ResponsiveContext.Consumer>
         {(size) => (
-          <Box pad="medium">
+          <Box>
             <Form
               value={this.state}
-              onSubmit={this.props.handleLogin}
+              onSubmit={() =>
+                this.props.handleLogin(this.state.email, this.state.password)
+              }
               onChange={(nextFormValue: {}) => this.setState(nextFormValue)}
             >
               <FormField label="email" required name="email">
