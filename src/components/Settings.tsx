@@ -6,8 +6,8 @@ import {
   RadioButtonGroup,
   Button,
   Text,
-  ResponsiveContext,
-  Anchor
+  ResponsiveContext
+  //Anchor
 } from 'grommet';
 import { CircleQuestion, FormClose } from 'grommet-icons';
 
@@ -70,9 +70,11 @@ export default class Settings extends Component<SettingsProps> {
                     <Button label="export" size="small" />
                   </Box>
                 </Box>
+                {/* 
                 <Box align="center">
                   <Anchor label="refresh app" href="/home" />
                 </Box>
+                */}
                 <Button
                   alignSelf="center"
                   size="small"

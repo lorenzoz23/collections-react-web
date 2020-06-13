@@ -33,7 +33,7 @@ export default class App extends Component {
           <Box fill>
             <Switch>
               <Route exact path="/" component={Login} />
-              <Route path="/home/:id" component={HomePage} />
+              <Route exact path="/home/:id" component={HomePage} />
               <Redirect to="/" from="/*" />
             </Switch>
           </Box>

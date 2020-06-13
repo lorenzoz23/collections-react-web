@@ -39,6 +39,8 @@ const AppBar = (props: any) => (
 
 export default class HomePage extends Component {
   state = {
+    uid: '',
+    invalidRoute: false,
     loggedIn: true,
     movies: [],
     showSettings: false
@@ -47,11 +49,20 @@ export default class HomePage extends Component {
   constructor(props: any) {
     super(props);
     this.state = {
+      uid: props.location.state === undefined ? '' : props.location.state.id,
+      invalidRoute: false,
       loggedIn: true,
       movies: [],
       showSettings: false
     };
+    console.log('uid: ' + this.state.uid);
   }
+
+  componentDidMount = () => {
+    if (this.state.uid === '') {
+      this.setState({ invalidRoute: true });
+    }
+  };
 
   logOut = () => {
     firebase
@@ -82,9 +93,10 @@ export default class HomePage extends Component {
   };
 
   render() {
+    const home = '/home/' + this.state.uid;
     return (
       <Router>
-        {!this.state.loggedIn ? (
+        {!this.state.loggedIn || this.state.invalidRoute ? (
           <Redirect exact to="/" />
         ) : (
           <ResponsiveContext.Consumer>
@@ -100,7 +112,7 @@ export default class HomePage extends Component {
                   {size !== 'small' ? (
                     <Box direction="row" gap="medium" align="center">
                       <Heading level="3" margin="none" alignSelf="center">
-                        <Anchor title="home" color="light-1" href="/home">
+                        <Anchor title="home" color="light-1" href={home}>
                           my lot
                         </Anchor>
                       </Heading>

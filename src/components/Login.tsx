@@ -28,10 +28,10 @@ firebase.auth().useDeviceLanguage();
 
 export default class Login extends Component {
   state = {
-    uid: '',
     valid: false,
     width: 0,
-    height: 0
+    height: 0,
+    uid: ''
   };
 
   updateWindowDimensions = () => {
@@ -48,19 +48,31 @@ export default class Login extends Component {
   };
 
   handleLogin = () => {
-    this.setState({
-      valid: true
+    let id: string = '';
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        // User is signed in.
+        id = user.uid;
+        console.log(id);
+        this.setState({
+          valid: true,
+          uid: id
+        });
+      } else {
+        // No user is signed in.
+        console.log('error: user has bad credentials');
+      }
     });
   };
 
   render() {
-    const url: string = '/home/' + this.state.uid;
+    const url = '/home/' + this.state.uid;
     return (
       <ResponsiveContext.Consumer>
         {(size) => (
           <Router>
             {this.state.valid ? (
-              <Redirect exact to={url} />
+              <Redirect to={{ pathname: url, state: { id: this.state.uid } }} />
             ) : (
               <Box
                 flex
