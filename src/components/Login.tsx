@@ -99,18 +99,19 @@ export default class Login extends Component {
                     handleLogin={this.handleLogin}
                   />
                 </Box>
-                <Box
-                  alignSelf={this.state.width < 500 ? 'center' : 'end'}
-                  pad={
-                    this.state.width < 500
-                      ? { right: 'none' }
-                      : { right: 'medium' }
-                  }
-                >
-                  <Heading color="#FF6C88" level="2">
-                    your film collection on the go
-                  </Heading>
-                </Box>
+                {this.state.width >= 500 ? (
+                  <Box alignSelf="end" pad={{ right: 'medium' }}>
+                    <Heading color="#FF6C88" level="2">
+                      your film collection on the go
+                    </Heading>
+                  </Box>
+                ) : (
+                  <Box alignSelf="center">
+                    <Heading color="#FF6C88" level="3">
+                      your film collection on the go
+                    </Heading>
+                  </Box>
+                )}
               </Box>
             )}
             <Switch>
