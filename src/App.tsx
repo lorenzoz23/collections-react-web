@@ -13,9 +13,10 @@ import HomePage from './components/HomePage';
 const theme = {
   global: {
     colors: {
-      header: '#228BE6',
-      home: '#213444',
-      footer: 'brand'
+      header: '#213444',
+      home:
+        'radial-gradient(circle, rgba(27,50,163,1) 0%, rgba(143,38,59,1) 100%)',
+      footer: '213444'
     },
     font: {
       family: 'Roboto',

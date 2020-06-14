@@ -27,7 +27,6 @@ import FooterComponent from './FooterComponent';
 
 const AppBar = (props: any) => (
   <Box
-    tag="header"
     direction="row"
     align="center"
     justify="between"
@@ -106,7 +105,7 @@ export default class HomePage extends Component {
                   pad={
                     size === 'small'
                       ? { right: 'small', left: 'medium', vertical: 'small' }
-                      : { left: 'medium', right: 'medium', vertical: 'small' }
+                      : { left: 'medium', right: 'medium' }
                   }
                 >
                   {size !== 'small' ? (
