@@ -15,9 +15,11 @@ const columns: Record<string, string[]> = {
     'auto',
     'auto',
     'auto',
+    'auto',
     'auto'
   ],
   xlarge: [
+    'auto',
     'auto',
     'auto',
     'auto',
@@ -66,21 +68,30 @@ export default class Collection extends Component {
 
   getMovieCollection = () => {
     //TODO
+    /*
+    let movies: movie[] = [];
+    for (let i = 0; i < 40; i++) {
+      movies.push({
+        name: '',
+        plot: '',
+        rating: '',
+        year: 0
+      });
+    }
+    this.setState({
+      movies: movies
+    });
+    */
   };
 
   // Create box for each movie
-  listMovieBoxes = (size: string) => {
+  listMovieBoxes = () => {
     let boxArr = [];
     boxArr = this.state.movies.map((movie) => (
       <Box
         key={movie.name}
-        background="light-2"
-        justify="start"
-        align="center"
-        pad="small"
+        background="#AEB6BF"
         round="small"
-        width={size === 'small' ? '55px' : '125px'}
-        height={size === 'small' ? 'xsmall' : 'small'}
         onClick={() => {}}
       />
     ));
@@ -91,15 +102,13 @@ export default class Collection extends Component {
   movieCollection = (size: string) => {
     return (
       <Grid
-        gap={size !== 'small' ? 'large' : 'medium'}
-        margin="small"
+        gap="small"
         columns={columns[size]}
         rows={this.getRows(size)}
-        //rows={size !== 'small' ? 'medium' : 'small'}
         areas={undefined}
-        fill="vertical"
+        pad="small"
       >
-        {this.listMovieBoxes(size)}
+        {this.listMovieBoxes()}
       </Grid>
     );
   };
@@ -108,7 +117,7 @@ export default class Collection extends Component {
     return (
       <ResponsiveContext.Consumer>
         {(size) => (
-          <Box flex justify="center" align="center" fill>
+          <Box justify="start" alignContent="center" flex>
             {this.state.movies.length === 0
               ? this.emptyState()
               : this.movieCollection(size)}

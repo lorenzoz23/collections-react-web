@@ -17,7 +17,6 @@ import {
   Switch,
   Route
 } from 'react-router-dom';
-import { Scrollbars } from 'react-custom-scrollbars';
 
 import Login from './Login';
 import Settings from './Settings';
@@ -177,23 +176,14 @@ export default class HomePage extends Component {
                     </Avatar>
                   </Box>
                 </AppBar>
-                <Scrollbars
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    overflowX: 'hidden',
-                    flex: 1
-                  }}
-                  autoHide
+                <Box
+                  overflow={{ horizontal: 'hidden' }}
+                  background="home"
+                  alignContent="center"
+                  flex
                 >
-                  <Box
-                    overflow={{ horizontal: 'hidden' }}
-                    background="home"
-                    fill
-                  >
-                    <Collection />
-                  </Box>
-                </Scrollbars>
+                  <Collection />
+                </Box>
                 <FooterComponent />
                 {this.state.showSettings ? (
                   <Settings

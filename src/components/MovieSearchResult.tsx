@@ -72,7 +72,7 @@ export default class MovieSearchResult extends Component<
     return (
       <Box
         pad="medium"
-        background="linear-gradient(135deg, rgba(74,224,226,1) 0%, rgba(255,226,163,1) 100%)"
+        background="linear-gradient(90deg, rgba(33,52,68,1) 25%, rgba(24,122,204,1) 100%)"
         align="center"
         justify="center"
         round

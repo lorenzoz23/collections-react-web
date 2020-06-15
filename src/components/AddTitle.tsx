@@ -63,7 +63,7 @@ export default class AddTitle extends Component {
                 flex
                 pad="medium"
                 width="medium"
-                background="radial-gradient(circle, rgba(255,226,163,1) 0%, rgba(163,255,231,1) 100%)"
+                background="radial-gradient(circle, rgba(33,52,68,1) 10%, rgba(24,122,204,1) 100%)"
                 align="center"
                 justify="center"
                 overflow="auto"
