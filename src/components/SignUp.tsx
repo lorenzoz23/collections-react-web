@@ -17,13 +17,15 @@ export default class SignUp extends Component<SignUpProps> {
   state = {
     name: '',
     email: '',
-    password: ''
+    password: '',
+    errorMessage: ['']
   };
 
   defaultState = {
     name: '',
     email: '',
-    password: ''
+    password: '',
+    errorMessage: ['']
   };
 
   handleSignUp = (email: string, password: string) => {
@@ -32,7 +34,39 @@ export default class SignUp extends Component<SignUpProps> {
       .createUserWithEmailAndPassword(email, password)
       .then(() => this.props.handleUserSignUp(email, password))
       .catch((error: any) => {
-        console.log(error.code);
+        let message: string[] = ['', ''];
+        switch (error.code) {
+          case 'auth/email-already-in-use':
+            message = [
+              'email',
+              'email already in use; there are dozens of us!'
+            ];
+            break;
+          case 'auth/invalid-email':
+            message = [
+              'email',
+              'you call that a properly formatted email address?!'
+            ];
+            break;
+          case 'auth/operation-not-allowed':
+            message = ['password', 'oops! this may be our bad...'];
+            break;
+          case 'auth/weak-password':
+            message = [
+              'password',
+              'weak password; is that the best you can do?'
+            ];
+            break;
+          default:
+            message = [
+              'password',
+              "honestly? no idea what just happened. let's try that again."
+            ];
+            break;
+        }
+        this.setState({
+          errorMessage: message
+        });
       });
   };
 
@@ -59,7 +93,16 @@ export default class SignUp extends Component<SignUpProps> {
                   }}
                 />
               </FormField>
-              <FormField label="email" required name="email">
+              <FormField
+                label="email"
+                required
+                name="email"
+                error={
+                  this.state.errorMessage[0] === 'email'
+                    ? this.state.errorMessage[1]
+                    : ''
+                }
+              >
                 <TextInput
                   name="email"
                   size={size === 'small' ? 'medium' : 'xlarge'}
@@ -69,7 +112,16 @@ export default class SignUp extends Component<SignUpProps> {
                   }}
                 />
               </FormField>
-              <FormField label="password" required name="password">
+              <FormField
+                label="password"
+                required
+                name="password"
+                error={
+                  this.state.errorMessage[0] === 'password'
+                    ? this.state.errorMessage[1]
+                    : ''
+                }
+              >
                 <TextInput
                   name="password"
                   type="password"

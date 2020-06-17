@@ -59,13 +59,13 @@ export default class SignIn extends Component<SignInProps> {
             case 'auth/user-disabled':
               message = [
                 'password',
-                'you went over the line, so we marked you a zero - account disabled'
+                'account disabled; you went over the line, so we marked you a zero'
               ];
               break;
             default:
               message = [
                 'password',
-                "honestly? no idea what just happened. let's try it again."
+                "honestly? no idea what just happened. let's try that again."
               ];
               break;
           }
