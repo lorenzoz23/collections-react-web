@@ -1,17 +1,17 @@
 import React, { Component } from 'react';
 import { ResponsiveContext, Box, Button } from 'grommet';
 import { Facebook } from 'grommet-icons';
+import firebase from 'firebase/app';
+import 'firebase/auth';
 
 interface LoginFacebookProps {
-  firebase: any;
+  handleLogin(): void;
 }
 
 export default class LoginFacebook extends Component<LoginFacebookProps> {
-  state = {};
-
   signInWithFb = () => {
-    const providerFb = new this.props.firebase.auth.FacebookAuthProvider();
-    this.props.firebase
+    const providerFb = new firebase.auth.FacebookAuthProvider();
+    firebase
       .auth()
       .signInWithPopup(providerFb)
       .then((result: any) => {
@@ -21,6 +21,7 @@ export default class LoginFacebook extends Component<LoginFacebookProps> {
         // The signed-in user info.
         const user = result.user;
         console.log(user);
+        this.props.handleLogin();
       })
       .catch((error: any) => {
         // Handle Errors here.

@@ -7,9 +7,11 @@ import {
   Button,
   ResponsiveContext
 } from 'grommet';
+import firebase from 'firebase/app';
+import 'firebase/auth';
 
 interface SignUpProps {
-  handleSignUp(email: string, password: string, name: string): void;
+  handleUserSignUp(email: string, password: string): void;
 }
 export default class SignUp extends Component<SignUpProps> {
   state = {
@@ -24,6 +26,16 @@ export default class SignUp extends Component<SignUpProps> {
     password: ''
   };
 
+  handleSignUp = (email: string, password: string) => {
+    firebase
+      .auth()
+      .createUserWithEmailAndPassword(email, password)
+      .then(() => this.props.handleUserSignUp(email, password))
+      .catch((error: any) => {
+        console.log(error.code);
+      });
+  };
+
   render() {
     return (
       <ResponsiveContext.Consumer>
@@ -32,17 +44,14 @@ export default class SignUp extends Component<SignUpProps> {
             <Form
               onReset={() => this.setState(this.defaultState)}
               onSubmit={() =>
-                this.props.handleSignUp(
-                  this.state.email,
-                  this.state.password,
-                  this.state.name
-                )
+                this.handleSignUp(this.state.email, this.state.password)
               }
               onChange={(nextFormValue: {}) => this.setState(nextFormValue)}
             >
               <FormField label="name" name="name">
                 <TextInput
                   name="name"
+                  disabled
                   size={size === 'small' ? 'medium' : 'xlarge'}
                   value={this.state.name}
                   onChange={(e: any) => {

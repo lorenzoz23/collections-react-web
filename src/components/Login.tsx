@@ -10,7 +10,7 @@ import {
 import HomePage from './HomePage';
 import LoginButtons from './LoginButtons';
 
-import * as firebase from 'firebase/app';
+import firebase from 'firebase/app';
 import 'firebase/auth';
 
 const firebaseConfig = {
@@ -94,10 +94,7 @@ export default class Login extends Component {
                   <Heading color="#FF6C88">cinelot</Heading>
                 </Box>
                 <Box align="center" justify="center">
-                  <LoginButtons
-                    firebase={firebase}
-                    handleLogin={this.handleLogin}
-                  />
+                  <LoginButtons handleLogin={this.handleLogin} />
                 </Box>
                 {this.state.width >= 500 ? (
                   <Box alignSelf="end" pad={{ right: 'medium' }}>

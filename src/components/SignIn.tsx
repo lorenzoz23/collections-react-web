@@ -8,17 +8,72 @@ import {
   ResponsiveContext
 } from 'grommet';
 import { Next, Previous } from 'grommet-icons';
+import firebase from 'firebase/app';
+import 'firebase/auth';
 
 interface SignInProps {
-  handleLogin(email: string, password: string): void;
+  handleLogin(): void;
   goBack(): void;
   email: string;
   password: string;
+  created: boolean;
 }
+
 export default class SignIn extends Component<SignInProps> {
   state = {
     email: this.props.email,
-    password: this.props.password
+    password: this.props.password,
+    errorMessage: [''],
+    created: this.props.created
+  };
+
+  handleLogin = (email: string, password: string) => {
+    if (this.state.created) {
+      this.props.handleLogin();
+    } else {
+      firebase
+        .auth()
+        .signInWithEmailAndPassword(email, password)
+        .then(() => this.props.handleLogin())
+        .catch((error: any) => {
+          let message: string[] = ['', ''];
+          switch (error.code) {
+            case 'auth/invalid-email':
+              message = [
+                'email',
+                'you call that a properly formatted email address?!'
+              ];
+              break;
+            case 'auth/user-not-found':
+              message = [
+                'email',
+                'the first step towards recovery is to actually make an account'
+              ];
+              break;
+            case 'auth/wrong-password':
+              message = [
+                'password',
+                "hey, typing can be hard. let's give that password another go, okay?"
+              ];
+              break;
+            case 'auth/user-disabled':
+              message = [
+                'password',
+                'you went over the line, so we marked you a zero - account disabled'
+              ];
+              break;
+            default:
+              message = [
+                'password',
+                "honestly? no idea what just happened. let's try it again."
+              ];
+              break;
+          }
+          this.setState({
+            errorMessage: message
+          });
+        });
+    }
   };
 
   render() {
@@ -29,11 +84,20 @@ export default class SignIn extends Component<SignInProps> {
             <Form
               value={this.state}
               onSubmit={() =>
-                this.props.handleLogin(this.state.email, this.state.password)
+                this.handleLogin(this.state.email, this.state.password)
               }
               onChange={(nextFormValue: {}) => this.setState(nextFormValue)}
             >
-              <FormField label="email" required name="email">
+              <FormField
+                label="email"
+                required
+                name="email"
+                error={
+                  this.state.errorMessage[0] === 'email'
+                    ? this.state.errorMessage[1]
+                    : ''
+                }
+              >
                 <TextInput
                   name="email"
                   size={size === 'small' ? 'medium' : 'xlarge'}
@@ -43,7 +107,16 @@ export default class SignIn extends Component<SignInProps> {
                   }}
                 />
               </FormField>
-              <FormField label="password" required name="password">
+              <FormField
+                label="password"
+                required
+                name="password"
+                error={
+                  this.state.errorMessage[0] === 'password'
+                    ? this.state.errorMessage[1]
+                    : ''
+                }
+              >
                 <TextInput
                   name="password"
                   size={size === 'small' ? 'medium' : 'xlarge'}

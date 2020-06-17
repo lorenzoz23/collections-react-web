@@ -3,19 +3,14 @@ import { ResponsiveContext, Box, Button } from 'grommet';
 import { MailOption } from 'grommet-icons';
 import LoginEmail from './LoginEmail';
 import LoginGoogle from './LoginGoogle';
-import firebase from 'firebase';
 import LoginFacebook from './LoginFacebook';
 
 interface LoginButtonProps {
-  firebase: any;
   handleLogin(): void;
 }
 
 export default class LoginButtons extends Component<LoginButtonProps> {
   state = {
-    email: '',
-    password: '',
-    name: '',
     show: false
   };
 
@@ -32,7 +27,6 @@ export default class LoginButtons extends Component<LoginButtonProps> {
           <Box>
             {this.state.show ? (
               <LoginEmail
-                firebase={firebase}
                 goBack={this.goBack}
                 handleLogin={this.props.handleLogin}
               />
@@ -48,8 +42,8 @@ export default class LoginButtons extends Component<LoginButtonProps> {
                     this.setState({ show: true });
                   }}
                 />
-                <LoginGoogle firebase={firebase} />
-                <LoginFacebook firebase={firebase} />
+                <LoginGoogle handleLogin={this.props.handleLogin} />
+                <LoginFacebook handleLogin={this.props.handleLogin} />
               </Box>
             )}
           </Box>

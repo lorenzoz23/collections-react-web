@@ -1,17 +1,17 @@
 import React, { Component } from 'react';
 import { ResponsiveContext, Box, Button } from 'grommet';
 import { Google } from 'grommet-icons';
+import firebase from 'firebase/app';
+import 'firebase/auth';
 
 interface LoginGoogleProps {
-  firebase: any;
+  handleLogin(): void;
 }
 
 export default class LoginGoogle extends Component<LoginGoogleProps> {
-  state = {};
-
   signInWithGoogle = () => {
-    const providerGoogle = new this.props.firebase.auth.GoogleAuthProvider();
-    this.props.firebase
+    const providerGoogle = new firebase.auth.GoogleAuthProvider();
+    firebase
       .auth()
       .signInWithPopup(providerGoogle)
       .then((result: any) => {
@@ -21,6 +21,7 @@ export default class LoginGoogle extends Component<LoginGoogleProps> {
         // The signed-in user info.
         const user = result.user;
         console.log(user);
+        this.props.handleLogin();
       })
       .catch((error: any) => {
         // Handle Errors here.
