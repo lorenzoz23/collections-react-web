@@ -9,7 +9,7 @@ interface SingleMovieViewProps {
   movie: movie;
 }
 
-type movieView = {
+export type movieView = {
   movie: movie;
   checked: boolean;
 };

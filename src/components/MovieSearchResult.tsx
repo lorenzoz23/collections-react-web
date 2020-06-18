@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Box, Heading, Button, Image, CheckBox } from 'grommet';
 import { Close, Previous } from 'grommet-icons';
 import { movie } from './HomePage';
+//import SingleMovieView from './SingleMovieView';
 
 interface MovieSearchResultProps {
   title: string;
@@ -11,24 +12,21 @@ interface MovieSearchResultProps {
   movieAdded(movie: movie): void;
 }
 
-type searchResult = {
+type searchResultMovie = {
   movie: movie;
   checked: boolean;
+};
+
+type searchResults = {
+  movies: searchResultMovie[];
 };
 
 export default class MovieSearchResult extends Component<
   MovieSearchResultProps
 > {
-  state: { result: searchResult } = {
-    result: {
-      movie: {
-        name: '',
-        plot: '',
-        date: '',
-        poster: '',
-        id: ''
-      },
-      checked: false
+  state: { movieList: searchResults } = {
+    movieList: {
+      movies: []
     }
   };
 
@@ -38,22 +36,29 @@ export default class MovieSearchResult extends Component<
     )
       .then((resp) => resp.json())
       .then((data) => {
-        console.log(data.results[0]);
-        const newMovie: movie = {
-          name: data.results[0].title,
-          plot: data.results[0].overview,
-          date: data.results[0].release_date,
-          poster:
-            'https://image.tmdb.org/t/p/w500' + data.results[0].poster_path,
-          id: data.results[0].id
+        console.log(data.results);
+        const results = data.results;
+        const movieItems: searchResultMovie[] = [];
+        results.map((item: any) => {
+          const newMovie: movie = {
+            name: item.title,
+            plot: item.overview,
+            date: item.release_date,
+            poster: 'https://image.tmdb.org/t/p/w500' + item.poster_path,
+            id: item.id
+          };
+          const newSearchResultMovie: searchResultMovie = {
+            movie: newMovie,
+            checked: false
+          };
+          movieItems.push(newSearchResultMovie);
+        });
+
+        const newMovieList: searchResults = {
+          movies: movieItems
         };
-        const result: searchResult = {
-          movie: newMovie,
-          checked: false
-        };
-        console.log(result);
         this.setState({
-          result: result
+          movieList: newMovieList
         });
       })
       .catch((err) => {
@@ -61,13 +66,24 @@ export default class MovieSearchResult extends Component<
       });
   };
 
-  checkedMovie = () => {
-    const checkedMovie: searchResult = {
-      ...this.state.result,
-      checked: !this.state.result.checked
+  checkedMovie = (movie: searchResultMovie) => {
+    let results: searchResultMovie[] = [];
+    let updatedMovie = movie;
+    updatedMovie.checked = !updatedMovie.checked;
+
+    this.state.movieList.movies.forEach((element) => {
+      if (element.movie.id !== movie.movie.id) {
+        results.push(element);
+      } else {
+        results.push(updatedMovie);
+      }
+    });
+
+    const newMovieList: searchResults = {
+      movies: results
     };
     this.setState({
-      movie: checkedMovie
+      movieList: newMovieList
     });
   };
 
@@ -80,31 +96,33 @@ export default class MovieSearchResult extends Component<
         justify="center"
         round
       >
-        <Box direction="row" justify="between" gap="medium" alignSelf="end">
-          <Box
-            height={{ min: '225px', max: '225px' }}
-            width={{ min: '150px', max: '150px' }}
-            style={{ backgroundColor: '#34495E', borderRadius: 20 }}
-            border={{ size: 'small', color: '#34495E', side: 'all' }}
-          >
-            <Image
-              fill
-              fit="cover"
-              src={this.state.result.movie.poster}
-              style={{ borderRadius: 20 }}
-            />
-          </Box>
-          <Box direction="row" gap="small">
-            <Heading level="3">{this.state.result.movie.name}</Heading>
-            <CheckBox
-              checked={this.state.result.checked}
-              label="add film?"
-              onChange={() => {
-                this.checkedMovie();
-              }}
-            />
-          </Box>
-        </Box>
+        {this.state.movieList.movies.map((item) => {
+          <Box direction="row" justify="between" gap="medium" alignSelf="end">
+            <Box
+              height={{ min: '225px', max: '225px' }}
+              width={{ min: '150px', max: '150px' }}
+              style={{ backgroundColor: '#34495E', borderRadius: 20 }}
+              border={{ size: 'small', color: '#34495E', side: 'all' }}
+            >
+              <Image
+                fill
+                fit="cover"
+                src={item.movie.poster}
+                style={{ borderRadius: 20 }}
+              />
+            </Box>
+            <Box direction="row" gap="small">
+              <Heading level="3">{item.movie.name}</Heading>
+              <CheckBox
+                checked={item.checked}
+                label="add film?"
+                onChange={() => {
+                  this.checkedMovie(item);
+                }}
+              />
+            </Box>
+          </Box>;
+        })}
         <Box direction="row" justify="between" pad={{ top: 'medium' }} fill>
           <Button
             title="back"
