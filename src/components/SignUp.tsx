@@ -37,31 +37,19 @@ export default class SignUp extends Component<SignUpProps> {
         let message: string[] = ['', ''];
         switch (error.code) {
           case 'auth/email-already-in-use':
-            message = [
-              'email',
-              'email already in use; there are dozens of us!'
-            ];
+            message = ['email', 'email already in use'];
             break;
           case 'auth/invalid-email':
-            message = [
-              'email',
-              'you call that a properly formatted email address?!'
-            ];
+            message = ['email', 'invalid email'];
             break;
           case 'auth/operation-not-allowed':
-            message = ['password', 'oops! this may be our bad...'];
+            message = ['password', 'account creation is currently not allowed'];
             break;
           case 'auth/weak-password':
-            message = [
-              'password',
-              'weak password; is that the best you can do?'
-            ];
+            message = ['password', 'password is too weak'];
             break;
           default:
-            message = [
-              'password',
-              "honestly? no idea what just happened. let's try that again."
-            ];
+            message = ['password', 'please try again'];
             break;
         }
         this.setState({
@@ -85,6 +73,7 @@ export default class SignUp extends Component<SignUpProps> {
               <FormField label="name" name="name">
                 <TextInput
                   name="name"
+                  placeholder="field is currently disabled"
                   disabled
                   size={size === 'small' ? 'medium' : 'xlarge'}
                   value={this.state.name}

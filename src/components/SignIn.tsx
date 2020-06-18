@@ -39,34 +39,19 @@ export default class SignIn extends Component<SignInProps> {
           let message: string[] = ['', ''];
           switch (error.code) {
             case 'auth/invalid-email':
-              message = [
-                'email',
-                'you call that a properly formatted email address?!'
-              ];
+              message = ['email', 'invalid email'];
               break;
             case 'auth/user-not-found':
-              message = [
-                'email',
-                'the first step towards recovery is to actually make an account'
-              ];
+              message = ['email', 'user not found'];
               break;
             case 'auth/wrong-password':
-              message = [
-                'password',
-                "hey, typing can be hard. let's give that password another go, okay?"
-              ];
+              message = ['password', 'password is incorrect'];
               break;
             case 'auth/user-disabled':
-              message = [
-                'password',
-                'account disabled; you went over the line, so we marked you a zero'
-              ];
+              message = ['password', 'user account is disabled'];
               break;
             default:
-              message = [
-                'password',
-                "honestly? no idea what just happened. let's try that again."
-              ];
+              message = ['password', 'please try again'];
               break;
           }
           this.setState({

@@ -1,33 +1,33 @@
 import React, { Component } from 'react';
-import { Box, Heading, Button, Text, Image, CheckBox } from 'grommet';
+import { Box, Heading, Button, Image, CheckBox } from 'grommet';
 import { Close, Previous } from 'grommet-icons';
+import { movie } from './HomePage';
 
 interface MovieSearchResultProps {
   title: string;
   year: string;
   closeAdd(): void;
   closeResult(): void;
+  movieAdded(movie: movie): void;
 }
 
 type searchResult = {
-  name: string;
-  plot: string;
-  date: string;
-  poster: string;
-  id: string;
+  movie: movie;
   checked: boolean;
 };
 
 export default class MovieSearchResult extends Component<
   MovieSearchResultProps
 > {
-  state: { movie: searchResult } = {
-    movie: {
-      name: '',
-      plot: '',
-      date: '',
-      poster: '',
-      id: '',
+  state: { result: searchResult } = {
+    result: {
+      movie: {
+        name: '',
+        plot: '',
+        date: '',
+        poster: '',
+        id: ''
+      },
       checked: false
     }
   };
@@ -39,18 +39,21 @@ export default class MovieSearchResult extends Component<
       .then((resp) => resp.json())
       .then((data) => {
         console.log(data.results[0]);
-        const result: searchResult = {
+        const newMovie: movie = {
           name: data.results[0].title,
           plot: data.results[0].overview,
           date: data.results[0].release_date,
           poster:
             'https://image.tmdb.org/t/p/w500' + data.results[0].poster_path,
-          id: data.results[0].id,
+          id: data.results[0].id
+        };
+        const result: searchResult = {
+          movie: newMovie,
           checked: false
         };
         console.log(result);
         this.setState({
-          movie: result
+          result: result
         });
       })
       .catch((err) => {
@@ -60,8 +63,8 @@ export default class MovieSearchResult extends Component<
 
   checkedMovie = () => {
     const checkedMovie: searchResult = {
-      ...this.state.movie,
-      checked: !this.state.movie.checked
+      ...this.state.result,
+      checked: !this.state.result.checked
     };
     this.setState({
       movie: checkedMovie
@@ -87,16 +90,19 @@ export default class MovieSearchResult extends Component<
             <Image
               fill
               fit="cover"
-              src={this.state.movie.poster}
+              src={this.state.result.movie.poster}
               style={{ borderRadius: 20 }}
             />
           </Box>
-          <Box justify="evenly" alignSelf="end">
-            <Heading level="3">{this.state.movie.name}</Heading>
-            <Box gap="small">
-              <Text weight="bold">{this.state.movie.date.substring(0, 4)}</Text>
-              <Text size="small">{this.state.movie.plot}</Text>
-            </Box>
+          <Box direction="row" gap="small">
+            <Heading level="3">{this.state.result.movie.name}</Heading>
+            <CheckBox
+              checked={this.state.result.checked}
+              label="add film?"
+              onChange={() => {
+                this.checkedMovie();
+              }}
+            />
           </Box>
         </Box>
         <Box direction="row" justify="between" pad={{ top: 'medium' }} fill>
@@ -104,13 +110,6 @@ export default class MovieSearchResult extends Component<
             title="back"
             icon={<Previous />}
             onClick={() => this.props.closeResult()}
-          />
-          <CheckBox
-            checked={this.state.movie.checked}
-            label="add film?"
-            onChange={() => {
-              this.checkedMovie();
-            }}
           />
           <Button
             title="cancel"

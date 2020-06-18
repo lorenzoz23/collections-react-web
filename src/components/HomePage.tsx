@@ -9,8 +9,9 @@ import {
   Avatar
 } from 'grommet';
 import { Search, Filter, User } from 'grommet-icons';
-import * as firebase from 'firebase/app';
+import firebase from 'firebase/app';
 import 'firebase/auth';
+import 'firebase/database';
 import {
   Redirect,
   BrowserRouter as Router,
@@ -35,13 +36,22 @@ const AppBar = (props: any) => (
   />
 );
 
+export type movie = {
+  name: string;
+  plot: string;
+  date: string;
+  poster: string;
+  id: string;
+};
+
 export default class HomePage extends Component {
   state = {
     uid: '',
     invalidRoute: false,
     loggedIn: true,
     movies: [],
-    showSettings: false
+    showSettings: false,
+    wishlist: false
   };
 
   constructor(props: any) {
@@ -51,7 +61,8 @@ export default class HomePage extends Component {
       invalidRoute: false,
       loggedIn: true,
       movies: [],
-      showSettings: false
+      showSettings: false,
+      wishlist: false
     };
     console.log('uid: ' + this.state.uid);
   }
@@ -59,7 +70,40 @@ export default class HomePage extends Component {
   componentDidMount = () => {
     if (this.state.uid === '') {
       this.setState({ invalidRoute: true });
+    } else {
+      let userCollection: any[] = [];
+      let lot: movie[] = [];
+
+      firebase
+        .database()
+        .ref('/users/' + this.state.uid)
+        .once('value')
+        .then((snapshot) => {
+          userCollection = snapshot.val() && snapshot.val().collection;
+        });
+
+      userCollection.map((movie) => {
+        return lot.push({
+          name: movie.name,
+          plot: movie.plot,
+          date: movie.date,
+          poster: movie.poster,
+          id: movie.id
+        });
+      });
+      console.log(lot);
+      this.setState({
+        movies: lot
+      });
     }
+  };
+
+  movieAdded = (movie: movie) => {
+    let collection: movie[] = this.state.movies;
+    collection.push(movie);
+    this.setState({
+      movies: collection
+    });
   };
 
   logOut = () => {
@@ -78,20 +122,21 @@ export default class HomePage extends Component {
     });
   };
 
-  exitSettings = () => {
+  toggleSettings = () => {
     this.setState({
-      showSettings: false
+      showSettings: !this.state.showSettings
     });
   };
 
-  enterSettings = () => {
+  handleWishlist = () => {
     this.setState({
-      showSettings: true
+      wishlist: !this.state.wishlist
     });
   };
 
   render() {
     const home = '/home/' + this.state.uid;
+    const title = this.state.wishlist ? 'my wishlist' : 'my lot';
     return (
       <Router>
         {!this.state.loggedIn || this.state.invalidRoute ? (
@@ -111,7 +156,7 @@ export default class HomePage extends Component {
                     <Box direction="row" gap="medium" align="center">
                       <Heading level="3" margin="none" alignSelf="center">
                         <Anchor title="home" color="light-1" href={home}>
-                          my lot
+                          {title}
                         </Anchor>
                       </Heading>
                       <Box direction="row" align="center" gap="small">
@@ -121,7 +166,7 @@ export default class HomePage extends Component {
                           icon={<Search />}
                         />
                         <Box>
-                          <AddTitle />
+                          <AddTitle movieAdded={this.movieAdded} />
                         </Box>
                         <Menu
                           style={{ borderRadius: 100 }}
@@ -147,7 +192,7 @@ export default class HomePage extends Component {
                           `search ${this.state.movies.length} films...`
                         ]}
                       />
-                      <AddTitle />
+                      <AddTitle movieAdded={this.movieAdded} />
                       <Menu
                         title="filter by tags"
                         dropAlign={{ top: 'bottom', left: 'right' }}
@@ -163,8 +208,7 @@ export default class HomePage extends Component {
                   <Box>
                     <Avatar
                       hoverIndicator="brand"
-                      background="accent-2"
-                      onClick={this.enterSettings}
+                      onClick={this.toggleSettings}
                       title="settings"
                       align="center"
                       size={size === 'small' ? '40px' : 'medium'}
@@ -182,14 +226,18 @@ export default class HomePage extends Component {
                   alignContent="center"
                   flex
                 >
-                  <Collection />
+                  <Collection
+                    wishlist={this.state.wishlist}
+                    movies={this.state.movies}
+                  />
                 </Box>
                 <FooterComponent />
                 {this.state.showSettings ? (
                   <Settings
                     loggedIn={this.state.loggedIn}
                     logOut={this.logOut}
-                    exitSettings={this.exitSettings}
+                    toggleSettings={this.toggleSettings}
+                    handleWishlist={this.handleWishlist}
                   />
                 ) : null}
               </Box>

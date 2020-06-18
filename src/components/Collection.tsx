@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { Box, Text, ResponsiveContext, Grid } from 'grommet';
-
-type movie = { name: string; plot: string; rating: string; year: number };
+import type { movie } from './HomePage';
 
 const columns: Record<string, string[]> = {
   small: ['auto', 'auto', 'auto', 'auto'],
@@ -32,19 +31,22 @@ const columns: Record<string, string[]> = {
   ]
 };
 
-export default class Collection extends Component {
-  state: { movies: movie[] } = {
-    movies: []
-  };
+interface CollectionProps {
+  wishlist: boolean;
+  movies: movie[];
+}
 
-  componentDidMount = () => {
-    this.getMovieCollection();
+export default class Collection extends Component<CollectionProps> {
+  state = {
+    movies: this.props.movies
   };
 
   emptyState = () => {
     return (
       <Box align="center" justify="center" flex>
-        <Text>there is nothing in your lot</Text>
+        <Text>
+          there is nothing in your {this.props.wishlist ? 'wishlist' : 'lot'}
+        </Text>
       </Box>
     );
   };
@@ -66,23 +68,20 @@ export default class Collection extends Component {
     return rows;
   };
 
-  getMovieCollection = () => {
-    //TODO
-    /*
-    let movies: movie[] = [];
-    for (let i = 0; i < 40; i++) {
-      movies.push({
-        name: '',
-        plot: '',
-        rating: '',
-        year: 0
-      });
-    }
-    this.setState({
-      movies: movies
-    });
-    */
-  };
+  // getMovieCollection = () => {
+  //   let movies: movie[] = [];
+  //   for (let i = 0; i < 40; i++) {
+  //     movies.push({
+  //       name: '',
+  //       plot: '',
+  //       rating: '',
+  //       year: 0
+  //     });
+  //   }
+  //   this.setState({
+  //     movies: movies
+  //   });
+  // };
 
   // Create box for each movie
   listMovieBoxes = () => {

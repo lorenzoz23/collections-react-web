@@ -2,8 +2,13 @@ import React, { Component } from 'react';
 import { Box, Button, Heading, TextInput, Layer, FormField } from 'grommet';
 import { Add, FormNextLink } from 'grommet-icons';
 import MovieSearchResult from './MovieSearchResult';
+import { movie } from './HomePage';
 
-export default class AddTitle extends Component {
+interface AddTitleProps {
+  movieAdded(movie: movie): void;
+}
+
+export default class AddTitle extends Component<AddTitleProps> {
   state = {
     visible: false,
     searchTitle: '',
@@ -57,6 +62,7 @@ export default class AddTitle extends Component {
                 year={this.state.searchYear}
                 closeAdd={this.closeAddTitle}
                 closeResult={this.closeMovieSearchResult}
+                movieAdded={(movie: movie) => this.props.movieAdded(movie)}
               />
             ) : (
               <Box
