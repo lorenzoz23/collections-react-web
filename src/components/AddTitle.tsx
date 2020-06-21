@@ -55,8 +55,7 @@ export default class AddTitle extends Component<AddTitleProps> {
             style={{ borderRadius: 30 }}
             position="center"
             onClickOutside={() => {
-              this.closeMovieSearchResult();
-              this.closeAddTitle();
+              this.setState({ visible: false });
             }}
           >
             {this.state.searched ? (

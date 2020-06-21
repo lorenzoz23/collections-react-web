@@ -134,6 +134,7 @@ export default class MovieSearchResult extends Component<
         background="linear-gradient(45deg, rgba(33,52,68,1) 10%, rgba(24,122,204,1) 100%)"
         overflow={{ horizontal: 'hidden', vertical: 'auto' }}
         height={{ max: 'medium' }}
+        flex
       >
         {this.state.visible ? (
           <SingleMovieView
@@ -189,13 +190,12 @@ export default class MovieSearchResult extends Component<
         )}
         {!this.state.visible ? (
           <Footer>
-            <Box direction="row" justify="between" fill>
+            <Box direction="row" fill gap="small">
               <Button
                 title="back"
                 icon={<Previous />}
                 onClick={() => this.props.closeResult()}
               />
-              <Button label={label} alignSelf="center" primary />
               <Button
                 title="cancel"
                 icon={<Close />}
@@ -203,6 +203,19 @@ export default class MovieSearchResult extends Component<
               />
             </Box>
           </Footer>
+        ) : null}
+        {this.state.numToAdd > 0 ? (
+          <Button
+            label={label}
+            primary
+            hoverIndicator="transparent"
+            style={{
+              position: 'fixed',
+              bottom: '20px',
+              //zIndex: 99,
+              right: '30px'
+            }}
+          />
         ) : null}
       </Box>
     );
