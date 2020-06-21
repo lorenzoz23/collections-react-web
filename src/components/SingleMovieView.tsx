@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
-import { Box, Heading, Button, Text, Image, CheckBox } from 'grommet';
+import { Box, Heading, Button, Text, Image } from 'grommet';
 import { Previous } from 'grommet-icons';
 import { movie } from './HomePage';
 
 interface SingleMovieViewProps {
-  closeResult(): void;
-  movieAdded(movie: movie): void;
+  closeDetailView?(): void;
+  movieAdded?(movie: movie): void;
   movie: movie;
+  add: boolean;
 }
 
 export type movieView = {
@@ -33,19 +34,13 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
     const movieToAdd: movie = {
       ...this.state.movieView.movie
     };
-    this.props.movieAdded(movieToAdd);
+    this.props.movieAdded!(movieToAdd);
   };
 
   render() {
     return (
-      <Box
-        pad="medium"
-        background="linear-gradient(90deg, rgba(33,52,68,1) 25%, rgba(24,122,204,1) 100%)"
-        align="center"
-        justify="center"
-        round
-      >
-        <Box direction="row" justify="between" gap="medium" alignSelf="end">
+      <Box gap="small">
+        <Box direction="row" justify="start" gap="medium">
           <Box
             height={{ min: '225px', max: '225px' }}
             width={{ min: '150px', max: '150px' }}
@@ -69,20 +64,15 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
             </Box>
           </Box>
         </Box>
-        <Box direction="row" justify="between" pad={{ top: 'medium' }} fill>
-          <Button
-            title="back"
-            icon={<Previous />}
-            onClick={() => this.props.closeResult()}
-          />
-          <CheckBox
-            checked={this.state.movieView.checked}
-            label="add film?"
-            onChange={() => {
-              this.checkedMovie();
-            }}
-          />
-        </Box>
+        {this.props.add ? (
+          <Box align="center" alignSelf="start">
+            <Button
+              title="back"
+              icon={<Previous />}
+              onClick={() => this.props.closeDetailView!()}
+            />
+          </Box>
+        ) : null}
       </Box>
     );
   }

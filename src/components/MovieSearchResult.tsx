@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { Box, Heading, Button, Image, CheckBox } from 'grommet';
-import { Close, Previous } from 'grommet-icons';
+import { Box, Heading, Button, Image, CheckBox, Footer } from 'grommet';
+import { Close, Next, Previous } from 'grommet-icons';
 import { movie } from './HomePage';
-//import SingleMovieView from './SingleMovieView';
+import SingleMovieView from './SingleMovieView';
 
 interface MovieSearchResultProps {
   title: string;
@@ -24,10 +24,24 @@ type searchResults = {
 export default class MovieSearchResult extends Component<
   MovieSearchResultProps
 > {
-  state: { movieList: searchResults } = {
+  state: {
+    movieList: searchResults;
+    visible: boolean;
+    movieToShow: movie;
+    numToAdd: number;
+  } = {
     movieList: {
       movies: []
-    }
+    },
+    visible: false,
+    movieToShow: {
+      name: '',
+      plot: '',
+      date: '',
+      poster: '',
+      id: ''
+    },
+    numToAdd: 0
   };
 
   componentDidMount = () => {
@@ -38,8 +52,8 @@ export default class MovieSearchResult extends Component<
       .then((data) => {
         console.log(data.results);
         const results = data.results;
-        const movieItems: searchResultMovie[] = [];
-        results.map((item: any) => {
+        let movieItems: searchResultMovie[] = [];
+        movieItems = results.map((item: any) => {
           const newMovie: movie = {
             name: item.title,
             plot: item.overview,
@@ -51,7 +65,7 @@ export default class MovieSearchResult extends Component<
             movie: newMovie,
             checked: false
           };
-          movieItems.push(newSearchResultMovie);
+          return newSearchResultMovie;
         });
 
         const newMovieList: searchResults = {
@@ -82,59 +96,114 @@ export default class MovieSearchResult extends Component<
     const newMovieList: searchResults = {
       movies: results
     };
+    const numToAdd = updatedMovie.checked
+      ? this.state.numToAdd + 1
+      : this.state.numToAdd - 1;
     this.setState({
-      movieList: newMovieList
+      movieList: newMovieList,
+      numToAdd: numToAdd
+    });
+  };
+
+  showMovieDetails = (movie: movie) => {
+    this.setState({
+      visible: true,
+      movieToShow: movie
+    });
+  };
+
+  closeDetailView = () => {
+    this.setState({
+      visible: false,
+      movieToShow: {
+        name: '',
+        plot: '',
+        date: '',
+        poster: '',
+        id: ''
+      }
     });
   };
 
   render() {
+    const label = 'add ' + this.state.numToAdd + ' films';
     return (
       <Box
-        pad="medium"
-        background="linear-gradient(90deg, rgba(33,52,68,1) 25%, rgba(24,122,204,1) 100%)"
-        align="center"
-        justify="center"
-        round
+        pad="small"
+        gap="small"
+        background="linear-gradient(45deg, rgba(33,52,68,1) 10%, rgba(24,122,204,1) 100%)"
+        overflow={{ horizontal: 'hidden', vertical: 'auto' }}
+        height={{ max: 'medium' }}
       >
-        {this.state.movieList.movies.map((item) => {
-          <Box direction="row" justify="between" gap="medium" alignSelf="end">
+        {this.state.visible ? (
+          <SingleMovieView
+            movie={this.state.movieToShow}
+            add={true}
+            closeDetailView={this.closeDetailView}
+          />
+        ) : (
+          this.state.movieList.movies.map((item) => (
             <Box
-              height={{ min: '225px', max: '225px' }}
-              width={{ min: '150px', max: '150px' }}
-              style={{ backgroundColor: '#34495E', borderRadius: 20 }}
-              border={{ size: 'small', color: '#34495E', side: 'all' }}
+              height={{ min: '200px', max: '200px' }}
+              pad="small"
+              direction="row"
+              gap="medium"
+              fill="horizontal"
+              border={{ size: 'small', color: 'accent-1', side: 'all' }}
             >
-              <Image
-                fill
-                fit="cover"
-                src={item.movie.poster}
-                style={{ borderRadius: 20 }}
+              <Box
+                style={{ backgroundColor: '#34495E', borderRadius: 20 }}
+                border={{ size: 'small', color: '#34495E', side: 'all' }}
+                height={{ min: '175px', max: '175px' }}
+                width={{ min: '125px', max: '125px' }}
+                alignSelf="center"
+              >
+                <Image
+                  fill
+                  fit="cover"
+                  src={item.movie.poster}
+                  style={{ borderRadius: 20 }}
+                />
+              </Box>
+              <Box alignSelf="center">
+                <Heading alignSelf="start" level="3">
+                  {item.movie.name}
+                </Heading>
+                <Box direction="row" gap="small" alignSelf="start">
+                  <CheckBox
+                    checked={item.checked}
+                    label="add film?"
+                    onChange={() => {
+                      this.checkedMovie(item);
+                    }}
+                  />
+                  <Button
+                    icon={<Next />}
+                    title="movie details"
+                    onClick={() => this.showMovieDetails(item.movie)}
+                  />
+                </Box>
+              </Box>
+            </Box>
+          ))
+        )}
+        {!this.state.visible ? (
+          <Footer>
+            <Box direction="row" justify="between" fill>
+              <Button
+                title="back"
+                icon={<Previous />}
+                onClick={() => this.props.closeResult()}
+              />
+              <Button label={label} alignSelf="center" primary />
+              <Button
+                title="cancel"
+                icon={<Close />}
+                onClick={() => this.props.closeAdd()}
               />
             </Box>
-            <Box direction="row" gap="small">
-              <Heading level="3">{item.movie.name}</Heading>
-              <CheckBox
-                checked={item.checked}
-                label="add film?"
-                onChange={() => {
-                  this.checkedMovie(item);
-                }}
-              />
-            </Box>
-          </Box>;
-        })}
-        <Box direction="row" justify="between" pad={{ top: 'medium' }} fill>
-          <Button
-            title="back"
-            icon={<Previous />}
-            onClick={() => this.props.closeResult()}
-          />
-          <Button
-            title="cancel"
-            icon={<Close />}
-            onClick={() => this.props.closeAdd()}
-          />
-        </Box>
+          </Footer>
+        ) : null}
       </Box>
     );
   }

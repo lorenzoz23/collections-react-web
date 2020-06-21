@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Box, Text, ResponsiveContext, Grid } from 'grommet';
 import type { movie } from './HomePage';
+import SingleMovieView from './SingleMovieView';
 
 const columns: Record<string, string[]> = {
   small: ['auto', 'auto', 'auto', 'auto'],
@@ -91,7 +92,7 @@ export default class Collection extends Component<CollectionProps> {
         key={movie.name}
         background="#AEB6BF"
         round="small"
-        onClick={() => {}}
+        onClick={() => <SingleMovieView add={false} movie={movie} />}
       />
     ));
 
