@@ -25,7 +25,7 @@ import AddTitle from './AddTitle';
 import Collection from './Collection';
 import FooterComponent from './FooterComponent';
 
-const AppBar = (props: any) => (
+export const AppBar = (props: any) => (
   <Box
     direction="row"
     align="center"
@@ -45,7 +45,14 @@ export type movie = {
 };
 
 export default class HomePage extends Component {
-  state = {
+  state: {
+    uid: string;
+    invalidRoute: boolean;
+    loggedIn: boolean;
+    movies: movie[];
+    showSettings: boolean;
+    wishlist: boolean;
+  } = {
     uid: '',
     invalidRoute: false,
     loggedIn: true,
@@ -98,9 +105,12 @@ export default class HomePage extends Component {
     }
   };
 
-  movieAdded = (movie: movie) => {
+  moviesAdded = (movies: movie[]) => {
     let collection: movie[] = this.state.movies;
-    collection.push(movie);
+
+    for (let i = 0; i < movies.length; i++) {
+      collection.push(movies[i]);
+    }
     this.setState({
       movies: collection
     });
@@ -166,7 +176,11 @@ export default class HomePage extends Component {
                           icon={<Search />}
                         />
                         <Box>
-                          <AddTitle movieAdded={this.movieAdded} />
+                          <AddTitle
+                            moviesAdded={(movies: movie[]) =>
+                              this.moviesAdded(movies)
+                            }
+                          />
                         </Box>
                         <Menu
                           style={{ borderRadius: 100 }}
@@ -192,7 +206,11 @@ export default class HomePage extends Component {
                           `search ${this.state.movies.length} films...`
                         ]}
                       />
-                      <AddTitle movieAdded={this.movieAdded} />
+                      <AddTitle
+                        moviesAdded={(movies: movie[]) =>
+                          this.moviesAdded(movies)
+                        }
+                      />
                       <Menu
                         title="filter by tags"
                         dropAlign={{ top: 'bottom', left: 'right' }}

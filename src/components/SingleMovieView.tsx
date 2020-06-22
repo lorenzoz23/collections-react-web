@@ -39,19 +39,25 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
 
   render() {
     return (
-      <Box gap="small">
+      <Box
+        gap="small"
+        pad="small"
+        background="linear-gradient(45deg, rgba(33,52,68,1) 10%, rgba(24,122,204,1) 100%)"
+        round
+      >
         <Box direction="row" justify="start" gap="medium">
           <Box
             height={{ min: '225px', max: '225px' }}
             width={{ min: '150px', max: '150px' }}
-            style={{ backgroundColor: '#34495E', borderRadius: 20 }}
+            style={{ backgroundColor: '#34495E', borderRadius: 10 }}
             border={{ size: 'small', color: '#34495E', side: 'all' }}
+            alignSelf="end"
           >
             <Image
               fill
               fit="cover"
               src={this.state.movieView.movie.poster}
-              style={{ borderRadius: 20 }}
+              style={{ borderRadius: 10 }}
             />
           </Box>
           <Box justify="evenly" alignSelf="end">

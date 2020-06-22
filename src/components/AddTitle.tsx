@@ -5,7 +5,7 @@ import MovieSearchResult from './MovieSearchResult';
 import { movie } from './HomePage';
 
 interface AddTitleProps {
-  movieAdded(movie: movie): void;
+  moviesAdded(movies: movie[]): void;
 }
 
 export default class AddTitle extends Component<AddTitleProps> {
@@ -39,6 +39,11 @@ export default class AddTitle extends Component<AddTitleProps> {
     });
   };
 
+  moviesAdded = (movies: movie[]) => {
+    this.closeAddTitle();
+    this.props.moviesAdded(movies);
+  };
+
   render() {
     return (
       <Box title="add a film!" align="center">
@@ -64,7 +69,7 @@ export default class AddTitle extends Component<AddTitleProps> {
                 year={this.state.searchYear}
                 closeAdd={this.closeAddTitle}
                 closeResult={this.closeMovieSearchResult}
-                movieAdded={(movie: movie) => this.props.movieAdded(movie)}
+                moviesAdded={(movies: movie[]) => this.moviesAdded(movies)}
               />
             ) : (
               <Box

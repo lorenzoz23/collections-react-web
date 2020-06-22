@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Box, Text, ResponsiveContext, Grid } from 'grommet';
+import { Box, Text, ResponsiveContext, Grid, Layer } from 'grommet';
 import type { movie } from './HomePage';
 import SingleMovieView from './SingleMovieView';
 
@@ -38,8 +38,15 @@ interface CollectionProps {
 }
 
 export default class Collection extends Component<CollectionProps> {
-  state = {
-    movies: this.props.movies
+  state: { movieDetailsVisible: boolean; movieToShow: movie } = {
+    movieDetailsVisible: false,
+    movieToShow: {
+      name: '',
+      plot: '',
+      date: '',
+      poster: '',
+      id: ''
+    }
   };
 
   emptyState = () => {
@@ -54,7 +61,7 @@ export default class Collection extends Component<CollectionProps> {
 
   getRows = (size: string) => {
     let rows: string[] = [];
-    const numMovies: number = this.state.movies.length;
+    const numMovies: number = this.props.movies.length;
     const numRows: number = Math.ceil(numMovies / columns[size].length);
 
     let i: number = 0;
@@ -69,14 +76,20 @@ export default class Collection extends Component<CollectionProps> {
     return rows;
   };
 
+  // componentDidMount = () => {
+  //   this.getMovieCollection();
+  // };
+
   // getMovieCollection = () => {
   //   let movies: movie[] = [];
-  //   for (let i = 0; i < 40; i++) {
+  //   for (let i = 0; i < 10; i++) {
   //     movies.push({
   //       name: '',
   //       plot: '',
-  //       rating: '',
-  //       year: 0
+  //       date: '',
+  //       poster:
+  //         'https://image.tmdb.org/t/p/w500/8j58iEBw9pOXFD2L0nt0ZXeHviB.jpg',
+  //       id: ''
   //     });
   //   }
   //   this.setState({
@@ -87,12 +100,15 @@ export default class Collection extends Component<CollectionProps> {
   // Create box for each movie
   listMovieBoxes = () => {
     let boxArr = [];
-    boxArr = this.state.movies.map((movie) => (
+    boxArr = this.props.movies.map((movie) => (
       <Box
-        key={movie.name}
-        background="#AEB6BF"
+        key={movie.id}
+        background={{ image: `url(${movie.poster})`, color: '#34495E' }}
+        border={{ size: 'small', color: '#34495E', side: 'all' }}
         round="small"
-        onClick={() => <SingleMovieView add={false} movie={movie} />}
+        onClick={() =>
+          this.setState({ movieDetailsVisible: true, movieToShow: movie })
+        }
       />
     ));
 
@@ -118,9 +134,24 @@ export default class Collection extends Component<CollectionProps> {
       <ResponsiveContext.Consumer>
         {(size) => (
           <Box justify="start" alignContent="center" flex>
-            {this.state.movies.length === 0
-              ? this.emptyState()
-              : this.movieCollection(size)}
+            {this.state.movieDetailsVisible ? (
+              <Layer
+                onClickOutside={() =>
+                  this.setState({
+                    movieDetailsVisible: false
+                  })
+                }
+                position="center"
+                animation="slide"
+                style={{ borderRadius: 30 }}
+              >
+                <SingleMovieView movie={this.state.movieToShow} add={false} />
+              </Layer>
+            ) : this.props.movies.length === 0 ? (
+              this.emptyState()
+            ) : (
+              this.movieCollection(size)
+            )}
           </Box>
         )}
       </ResponsiveContext.Consumer>
