@@ -243,6 +243,7 @@ export default class HomePage extends Component {
                           />
                         </Box>
                         <Menu
+                          disabled
                           hoverIndicator="accent-1"
                           title="filter by tags"
                           focusIndicator={false}
@@ -275,6 +276,7 @@ export default class HomePage extends Component {
                         }
                       />
                       <Menu
+                        disabled
                         title="filter by tags"
                         focusIndicator={false}
                         dropAlign={{ top: 'bottom', left: 'right' }}

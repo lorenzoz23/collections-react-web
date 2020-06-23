@@ -141,6 +141,7 @@ export default class Settings extends Component<SettingsProps> {
                   <Box direction="row" align="center">
                     <Text weight="bold">wishlist view</Text>
                     <Button
+                      disabled
                       onClick={() => {
                         this.setState({
                           showViewInfo: !this.state.showViewInfo
@@ -160,6 +161,7 @@ export default class Settings extends Component<SettingsProps> {
                     </Box>
                   ) : null}
                   <CheckBox
+                    disabled
                     checked={this.state.wishlistChecked}
                     toggle
                     reverse
@@ -197,11 +199,12 @@ export default class Settings extends Component<SettingsProps> {
                   ) : null}
                   <Box gap="small" direction="row">
                     <Button
+                      disabled
                       label="import"
                       size="small"
                       onClick={this.handleImport}
                     />
-                    <Button label="export" size="small" />
+                    <Button disabled label="export" size="small" />
                     <input
                       type="file"
                       style={{ display: 'none' }}
