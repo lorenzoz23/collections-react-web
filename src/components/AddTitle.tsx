@@ -1,9 +1,18 @@
 import React, { Component } from 'react';
 import { Box, Button, Heading, TextInput, Layer, FormField } from 'grommet';
+import firebase from 'firebase/app';
+import 'firebase/database';
 import { Add, FormNextLink } from 'grommet-icons';
-import MovieSearchResult from './MovieSearchResult';
 
-export default class AddTitle extends Component {
+import MovieSearchResult from './MovieSearchResult';
+import { movie } from './HomePage';
+
+interface AddTitleProps {
+  moviesAdded(movies: movie[]): void;
+  uid: string;
+}
+
+export default class AddTitle extends Component<AddTitleProps> {
   state = {
     visible: false,
     searchTitle: '',
@@ -34,11 +43,47 @@ export default class AddTitle extends Component {
     });
   };
 
+  moviesAdded = (movies: movie[]) => {
+    this.closeAddTitle();
+
+    let userCollection: any[] = [];
+    let lot: movie[] = [];
+
+    const userRef = firebase.database().ref('/users/' + this.props.uid);
+    userRef.once('value').then((snapshot) => {
+      userCollection = snapshot.val() && snapshot.val().collection;
+      if (userCollection) {
+        lot = userCollection.map((movie) => {
+          const entry: movie = {
+            name: movie.name,
+            plot: movie.plot,
+            date: movie.date,
+            poster: movie.poster,
+            id: movie.id
+          };
+          return entry;
+        });
+        movies.forEach((element) => {
+          lot.push(element);
+        });
+        userRef.set({
+          collection: lot
+        });
+      } else {
+        userRef.set({
+          collection: movies
+        });
+      }
+    });
+
+    this.props.moviesAdded(movies);
+  };
+
   render() {
     return (
       <Box title="add a film!" align="center">
         <Button
-          style={{ borderRadius: 100 }}
+          focusIndicator={false}
           hoverIndicator="accent-1"
           onClick={() => {
             this.setState({ visible: true });
@@ -49,7 +94,9 @@ export default class AddTitle extends Component {
           <Layer
             style={{ borderRadius: 30 }}
             position="center"
-            onClickOutside={() => this.setState({ visible: false })}
+            onClickOutside={() => {
+              this.setState({ visible: false });
+            }}
           >
             {this.state.searched ? (
               <MovieSearchResult
@@ -57,13 +104,14 @@ export default class AddTitle extends Component {
                 year={this.state.searchYear}
                 closeAdd={this.closeAddTitle}
                 closeResult={this.closeMovieSearchResult}
+                moviesAdded={(movies: movie[]) => this.moviesAdded(movies)}
               />
             ) : (
               <Box
                 flex
                 pad="medium"
                 width="medium"
-                background="radial-gradient(circle, rgba(255,226,163,1) 0%, rgba(163,255,231,1) 100%)"
+                background="addTitle"
                 align="center"
                 justify="center"
                 overflow="auto"

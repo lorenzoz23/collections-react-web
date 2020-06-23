@@ -1,22 +1,30 @@
 import React, { Component } from 'react';
-import { ResponsiveContext, Box, Button } from 'grommet';
+import { ResponsiveContext, Box, Button, CheckBox } from 'grommet';
 import { MailOption } from 'grommet-icons';
 import LoginEmail from './LoginEmail';
 import LoginGoogle from './LoginGoogle';
-import firebase from 'firebase';
 import LoginFacebook from './LoginFacebook';
 
 interface LoginButtonProps {
-  firebase: any;
   handleLogin(): void;
 }
 
 export default class LoginButtons extends Component<LoginButtonProps> {
   state = {
-    email: '',
-    password: '',
-    name: '',
-    show: false
+    show: false,
+    rememberMe: false
+  };
+
+  componentDidMount = () => {
+    const remember = this.getInitialState();
+    this.setState({ rememberMe: remember === null ? false : true });
+    if (remember) {
+      this.props.handleLogin();
+    }
+  };
+
+  getInitialState = () => {
+    return localStorage.getItem('rememberMe');
   };
 
   goBack = () => {
@@ -32,9 +40,12 @@ export default class LoginButtons extends Component<LoginButtonProps> {
           <Box>
             {this.state.show ? (
               <LoginEmail
-                firebase={firebase}
                 goBack={this.goBack}
                 handleLogin={this.props.handleLogin}
+                rememberMe={this.state.rememberMe}
+                handleRememberMe={(checked: boolean) =>
+                  this.setState({ rememberMe: checked })
+                }
               />
             ) : (
               <Box gap="medium">
@@ -48,8 +59,23 @@ export default class LoginButtons extends Component<LoginButtonProps> {
                     this.setState({ show: true });
                   }}
                 />
-                <LoginGoogle firebase={firebase} />
-                <LoginFacebook firebase={firebase} />
+                <LoginGoogle
+                  handleLogin={this.props.handleLogin}
+                  rememberMe={this.state.rememberMe}
+                />
+                <LoginFacebook
+                  handleLogin={this.props.handleLogin}
+                  rememberMe={this.state.rememberMe}
+                />
+                <Box align="center">
+                  <CheckBox
+                    label="remember me?"
+                    checked={this.state.rememberMe}
+                    onChange={(event) =>
+                      this.setState({ rememberMe: event.target.checked })
+                    }
+                  />
+                </Box>
               </Box>
             )}
           </Box>

@@ -7,21 +7,55 @@ import {
   Button,
   ResponsiveContext
 } from 'grommet';
+import firebase from 'firebase/app';
+import 'firebase/auth';
 
 interface SignUpProps {
-  handleSignUp(email: string, password: string, name: string): void;
+  handleUserSignUp(email: string, password: string): void;
 }
 export default class SignUp extends Component<SignUpProps> {
   state = {
     name: '',
     email: '',
-    password: ''
+    password: '',
+    errorMessage: ['']
   };
 
   defaultState = {
     name: '',
     email: '',
-    password: ''
+    password: '',
+    errorMessage: ['']
+  };
+
+  handleSignUp = (email: string, password: string) => {
+    firebase
+      .auth()
+      .createUserWithEmailAndPassword(email, password)
+      .then(() => this.props.handleUserSignUp(email, password))
+      .catch((error: any) => {
+        let message: string[] = ['', ''];
+        switch (error.code) {
+          case 'auth/email-already-in-use':
+            message = ['email', 'email already in use'];
+            break;
+          case 'auth/invalid-email':
+            message = ['email', 'invalid email'];
+            break;
+          case 'auth/operation-not-allowed':
+            message = ['password', 'account creation is currently not allowed'];
+            break;
+          case 'auth/weak-password':
+            message = ['password', 'password is too weak'];
+            break;
+          default:
+            message = ['password', 'please try again'];
+            break;
+        }
+        this.setState({
+          errorMessage: message
+        });
+      });
   };
 
   render() {
@@ -32,17 +66,15 @@ export default class SignUp extends Component<SignUpProps> {
             <Form
               onReset={() => this.setState(this.defaultState)}
               onSubmit={() =>
-                this.props.handleSignUp(
-                  this.state.email,
-                  this.state.password,
-                  this.state.name
-                )
+                this.handleSignUp(this.state.email, this.state.password)
               }
               onChange={(nextFormValue: {}) => this.setState(nextFormValue)}
             >
               <FormField label="name" name="name">
                 <TextInput
                   name="name"
+                  placeholder="field is currently disabled"
+                  disabled
                   size={size === 'small' ? 'medium' : 'xlarge'}
                   value={this.state.name}
                   onChange={(e: any) => {
@@ -50,7 +82,16 @@ export default class SignUp extends Component<SignUpProps> {
                   }}
                 />
               </FormField>
-              <FormField label="email" required name="email">
+              <FormField
+                label="email"
+                required
+                name="email"
+                error={
+                  this.state.errorMessage[0] === 'email'
+                    ? this.state.errorMessage[1]
+                    : ''
+                }
+              >
                 <TextInput
                   name="email"
                   size={size === 'small' ? 'medium' : 'xlarge'}
@@ -60,7 +101,16 @@ export default class SignUp extends Component<SignUpProps> {
                   }}
                 />
               </FormField>
-              <FormField label="password" required name="password">
+              <FormField
+                label="password"
+                required
+                name="password"
+                error={
+                  this.state.errorMessage[0] === 'password'
+                    ? this.state.errorMessage[1]
+                    : ''
+                }
+              >
                 <TextInput
                   name="password"
                   type="password"

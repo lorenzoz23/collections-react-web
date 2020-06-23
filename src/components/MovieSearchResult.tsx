@@ -1,35 +1,47 @@
 import React, { Component } from 'react';
-import { Box, Heading, Button, Text, Image, CheckBox } from 'grommet';
-import { Close, Previous } from 'grommet-icons';
+import { Box, Heading, Button, Image, CheckBox, Text } from 'grommet';
+import { Close, Next, Previous, Trash } from 'grommet-icons';
+import { movie, AppBar } from './HomePage';
+import SingleMovieView from './SingleMovieView';
 
 interface MovieSearchResultProps {
   title: string;
   year: string;
   closeAdd(): void;
   closeResult(): void;
+  moviesAdded(movies: movie[]): void;
 }
 
-type searchResult = {
-  name: string;
-  plot: string;
-  date: string;
-  poster: string;
-  id: string;
+type searchResultMovie = {
+  movie: movie;
   checked: boolean;
+};
+
+type searchResults = {
+  movies: searchResultMovie[];
 };
 
 export default class MovieSearchResult extends Component<
   MovieSearchResultProps
 > {
-  state: { movie: searchResult } = {
-    movie: {
+  state: {
+    movieList: searchResults;
+    visible: boolean;
+    movieToShow: movie;
+    numToAdd: number;
+  } = {
+    movieList: {
+      movies: []
+    },
+    visible: false,
+    movieToShow: {
       name: '',
       plot: '',
       date: '',
       poster: '',
-      id: '',
-      checked: false
-    }
+      id: ''
+    },
+    numToAdd: 0
   };
 
   componentDidMount = () => {
@@ -38,19 +50,29 @@ export default class MovieSearchResult extends Component<
     )
       .then((resp) => resp.json())
       .then((data) => {
-        console.log(data.results[0]);
-        const result: searchResult = {
-          name: data.results[0].title,
-          plot: data.results[0].overview,
-          date: data.results[0].release_date,
-          poster:
-            'https://image.tmdb.org/t/p/w500' + data.results[0].poster_path,
-          id: data.results[0].id,
-          checked: false
+        console.log(data.results);
+        const results = data.results;
+        let movieItems: searchResultMovie[] = [];
+        movieItems = results.map((item: any) => {
+          const newMovie: movie = {
+            name: item.title,
+            plot: item.overview,
+            date: item.release_date,
+            poster: 'https://image.tmdb.org/t/p/w500' + item.poster_path,
+            id: item.id
+          };
+          const newSearchResultMovie: searchResultMovie = {
+            movie: newMovie,
+            checked: false
+          };
+          return newSearchResultMovie;
+        });
+
+        const newMovieList: searchResults = {
+          movies: movieItems
         };
-        console.log(result);
         this.setState({
-          movie: result
+          movieList: newMovieList
         });
       })
       .catch((err) => {
@@ -58,66 +80,188 @@ export default class MovieSearchResult extends Component<
       });
   };
 
-  checkedMovie = () => {
-    const checkedMovie: searchResult = {
-      ...this.state.movie,
-      checked: !this.state.movie.checked
+  checkedMovie = (movie: searchResultMovie) => {
+    let results: searchResultMovie[] = [];
+    let updatedMovie = movie;
+    updatedMovie.checked = !updatedMovie.checked;
+
+    this.state.movieList.movies.forEach((element) => {
+      if (element.movie.id !== movie.movie.id) {
+        results.push(element);
+      } else {
+        results.push(updatedMovie);
+      }
+    });
+
+    const newMovieList: searchResults = {
+      movies: results
     };
+    const numToAdd = updatedMovie.checked
+      ? this.state.numToAdd + 1
+      : this.state.numToAdd - 1;
     this.setState({
-      movie: checkedMovie
+      movieList: newMovieList,
+      numToAdd: numToAdd
     });
   };
 
+  showMovieDetails = (movie: movie) => {
+    this.setState({
+      visible: true,
+      movieToShow: movie
+    });
+  };
+
+  closeDetailView = () => {
+    this.setState({
+      visible: false,
+      movieToShow: {
+        name: '',
+        plot: '',
+        date: '',
+        poster: '',
+        id: ''
+      }
+    });
+  };
+
+  clearSelectedMovies = () => {
+    let movies = this.state.movieList.movies;
+
+    for (let i = 0; i < movies.length; i++) {
+      if (movies[i].checked) {
+        movies[i].checked = false;
+      }
+    }
+
+    const newMovieList: searchResults = {
+      movies: movies
+    };
+    this.setState({
+      movieList: newMovieList,
+      numToAdd: 0
+    });
+  };
+
+  moviesToAdd = () => {
+    let movies: movie[] = [];
+
+    this.state.movieList.movies.forEach((element) => {
+      if (element.checked) {
+        movies.push(element.movie);
+      }
+    });
+
+    this.props.moviesAdded(movies);
+  };
+
   render() {
+    const label = 'add ' + this.state.numToAdd;
     return (
       <Box
-        pad="medium"
-        background="linear-gradient(135deg, rgba(74,224,226,1) 0%, rgba(255,226,163,1) 100%)"
-        align="center"
-        justify="center"
-        round
+        justify="start"
+        alignContent="start"
+        background="movieSearchResult"
+        height={{ max: 'medium' }}
       >
-        <Box direction="row" justify="between" gap="medium" alignSelf="end">
-          <Box
-            height={{ min: '225px', max: '225px' }}
-            width={{ min: '150px', max: '150px' }}
-            style={{ backgroundColor: '#34495E', borderRadius: 20 }}
-            border={{ size: 'small', color: '#34495E', side: 'all' }}
-          >
-            <Image
-              fill
-              fit="cover"
-              src={this.state.movie.poster}
-              style={{ borderRadius: 20 }}
-            />
-          </Box>
-          <Box justify="evenly" alignSelf="end">
-            <Heading level="3">{this.state.movie.name}</Heading>
-            <Box gap="small">
-              <Text weight="bold">{this.state.movie.date.substring(0, 4)}</Text>
-              <Text size="small">{this.state.movie.plot}</Text>
+        {this.state.visible ? (
+          <SingleMovieView
+            movie={this.state.movieToShow}
+            add={true}
+            closeDetailView={this.closeDetailView}
+          />
+        ) : (
+          <Box fill>
+            <AppBar style={{ position: 'fixed', top: 0 }} fill="horizontal">
+              <Box direction="row" fill gap="small" justify="between">
+                <Button
+                  title="back"
+                  icon={<Previous size="small" />}
+                  onClick={() => this.props.closeResult()}
+                />
+                {this.state.numToAdd > 0 ? (
+                  <Box gap="small" direction="row">
+                    <Button
+                      label={label}
+                      primary
+                      size="small"
+                      hoverIndicator="accent-1"
+                      alignSelf="center"
+                      onClick={this.moviesToAdd}
+                    />
+                    <Button
+                      icon={<Trash color="#FF8686" />}
+                      alignSelf="center"
+                      title="clear selection"
+                      onClick={this.clearSelectedMovies}
+                    />
+                  </Box>
+                ) : null}
+                <Button
+                  title="cancel"
+                  icon={<Close size="small" />}
+                  onClick={() => this.props.closeAdd()}
+                />
+              </Box>
+            </AppBar>
+            <Box
+              gap="small"
+              overflow={{ horizontal: 'hidden', vertical: 'auto' }}
+              pad="small"
+              margin={{ top: 'large', bottom: 'small' }}
+              flex
+            >
+              {this.state.movieList.movies.length === 0 ? (
+                <Text textAlign="center">no data</Text>
+              ) : (
+                this.state.movieList.movies.map((item) => (
+                  <Box
+                    height={{ min: '200px', max: '200px' }}
+                    pad="small"
+                    direction="row"
+                    gap="medium"
+                    fill="horizontal"
+                    border={{ size: 'medium', color: 'accent-1', side: 'left' }}
+                  >
+                    <Box
+                      style={{ backgroundColor: '#34495E', borderRadius: 10 }}
+                      border={{ size: 'small', color: '#34495E', side: 'all' }}
+                      height={{ min: '175px', max: '175px' }}
+                      width={{ min: '125px', max: '125px' }}
+                      alignSelf="center"
+                    >
+                      <Image
+                        fill
+                        fit="cover"
+                        src={item.movie.poster}
+                        style={{ borderRadius: 10 }}
+                      />
+                    </Box>
+                    <Box alignSelf="center">
+                      <Heading alignSelf="start" level="3">
+                        {item.movie.name}
+                      </Heading>
+                      <Box direction="row" gap="small" alignSelf="start">
+                        <CheckBox
+                          checked={item.checked}
+                          label="add film?"
+                          onChange={() => {
+                            this.checkedMovie(item);
+                          }}
+                        />
+                        <Button
+                          icon={<Next />}
+                          title="details"
+                          onClick={() => this.showMovieDetails(item.movie)}
+                        />
+                      </Box>
+                    </Box>
+                  </Box>
+                ))
+              )}
             </Box>
           </Box>
-        </Box>
-        <Box direction="row" justify="between" pad={{ top: 'medium' }} fill>
-          <Button
-            title="back"
-            icon={<Previous />}
-            onClick={() => this.props.closeResult()}
-          />
-          <CheckBox
-            checked={this.state.movie.checked}
-            label="add film?"
-            onChange={() => {
-              this.checkedMovie();
-            }}
-          />
-          <Button
-            title="cancel"
-            icon={<Close />}
-            onClick={() => this.props.closeAdd()}
-          />
-        </Box>
+        )}
       </Box>
     );
   }

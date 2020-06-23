@@ -1,55 +1,31 @@
 import React, { Component } from 'react';
 import { ResponsiveContext, Box, Tabs, Tab } from 'grommet';
+
 import SignIn from './SignIn';
 import SignUp from './SignUp';
 
 interface LoginEmailProps {
   handleLogin(): void;
+  handleRememberMe(checked: boolean): void;
   goBack(): void;
-  firebase: any;
+  rememberMe: boolean;
 }
 
 export default class LoginEmail extends Component<LoginEmailProps> {
   state = {
     email: '',
     password: '',
-    name: '',
     activeIndex: 0,
     created: false
   };
 
-  handleLogin = (email: string, password: string) => {
-    if (this.state.created) {
-      this.props.handleLogin();
-    } else {
-      this.props.firebase
-        .auth()
-        .signInWithEmailAndPassword(email, password)
-        .then(() => this.props.handleLogin())
-        .catch((error: any) => {
-          const errorMessage = error.message;
-          console.log(errorMessage);
-        });
-    }
-  };
-
-  handleSignUp = (email: string, password: string, name: string) => {
-    this.props.firebase
-      .auth()
-      .createUserWithEmailAndPassword(email, password)
-      .then(() =>
-        this.setState({
-          email: email,
-          password: password,
-          name: name,
-          activeIndex: 0,
-          created: true
-        })
-      )
-      .catch((error: any) => {
-        const errorMessage = error.message;
-        console.log(errorMessage);
-      });
+  handleUserSignUp = (email: string, password: string) => {
+    this.setState({
+      email: email,
+      password: password,
+      activeIndex: 0,
+      created: true
+    });
   };
 
   render() {
@@ -66,20 +42,21 @@ export default class LoginEmail extends Component<LoginEmailProps> {
               <Tab title="sign in">
                 <SignIn
                   goBack={this.props.goBack}
-                  handleLogin={(email: string, password: string) =>
-                    this.handleLogin(email, password)
-                  }
                   email={this.state.email}
+                  handleRememberMe={(checked: boolean) =>
+                    this.props.handleRememberMe(checked)
+                  }
                   password={this.state.password}
+                  handleLogin={this.props.handleLogin}
+                  created={this.state.created}
+                  rememberMe={this.props.rememberMe}
                 />
               </Tab>
               <Tab title="sign up">
                 <SignUp
-                  handleSignUp={(
-                    email: string,
-                    password: string,
-                    name: string
-                  ) => this.handleSignUp(email, password, name)}
+                  handleUserSignUp={(email: string, password: string) =>
+                    this.handleUserSignUp(email, password)
+                  }
                 />
               </Tab>
             </Tabs>

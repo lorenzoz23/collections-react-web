@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
-import { Box, Text, ResponsiveContext, Grid } from 'grommet';
-
-type movie = { name: string; plot: string; rating: string; year: number };
+import { Box, Text, ResponsiveContext, Grid, Layer } from 'grommet';
+import type { movie } from './HomePage';
+import SingleMovieView from './SingleMovieView';
 
 const columns: Record<string, string[]> = {
   small: ['auto', 'auto', 'auto', 'auto'],
   medium: ['auto', 'auto', 'auto', 'auto', 'auto', 'auto'],
   large: [
+    'auto',
     'auto',
     'auto',
     'auto',
@@ -26,30 +27,49 @@ const columns: Record<string, string[]> = {
     'auto',
     'auto',
     'auto',
+    'auto',
     'auto'
   ]
 };
 
-export default class Collection extends Component {
-  state: { movies: movie[] } = {
-    movies: []
-  };
+interface CollectionProps {
+  wishlist: boolean;
+  movies: movie[];
+  searchList: movie[];
+  searchVal: string;
+  handleDelete(movieId: string): void;
+}
 
-  componentDidMount = () => {
-    this.getMovieCollection();
+export default class Collection extends Component<CollectionProps> {
+  state: { movieDetailsVisible: boolean; movieToShow: movie } = {
+    movieDetailsVisible: false,
+    movieToShow: {
+      name: '',
+      plot: '',
+      date: '',
+      poster: '',
+      id: ''
+    }
   };
 
   emptyState = () => {
     return (
       <Box align="center" justify="center" flex>
-        <Text>there is nothing in your lot</Text>
+        {this.props.searchList.length === 0 &&
+        this.props.searchVal.length > 0 ? (
+          <Text>no such title in your film lot</Text>
+        ) : (
+          <Text>
+            there is nothing in your {this.props.wishlist ? 'wishlist' : 'lot'}
+          </Text>
+        )}
       </Box>
     );
   };
 
   getRows = (size: string) => {
     let rows: string[] = [];
-    const numMovies: number = this.state.movies.length;
+    const numMovies: number = this.props.movies.length;
     const numRows: number = Math.ceil(numMovies / columns[size].length);
 
     let i: number = 0;
@@ -64,24 +84,44 @@ export default class Collection extends Component {
     return rows;
   };
 
-  getMovieCollection = () => {
-    //TODO
-  };
+  // componentDidMount = () => {
+  //   this.getMovieCollection();
+  // };
+
+  // getMovieCollection = () => {
+  //   let movies: movie[] = [];
+  //   for (let i = 0; i < 10; i++) {
+  //     movies.push({
+  //       name: '',
+  //       plot: '',
+  //       date: '',
+  //       poster:
+  //         'https://image.tmdb.org/t/p/w500/8j58iEBw9pOXFD2L0nt0ZXeHviB.jpg',
+  //       id: ''
+  //     });
+  //   }
+  //   this.setState({
+  //     movies: movies
+  //   });
+  // };
 
   // Create box for each movie
-  listMovieBoxes = (size: string) => {
+  listMovieBoxes = () => {
     let boxArr = [];
-    boxArr = this.state.movies.map((movie) => (
+    const moviesToMap: movie[] =
+      this.props.searchVal.length > 0
+        ? this.props.searchList
+        : this.props.movies;
+    boxArr = moviesToMap.map((movie) => (
       <Box
-        key={movie.name}
-        background="light-2"
-        justify="start"
-        align="center"
-        pad="small"
+        key={movie.id}
+        title={movie.name + ' (' + movie.date.substring(0, 4) + ')'}
+        background={{ image: `url(${movie.poster})`, color: '#34495E' }}
+        border={{ size: 'small', color: '#34495E', side: 'all' }}
         round="small"
-        width={size === 'small' ? '55px' : '125px'}
-        height={size === 'small' ? 'xsmall' : 'small'}
-        onClick={() => {}}
+        onClick={() =>
+          this.setState({ movieDetailsVisible: true, movieToShow: movie })
+        }
       />
     ));
 
@@ -91,27 +131,54 @@ export default class Collection extends Component {
   movieCollection = (size: string) => {
     return (
       <Grid
-        gap={size !== 'small' ? 'large' : 'medium'}
-        margin="small"
+        gap="small"
         columns={columns[size]}
         rows={this.getRows(size)}
-        //rows={size !== 'small' ? 'medium' : 'small'}
         areas={undefined}
-        fill="vertical"
+        pad="small"
       >
-        {this.listMovieBoxes(size)}
+        {this.listMovieBoxes()}
       </Grid>
     );
   };
 
+  handleDelete = (id: string) => {
+    this.setState({
+      movieDetailsVisible: false
+    });
+    this.props.handleDelete(id);
+  };
+
   render() {
+    const moviesToMap: movie[] =
+      this.props.searchVal.length > 0
+        ? this.props.searchList
+        : this.props.movies;
     return (
       <ResponsiveContext.Consumer>
         {(size) => (
-          <Box flex justify="center" align="center" fill>
-            {this.state.movies.length === 0
-              ? this.emptyState()
-              : this.movieCollection(size)}
+          <Box justify="start" alignContent="center" flex>
+            {this.state.movieDetailsVisible ? (
+              <Layer
+                onClickOutside={() =>
+                  this.setState({
+                    movieDetailsVisible: false
+                  })
+                }
+                position="center"
+                style={{ borderRadius: 30 }}
+              >
+                <SingleMovieView
+                  movie={this.state.movieToShow}
+                  add={false}
+                  handleDelete={(id: string) => this.handleDelete(id)}
+                />
+              </Layer>
+            ) : moviesToMap.length === 0 ? (
+              this.emptyState()
+            ) : (
+              this.movieCollection(size)
+            )}
           </Box>
         )}
       </ResponsiveContext.Consumer>

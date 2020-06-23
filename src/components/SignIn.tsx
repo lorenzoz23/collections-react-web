@@ -5,20 +5,75 @@ import {
   TextInput,
   Box,
   Button,
-  ResponsiveContext
+  ResponsiveContext,
+  CheckBox
 } from 'grommet';
 import { Next, Previous } from 'grommet-icons';
+import firebase from 'firebase/app';
+import 'firebase/auth';
 
 interface SignInProps {
-  handleLogin(email: string, password: string): void;
+  handleLogin(): void;
   goBack(): void;
+  handleRememberMe(checked: boolean): void;
   email: string;
   password: string;
+  created: boolean;
+  rememberMe: boolean;
 }
+
 export default class SignIn extends Component<SignInProps> {
   state = {
     email: this.props.email,
-    password: this.props.password
+    password: this.props.password,
+    errorMessage: [''],
+    created: this.props.created,
+    rememberMe: this.props.rememberMe
+  };
+
+  handleLogin = (email: string, password: string) => {
+    if (this.state.created) {
+      this.props.handleLogin();
+    } else {
+      firebase
+        .auth()
+        .signInWithEmailAndPassword(email, password)
+        .then(() => {
+          if (this.props.rememberMe)
+            localStorage.setItem('rememberMe', 'remember');
+          this.props.handleLogin();
+        })
+        .catch((error: any) => {
+          let message: string[] = ['', ''];
+          switch (error.code) {
+            case 'auth/invalid-email':
+              message = ['email', 'invalid email'];
+              break;
+            case 'auth/user-not-found':
+              message = ['email', 'user not found'];
+              break;
+            case 'auth/wrong-password':
+              message = ['password', 'password is incorrect'];
+              break;
+            case 'auth/user-disabled':
+              message = ['password', 'user account is disabled'];
+              break;
+            default:
+              message = ['password', 'please try again'];
+              break;
+          }
+          this.setState({
+            errorMessage: message
+          });
+        });
+    }
+  };
+
+  handleRemember = (event: any) => {
+    this.setState({
+      rememberMe: event.target.checked
+    });
+    this.props.handleRememberMe(event.target.checked);
   };
 
   render() {
@@ -29,11 +84,20 @@ export default class SignIn extends Component<SignInProps> {
             <Form
               value={this.state}
               onSubmit={() =>
-                this.props.handleLogin(this.state.email, this.state.password)
+                this.handleLogin(this.state.email, this.state.password)
               }
               onChange={(nextFormValue: {}) => this.setState(nextFormValue)}
             >
-              <FormField label="email" required name="email">
+              <FormField
+                label="email"
+                required
+                name="email"
+                error={
+                  this.state.errorMessage[0] === 'email'
+                    ? this.state.errorMessage[1]
+                    : ''
+                }
+              >
                 <TextInput
                   name="email"
                   size={size === 'small' ? 'medium' : 'xlarge'}
@@ -43,7 +107,16 @@ export default class SignIn extends Component<SignInProps> {
                   }}
                 />
               </FormField>
-              <FormField label="password" required name="password">
+              <FormField
+                label="password"
+                required
+                name="password"
+                error={
+                  this.state.errorMessage[0] === 'password'
+                    ? this.state.errorMessage[1]
+                    : ''
+                }
+              >
                 <TextInput
                   name="password"
                   size={size === 'small' ? 'medium' : 'xlarge'}
@@ -70,6 +143,13 @@ export default class SignIn extends Component<SignInProps> {
                   title="continue"
                   hoverIndicator="accent-1"
                   size={size === 'small' ? 'small' : 'medium'}
+                />
+              </Box>
+              <Box align="center">
+                <CheckBox
+                  label="remember me?"
+                  checked={this.state.rememberMe}
+                  onChange={(event) => this.handleRemember(event)}
                 />
               </Box>
             </Form>
