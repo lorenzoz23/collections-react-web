@@ -161,7 +161,7 @@ export default class MovieSearchResult extends Component<
       <Box
         justify="start"
         alignContent="start"
-        background="linear-gradient(45deg, rgba(33,52,68,1) 10%, rgba(24,122,204,1) 100%)"
+        background="movieSearchResult"
         height={{ max: 'medium' }}
       >
         {this.state.visible ? (

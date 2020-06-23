@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ResponsiveContext, Box, Button } from 'grommet';
+import { ResponsiveContext, Box, Button, CheckBox } from 'grommet';
 import { MailOption } from 'grommet-icons';
 import LoginEmail from './LoginEmail';
 import LoginGoogle from './LoginGoogle';
@@ -11,7 +11,20 @@ interface LoginButtonProps {
 
 export default class LoginButtons extends Component<LoginButtonProps> {
   state = {
-    show: false
+    show: false,
+    rememberMe: false
+  };
+
+  componentDidMount = () => {
+    const remember = this.getInitialState();
+    this.setState({ rememberMe: remember === null ? false : true });
+    if (remember) {
+      this.props.handleLogin();
+    }
+  };
+
+  getInitialState = () => {
+    return localStorage.getItem('rememberMe');
   };
 
   goBack = () => {
@@ -29,6 +42,10 @@ export default class LoginButtons extends Component<LoginButtonProps> {
               <LoginEmail
                 goBack={this.goBack}
                 handleLogin={this.props.handleLogin}
+                rememberMe={this.state.rememberMe}
+                handleRememberMe={(checked: boolean) =>
+                  this.setState({ rememberMe: checked })
+                }
               />
             ) : (
               <Box gap="medium">
@@ -42,8 +59,23 @@ export default class LoginButtons extends Component<LoginButtonProps> {
                     this.setState({ show: true });
                   }}
                 />
-                <LoginGoogle handleLogin={this.props.handleLogin} />
-                <LoginFacebook handleLogin={this.props.handleLogin} />
+                <LoginGoogle
+                  handleLogin={this.props.handleLogin}
+                  rememberMe={this.state.rememberMe}
+                />
+                <LoginFacebook
+                  handleLogin={this.props.handleLogin}
+                  rememberMe={this.state.rememberMe}
+                />
+                <Box align="center">
+                  <CheckBox
+                    label="remember me?"
+                    checked={this.state.rememberMe}
+                    onChange={(event) =>
+                      this.setState({ rememberMe: event.target.checked })
+                    }
+                  />
+                </Box>
               </Box>
             )}
           </Box>

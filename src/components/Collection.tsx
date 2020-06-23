@@ -35,6 +35,9 @@ const columns: Record<string, string[]> = {
 interface CollectionProps {
   wishlist: boolean;
   movies: movie[];
+  searchList: movie[];
+  searchVal: string;
+  handleDelete(movieId: string): void;
 }
 
 export default class Collection extends Component<CollectionProps> {
@@ -52,9 +55,14 @@ export default class Collection extends Component<CollectionProps> {
   emptyState = () => {
     return (
       <Box align="center" justify="center" flex>
-        <Text>
-          there is nothing in your {this.props.wishlist ? 'wishlist' : 'lot'}
-        </Text>
+        {this.props.searchList.length === 0 &&
+        this.props.searchVal.length > 0 ? (
+          <Text>no such title in your film lot</Text>
+        ) : (
+          <Text>
+            there is nothing in your {this.props.wishlist ? 'wishlist' : 'lot'}
+          </Text>
+        )}
       </Box>
     );
   };
@@ -100,9 +108,14 @@ export default class Collection extends Component<CollectionProps> {
   // Create box for each movie
   listMovieBoxes = () => {
     let boxArr = [];
-    boxArr = this.props.movies.map((movie) => (
+    const moviesToMap: movie[] =
+      this.props.searchVal.length > 0
+        ? this.props.searchList
+        : this.props.movies;
+    boxArr = moviesToMap.map((movie) => (
       <Box
         key={movie.id}
+        title={movie.name + ' (' + movie.date.substring(0, 4) + ')'}
         background={{ image: `url(${movie.poster})`, color: '#34495E' }}
         border={{ size: 'small', color: '#34495E', side: 'all' }}
         round="small"
@@ -129,7 +142,18 @@ export default class Collection extends Component<CollectionProps> {
     );
   };
 
+  handleDelete = (id: string) => {
+    this.setState({
+      movieDetailsVisible: false
+    });
+    this.props.handleDelete(id);
+  };
+
   render() {
+    const moviesToMap: movie[] =
+      this.props.searchVal.length > 0
+        ? this.props.searchList
+        : this.props.movies;
     return (
       <ResponsiveContext.Consumer>
         {(size) => (
@@ -142,12 +166,15 @@ export default class Collection extends Component<CollectionProps> {
                   })
                 }
                 position="center"
-                animation="slide"
                 style={{ borderRadius: 30 }}
               >
-                <SingleMovieView movie={this.state.movieToShow} add={false} />
+                <SingleMovieView
+                  movie={this.state.movieToShow}
+                  add={false}
+                  handleDelete={(id: string) => this.handleDelete(id)}
+                />
               </Layer>
-            ) : this.props.movies.length === 0 ? (
+            ) : moviesToMap.length === 0 ? (
               this.emptyState()
             ) : (
               this.movieCollection(size)

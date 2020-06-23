@@ -5,7 +5,8 @@ import {
   TextInput,
   Box,
   Button,
-  ResponsiveContext
+  ResponsiveContext,
+  CheckBox
 } from 'grommet';
 import { Next, Previous } from 'grommet-icons';
 import firebase from 'firebase/app';
@@ -14,9 +15,11 @@ import 'firebase/auth';
 interface SignInProps {
   handleLogin(): void;
   goBack(): void;
+  handleRememberMe(checked: boolean): void;
   email: string;
   password: string;
   created: boolean;
+  rememberMe: boolean;
 }
 
 export default class SignIn extends Component<SignInProps> {
@@ -24,7 +27,8 @@ export default class SignIn extends Component<SignInProps> {
     email: this.props.email,
     password: this.props.password,
     errorMessage: [''],
-    created: this.props.created
+    created: this.props.created,
+    rememberMe: this.props.rememberMe
   };
 
   handleLogin = (email: string, password: string) => {
@@ -34,7 +38,11 @@ export default class SignIn extends Component<SignInProps> {
       firebase
         .auth()
         .signInWithEmailAndPassword(email, password)
-        .then(() => this.props.handleLogin())
+        .then(() => {
+          if (this.props.rememberMe)
+            localStorage.setItem('rememberMe', 'remember');
+          this.props.handleLogin();
+        })
         .catch((error: any) => {
           let message: string[] = ['', ''];
           switch (error.code) {
@@ -59,6 +67,13 @@ export default class SignIn extends Component<SignInProps> {
           });
         });
     }
+  };
+
+  handleRemember = (event: any) => {
+    this.setState({
+      rememberMe: event.target.checked
+    });
+    this.props.handleRememberMe(event.target.checked);
   };
 
   render() {
@@ -128,6 +143,13 @@ export default class SignIn extends Component<SignInProps> {
                   title="continue"
                   hoverIndicator="accent-1"
                   size={size === 'small' ? 'small' : 'medium'}
+                />
+              </Box>
+              <Box align="center">
+                <CheckBox
+                  label="remember me?"
+                  checked={this.state.rememberMe}
+                  onChange={(event) => this.handleRemember(event)}
                 />
               </Box>
             </Form>

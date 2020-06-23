@@ -6,7 +6,9 @@ import SignUp from './SignUp';
 
 interface LoginEmailProps {
   handleLogin(): void;
+  handleRememberMe(checked: boolean): void;
   goBack(): void;
+  rememberMe: boolean;
 }
 
 export default class LoginEmail extends Component<LoginEmailProps> {
@@ -41,9 +43,13 @@ export default class LoginEmail extends Component<LoginEmailProps> {
                 <SignIn
                   goBack={this.props.goBack}
                   email={this.state.email}
+                  handleRememberMe={(checked: boolean) =>
+                    this.props.handleRememberMe(checked)
+                  }
                   password={this.state.password}
                   handleLogin={this.props.handleLogin}
                   created={this.state.created}
+                  rememberMe={this.props.rememberMe}
                 />
               </Tab>
               <Tab title="sign up">

@@ -1,11 +1,15 @@
 import React, { Component } from 'react';
 import { Box, Button, Heading, TextInput, Layer, FormField } from 'grommet';
+import firebase from 'firebase/app';
+import 'firebase/database';
 import { Add, FormNextLink } from 'grommet-icons';
+
 import MovieSearchResult from './MovieSearchResult';
 import { movie } from './HomePage';
 
 interface AddTitleProps {
   moviesAdded(movies: movie[]): void;
+  uid: string;
 }
 
 export default class AddTitle extends Component<AddTitleProps> {
@@ -41,6 +45,37 @@ export default class AddTitle extends Component<AddTitleProps> {
 
   moviesAdded = (movies: movie[]) => {
     this.closeAddTitle();
+
+    let userCollection: any[] = [];
+    let lot: movie[] = [];
+
+    const userRef = firebase.database().ref('/users/' + this.props.uid);
+    userRef.once('value').then((snapshot) => {
+      userCollection = snapshot.val() && snapshot.val().collection;
+      if (userCollection) {
+        lot = userCollection.map((movie) => {
+          const entry: movie = {
+            name: movie.name,
+            plot: movie.plot,
+            date: movie.date,
+            poster: movie.poster,
+            id: movie.id
+          };
+          return entry;
+        });
+        movies.forEach((element) => {
+          lot.push(element);
+        });
+        userRef.set({
+          collection: lot
+        });
+      } else {
+        userRef.set({
+          collection: movies
+        });
+      }
+    });
+
     this.props.moviesAdded(movies);
   };
 
@@ -48,7 +83,7 @@ export default class AddTitle extends Component<AddTitleProps> {
     return (
       <Box title="add a film!" align="center">
         <Button
-          style={{ borderRadius: 100 }}
+          focusIndicator={false}
           hoverIndicator="accent-1"
           onClick={() => {
             this.setState({ visible: true });
@@ -76,7 +111,7 @@ export default class AddTitle extends Component<AddTitleProps> {
                 flex
                 pad="medium"
                 width="medium"
-                background="radial-gradient(circle, rgba(33,52,68,1) 10%, rgba(24,122,204,1) 100%)"
+                background="addTitle"
                 align="center"
                 justify="center"
                 overflow="auto"

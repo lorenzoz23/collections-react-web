@@ -52,13 +52,17 @@ export default class HomePage extends Component {
     movies: movie[];
     showSettings: boolean;
     wishlist: boolean;
+    searchVal: string;
+    searchList: movie[];
   } = {
     uid: '',
     invalidRoute: false,
     loggedIn: true,
     movies: [],
     showSettings: false,
-    wishlist: false
+    wishlist: false,
+    searchVal: '',
+    searchList: []
   };
 
   constructor(props: any) {
@@ -69,7 +73,9 @@ export default class HomePage extends Component {
       loggedIn: true,
       movies: [],
       showSettings: false,
-      wishlist: false
+      wishlist: false,
+      searchVal: '',
+      searchList: []
     };
     console.log('uid: ' + this.state.uid);
   }
@@ -87,21 +93,23 @@ export default class HomePage extends Component {
         .once('value')
         .then((snapshot) => {
           userCollection = snapshot.val() && snapshot.val().collection;
-        });
+          if (userCollection) {
+            lot = userCollection.map((movie) => {
+              const entry: movie = {
+                name: movie.name,
+                plot: movie.plot,
+                date: movie.date,
+                poster: movie.poster,
+                id: movie.id
+              };
+              return entry;
+            });
 
-      userCollection.map((movie) => {
-        return lot.push({
-          name: movie.name,
-          plot: movie.plot,
-          date: movie.date,
-          poster: movie.poster,
-          id: movie.id
+            this.setState({
+              movies: lot
+            });
+          }
         });
-      });
-      console.log(lot);
-      this.setState({
-        movies: lot
-      });
     }
   };
 
@@ -123,13 +131,14 @@ export default class HomePage extends Component {
       .then(() => {
         // Sign-out successful.
         console.log('success');
+        localStorage.removeItem('rememberMe');
+        this.setState({
+          loggedIn: false
+        });
       })
       .catch((error: any) => {
         console.log(error);
       });
-    this.setState({
-      loggedIn: false
-    });
   };
 
   toggleSettings = () => {
@@ -142,6 +151,54 @@ export default class HomePage extends Component {
     this.setState({
       wishlist: !this.state.wishlist
     });
+  };
+
+  handleSearch = (event: any) => {
+    let searchList: movie[] = [];
+    for (let i = 0; i < this.state.movies.length; i++) {
+      if (
+        this.state.movies[i].name
+          .toLowerCase()
+          .includes(event.target.value.toLowerCase())
+      ) {
+        searchList.push(this.state.movies[i]);
+      }
+    }
+    this.setState({
+      searchVal: event.target.value,
+      searchList: searchList
+    });
+  };
+
+  handleDeleteMovie = (id: string) => {
+    let newLot: movie[] = [];
+    for (let i = 0; i < this.state.movies.length; i++) {
+      if (this.state.movies[i].id !== id) {
+        newLot.push(this.state.movies[i]);
+      }
+    }
+
+    const userRef = firebase.database().ref('/users/' + this.state.uid);
+    userRef.set({
+      collection: newLot
+    });
+    this.setState({
+      movies: newLot
+    });
+  };
+
+  handleAccountDelete = () => {
+    const userRef = firebase.database().ref('/users/' + this.state.uid);
+    userRef
+      .remove()
+      .then(() => {
+        console.log('user deleted');
+        localStorage.clear();
+        this.logOut();
+      })
+      .catch((error) => {
+        console.log('account deletion unsuccessful: ' + error.message);
+      });
   };
 
   render() {
@@ -171,21 +228,24 @@ export default class HomePage extends Component {
                       </Heading>
                       <Box direction="row" align="center" gap="small">
                         <TextInput
+                          value={this.state.searchVal}
                           title="search your film lot!"
                           placeholder={`search ${this.state.movies.length} films...`}
                           icon={<Search />}
+                          onChange={(event) => this.handleSearch(event)}
                         />
                         <Box>
                           <AddTitle
+                            uid={this.state.uid}
                             moviesAdded={(movies: movie[]) =>
                               this.moviesAdded(movies)
                             }
                           />
                         </Box>
                         <Menu
-                          style={{ borderRadius: 100 }}
                           hoverIndicator="accent-1"
                           title="filter by tags"
+                          focusIndicator={false}
                           dropAlign={{ top: 'bottom', left: 'right' }}
                           icon={<Filter />}
                           items={[
@@ -199,20 +259,24 @@ export default class HomePage extends Component {
                   ) : (
                     <Box direction="row" gap="small" align="center">
                       <TextInput
+                        value={this.state.searchVal}
                         focusIndicator={false}
                         placeholder="my collection"
                         icon={<Search />}
                         suggestions={[
                           `search ${this.state.movies.length} films...`
                         ]}
+                        onChange={(event) => this.handleSearch(event)}
                       />
                       <AddTitle
+                        uid={this.state.uid}
                         moviesAdded={(movies: movie[]) =>
                           this.moviesAdded(movies)
                         }
                       />
                       <Menu
                         title="filter by tags"
+                        focusIndicator={false}
                         dropAlign={{ top: 'bottom', left: 'right' }}
                         icon={<Filter />}
                         items={[
@@ -225,6 +289,7 @@ export default class HomePage extends Component {
                   )}
                   <Box>
                     <Avatar
+                      focusIndicator={false}
                       hoverIndicator="brand"
                       onClick={this.toggleSettings}
                       title="settings"
@@ -247,6 +312,9 @@ export default class HomePage extends Component {
                   <Collection
                     wishlist={this.state.wishlist}
                     movies={this.state.movies}
+                    searchList={this.state.searchList}
+                    searchVal={this.state.searchVal}
+                    handleDelete={(id: string) => this.handleDeleteMovie(id)}
                   />
                 </Box>
                 <FooterComponent />
@@ -256,6 +324,9 @@ export default class HomePage extends Component {
                     logOut={this.logOut}
                     toggleSettings={this.toggleSettings}
                     handleWishlist={this.handleWishlist}
+                    wishlist={this.state.wishlist}
+                    uid={this.state.uid}
+                    handleAccountDelete={this.handleAccountDelete}
                   />
                 ) : null}
               </Box>

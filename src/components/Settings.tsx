@@ -7,16 +7,20 @@ import {
   Button,
   Text,
   ResponsiveContext,
-  CheckBox
-  //Anchor
+  CheckBox,
+  Select,
+  TextInput
 } from 'grommet';
-import { CircleQuestion } from 'grommet-icons';
+import { CircleQuestion, Magic } from 'grommet-icons';
 
 interface SettingsProps {
   logOut(): void;
   toggleSettings(): void;
   loggedIn: boolean;
   handleWishlist(): void;
+  wishlist: boolean;
+  uid: string;
+  handleAccountDelete(): void;
 }
 
 export default class Settings extends Component<SettingsProps> {
@@ -24,7 +28,15 @@ export default class Settings extends Component<SettingsProps> {
     loggedIn: this.props.loggedIn,
     showFileInfo: false,
     showViewInfo: false,
-    wishlistChecked: false
+    wishlistChecked: this.props.wishlist,
+    theme: '',
+    showDeleteAccountLayer: false,
+    uid: ''
+  };
+
+  componentDidMount = () => {
+    const mode = localStorage.getItem('visualModeValue') || 'gradient';
+    this.setState({ theme: mode });
   };
 
   logOut = async () => {
@@ -51,6 +63,18 @@ export default class Settings extends Component<SettingsProps> {
     this.props.handleWishlist();
   };
 
+  handleThemeChange = (mode: string) => {
+    localStorage.setItem('visualModeValue', mode);
+    this.setState({
+      theme: mode
+    });
+    window.location.reload();
+  };
+
+  handleDeleteAccount = () => {
+    this.setState({ showDeleteAccountLayer: true });
+  };
+
   render() {
     return (
       <ResponsiveContext.Consumer>
@@ -60,6 +84,40 @@ export default class Settings extends Component<SettingsProps> {
             onClickOutside={this.props.toggleSettings}
             style={{ borderRadius: 30 }}
           >
+            {this.state.showDeleteAccountLayer ? (
+              <Layer
+                position="bottom"
+                onClickOutside={() =>
+                  this.setState({ showDeleteAccountLayer: false })
+                }
+                style={{ borderRadius: 30 }}
+              >
+                <Box gap="small" pad="medium">
+                  <Text textAlign="center" weight="bold">
+                    please type in your auto-generated user-id to confirm
+                    account deletion
+                  </Text>
+                  <Text textAlign="center">
+                    <Text weight="bold">user-id: </Text>
+                    {this.props.uid}
+                  </Text>
+                  <TextInput
+                    placeholder="listen, we all know this is annoying and super extra but that's honestly the point..."
+                    value={this.state.uid}
+                    onChange={(event) =>
+                      this.setState({ uid: event.target.value })
+                    }
+                  />
+                  <Button
+                    primary
+                    color="status-error"
+                    label="here's lookin' at you, kid"
+                    disabled={this.state.uid === this.props.uid ? false : true}
+                    onClick={this.props.handleAccountDelete}
+                  />
+                </Box>
+              </Layer>
+            ) : null}
             <Box
               justify="center"
               align="center"
@@ -108,7 +166,7 @@ export default class Settings extends Component<SettingsProps> {
                     onChange={(event) => this.handleWishlist(event)}
                   />
                 </Box>
-                <Box align="center" margin={{ bottom: 'medium' }}>
+                <Box align="center">
                   <Box direction="row" align="center">
                     <Text weight="bold">import/export data</Text>
                     <Button
@@ -152,20 +210,25 @@ export default class Settings extends Component<SettingsProps> {
                     />
                   </Box>
                 </Box>
+                <Box gap="xsmall" align="center" margin={{ bottom: 'medium' }}>
+                  <Text weight="bold">theme</Text>
+                  <Select
+                    disabled={this.state.theme === 'gradient' ? [0] : [1]}
+                    icon={<Magic />}
+                    value={this.state.theme}
+                    placeholder="choose your visual style"
+                    options={['gradient', 'solid']}
+                    onChange={({ option }) => this.handleThemeChange(option)}
+                  />
+                </Box>
                 <Box align="center">
                   <Button
                     label="delete account"
                     color="status-error"
                     hoverIndicator="status-error"
+                    onClick={this.handleDeleteAccount}
                   />
                 </Box>
-                {/* <Button
-                  alignSelf="center"
-                  size="small"
-                  icon={<FormClose size="small" />}
-                  primary
-                  onClick={this.props.exitSettings}
-                /> */}
               </Box>
             </Box>
           </Layer>

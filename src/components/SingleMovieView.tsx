@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import { Box, Heading, Button, Text, Image } from 'grommet';
-import { Previous } from 'grommet-icons';
+import { Previous, Trash } from 'grommet-icons';
 import { movie } from './HomePage';
 
 interface SingleMovieViewProps {
   closeDetailView?(): void;
   movieAdded?(movie: movie): void;
+  handleDelete?(movieId: string): void;
   movie: movie;
   add: boolean;
 }
@@ -39,12 +40,7 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
 
   render() {
     return (
-      <Box
-        gap="small"
-        pad="small"
-        background="linear-gradient(45deg, rgba(33,52,68,1) 10%, rgba(24,122,204,1) 100%)"
-        round
-      >
+      <Box gap="small" pad="small" background="movieSearchResult" round>
         <Box direction="row" justify="start" gap="medium">
           <Box
             height={{ min: '225px', max: '225px' }}
@@ -78,7 +74,18 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
               onClick={() => this.props.closeDetailView!()}
             />
           </Box>
-        ) : null}
+        ) : (
+          <Box>
+            <Button
+              icon={<Trash color="#FF8686" />}
+              alignSelf="end"
+              title="remove film from lot"
+              onClick={() =>
+                this.props.handleDelete!(this.state.movieView.movie.id)
+              }
+            />
+          </Box>
+        )}
       </Box>
     );
   }
