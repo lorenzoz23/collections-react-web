@@ -6,7 +6,7 @@ import LoginGoogle from './LoginGoogle';
 import LoginFacebook from './LoginFacebook';
 
 interface LoginButtonProps {
-  handleLogin(): void;
+  handleLogin(name?: string): void;
 }
 
 export default class LoginButtons extends Component<LoginButtonProps> {
@@ -41,7 +41,7 @@ export default class LoginButtons extends Component<LoginButtonProps> {
             {this.state.show ? (
               <LoginEmail
                 goBack={this.goBack}
-                handleLogin={this.props.handleLogin}
+                handleLogin={(name: string) => this.props.handleLogin(name)}
                 rememberMe={this.state.rememberMe}
                 handleRememberMe={(checked: boolean) =>
                   this.setState({ rememberMe: checked })

@@ -31,7 +31,8 @@ export default class Login extends Component {
     valid: false,
     width: 0,
     height: 0,
-    uid: ''
+    uid: '',
+    name: ''
   };
 
   updateWindowDimensions = () => {
@@ -47,16 +48,25 @@ export default class Login extends Component {
     window.removeEventListener('resize', this.updateWindowDimensions);
   };
 
-  handleLogin = () => {
+  handleLogin = (name?: string) => {
     let id: string = '';
+    let fullName: string = '';
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
         // User is signed in.
         id = user.uid;
-        console.log(id);
+        if (name) {
+          fullName = name.toLowerCase();
+        } else {
+          fullName =
+            user.displayName === null
+              ? 'stranger'
+              : user.displayName.toLowerCase();
+        }
         this.setState({
           valid: true,
-          uid: id
+          uid: id,
+          name: fullName
         });
       } else {
         // No user is signed in.
@@ -72,7 +82,12 @@ export default class Login extends Component {
         {(size) => (
           <Router>
             {this.state.valid ? (
-              <Redirect to={{ pathname: url, state: { id: this.state.uid } }} />
+              <Redirect
+                to={{
+                  pathname: url,
+                  state: { id: this.state.uid, name: this.state.name }
+                }}
+              />
             ) : (
               <Box
                 flex
@@ -94,7 +109,9 @@ export default class Login extends Component {
                   <Heading color="#FF6C88">cinelot</Heading>
                 </Box>
                 <Box align="center" justify="center">
-                  <LoginButtons handleLogin={this.handleLogin} />
+                  <LoginButtons
+                    handleLogin={(name?: string) => this.handleLogin(name)}
+                  />
                 </Box>
                 {this.state.width >= 500 ? (
                   <Box alignSelf="end" pad={{ right: 'medium' }}>

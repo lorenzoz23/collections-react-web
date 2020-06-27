@@ -11,7 +11,7 @@ import firebase from 'firebase/app';
 import 'firebase/auth';
 
 interface SignUpProps {
-  handleUserSignUp(email: string, password: string): void;
+  handleUserSignUp(email: string, password: string, name: string): void;
 }
 export default class SignUp extends Component<SignUpProps> {
   state = {
@@ -32,7 +32,16 @@ export default class SignUp extends Component<SignUpProps> {
     firebase
       .auth()
       .createUserWithEmailAndPassword(email, password)
-      .then(() => this.props.handleUserSignUp(email, password))
+      .then(() => {
+        const user = firebase.auth().currentUser;
+        if (user) {
+          const userRef = firebase.database().ref('/users/' + user.uid);
+          userRef.set({
+            name: this.state.name
+          });
+        }
+        this.props.handleUserSignUp(email, password, this.state.name);
+      })
       .catch((error: any) => {
         let message: string[] = ['', ''];
         switch (error.code) {
@@ -73,8 +82,6 @@ export default class SignUp extends Component<SignUpProps> {
               <FormField label="name" name="name">
                 <TextInput
                   name="name"
-                  placeholder="field is currently disabled"
-                  disabled
                   size={size === 'small' ? 'medium' : 'xlarge'}
                   value={this.state.name}
                   onChange={(e: any) => {

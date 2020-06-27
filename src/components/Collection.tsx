@@ -7,7 +7,7 @@ import SingleMovieView from './SingleMovieView';
 
 const columns: Record<string, string[]> = {
   small: ['auto', 'auto', 'auto', 'auto'],
-  medium: ['auto', 'auto', 'auto', 'auto', 'auto', 'auto'],
+  medium: ['auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto'],
   large: [
     'auto',
     'auto',
@@ -22,6 +22,8 @@ const columns: Record<string, string[]> = {
     'auto'
   ],
   xlarge: [
+    'auto',
+    'auto',
     'auto',
     'auto',
     'auto',

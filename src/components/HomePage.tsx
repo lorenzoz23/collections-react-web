@@ -6,9 +6,13 @@ import {
   TextInput,
   ResponsiveContext,
   Menu,
-  Avatar
+  Avatar,
+  Layer,
+  CheckBox,
+  Paragraph,
+  Button
 } from 'grommet';
-import { Search, Filter, User, Sort } from 'grommet-icons';
+import { Search, Filter, User, Sort, Next } from 'grommet-icons';
 import firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/database';
@@ -47,6 +51,7 @@ export type movie = {
 export default class HomePage extends Component {
   state: {
     uid: string;
+    name: string;
     invalidRoute: boolean;
     loggedIn: boolean;
     movies: movie[];
@@ -55,8 +60,11 @@ export default class HomePage extends Component {
     searchVal: string;
     searchList: movie[];
     loading: boolean;
+    greeting: boolean;
+    greetingChecked: boolean;
   } = {
     uid: '',
+    name: '',
     invalidRoute: false,
     loggedIn: true,
     movies: [],
@@ -64,13 +72,16 @@ export default class HomePage extends Component {
     wishlist: false,
     searchVal: '',
     searchList: [],
-    loading: true
+    loading: true,
+    greeting: false,
+    greetingChecked: false
   };
 
   constructor(props: any) {
     super(props);
     this.state = {
       uid: props.location.state === undefined ? '' : props.location.state.id,
+      name: props.location.state === undefined ? '' : props.location.state.name,
       invalidRoute: false,
       loggedIn: true,
       movies: [],
@@ -78,15 +89,20 @@ export default class HomePage extends Component {
       wishlist: false,
       searchVal: '',
       searchList: [],
-      loading: true
+      loading: true,
+      greeting: false,
+      greetingChecked: false
     };
     console.log('uid: ' + this.state.uid);
+    console.log('name: ' + this.state.name);
   }
 
   componentDidMount = () => {
     if (this.state.uid === '') {
       this.setState({ invalidRoute: true });
     } else {
+      const greeting = localStorage.getItem('greeting') || 'show';
+      const showGreeting = greeting === 'show' ? true : false;
       let userCollection: any[] = [];
       let lot: movie[] = [];
 
@@ -110,7 +126,8 @@ export default class HomePage extends Component {
 
             this.setState({
               movies: lot,
-              loading: false
+              loading: false,
+              greeting: showGreeting
             });
           }
         });
@@ -205,9 +222,23 @@ export default class HomePage extends Component {
       });
   };
 
+  dismissGreeting = () => {
+    localStorage.setItem(
+      'greeting',
+      this.state.greetingChecked ? 'noShow' : 'show'
+    );
+    this.setState({
+      greeting: false
+    });
+  };
+
   render() {
     const home = '/home/' + this.state.uid;
     const title = this.state.wishlist ? 'my wishlist' : 'my lot';
+    const greeting =
+      this.state.name !== ''
+        ? 'greetings ' + this.state.name.split(' ', 1) + '!'
+        : 'greetings!';
     return (
       <Router>
         {!this.state.loggedIn || this.state.invalidRoute ? (
@@ -262,7 +293,7 @@ export default class HomePage extends Component {
                         <Menu
                           disabled
                           hoverIndicator="accent-1"
-                          title="sort films"
+                          title="sort films by..."
                           focusIndicator={false}
                           dropAlign={{ top: 'bottom', left: 'right' }}
                           icon={<Sort />}
@@ -349,6 +380,53 @@ export default class HomePage extends Component {
                     uid={this.state.uid}
                     handleAccountDelete={this.handleAccountDelete}
                   />
+                ) : null}
+                {this.state.greeting ? (
+                  <Layer
+                    position="center"
+                    responsive={false}
+                    style={{ borderRadius: 30 }}
+                  >
+                    <Box
+                      background="layer"
+                      justify="center"
+                      align="center"
+                      pad="small"
+                      round
+                      border={{ color: 'accent-1', side: 'all', size: 'small' }}
+                    >
+                      <Heading>{greeting}</Heading>
+                      <Paragraph textAlign="center">
+                        we at cinelot (it's just one person, actually), couldn't
+                        bee happier that you chose us to help you keep track of
+                        the one thing that's most important to you: your film
+                        collection!
+                      </Paragraph>
+                      <Paragraph textAlign="center">
+                        if you ever have any questions or are confused on what
+                        to do/where to start, just click the question mark at
+                        the bottom of the page for some useful info and tips!
+                      </Paragraph>
+                      <Box gap="small">
+                        <CheckBox
+                          checked={this.state.greetingChecked}
+                          label="never show this message again"
+                          onChange={(event) =>
+                            this.setState({
+                              greetingChecked: event.target.checked
+                            })
+                          }
+                        />
+                        <Button
+                          label="continue collecting"
+                          icon={<Next />}
+                          reverse
+                          primary
+                          onClick={this.dismissGreeting}
+                        />
+                      </Box>
+                    </Box>
+                  </Layer>
                 ) : null}
               </Box>
             )}
