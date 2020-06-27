@@ -14,13 +14,19 @@ const themeGradient = {
   global: {
     colors: {
       header: '#213444',
+      movieSearchResultHeader: '#213444',
       home:
         'radial-gradient(circle, rgba(27,50,163,1) 0%, rgba(143,38,59,1) 100%)',
       footer: '#213444',
-      addTitle:
+      layer:
         'radial-gradient(circle, rgba(33,52,68,1) 10%, rgba(24,122,204,1) 100%)',
       movieSearchResult:
-        'linear-gradient(45deg, rgba(33,52,68,1) 10%, rgba(24,122,204,1) 100%)'
+        'linear-gradient(45deg, rgba(33,52,68,1) 10%, rgba(24,122,204,1) 100%)',
+      deleteMovie: '#FF8686',
+      resultBorder: 'accent-1',
+      lotBorder: '#ADB9C6',
+      movieBorder: '#396897',
+      miniLayer: 'linear-gradient(90deg, #e3ffe7 0%, #d9e7ff 100%)'
     },
     font: {
       family: 'Roboto',
@@ -34,12 +40,18 @@ const themeSolid = {
   global: {
     colors: {
       header: '#228BE6',
+      movieSearchResultHeader: 'transparent',
       home: '#213444',
       footer: 'brand',
-      addTitle:
-        'radial-gradient(circle, rgba(255,226,163,1) 0%, rgba(163,255,231,1) 100%)',
+      layer:
+        'radial-gradient(circle, rgba(121,215,255,1) 0%, rgba(225,237,255,1) 100%)',
       movieSearchResult:
-        'linear-gradient(135deg, rgba(74,224,226,1) 0%, rgba(255,226,163,1) 100%)'
+        'linear-gradient(135deg, rgba(121,215,255,1) 0%, rgba(225,237,255,1) 75%)',
+      lotBorder: '#ADB9C6',
+      movieBorder: '#34495E',
+      deleteMovie: '#FF3F3F',
+      resultBorder: 'brand',
+      miniLayer: 'linear-gradient(90deg, #e3ffe7 0%, #d9e7ff 100%)'
     },
     font: {
       family: 'Roboto',

@@ -51,6 +51,7 @@ export default class FooterComponent extends Component {
             </Box>
             {this.state.showAbout ? (
               <Layer
+                responsive={false}
                 position="center"
                 onClickOutside={() => this.setState({ showAbout: false })}
                 style={{ borderRadius: 30 }}
@@ -58,8 +59,9 @@ export default class FooterComponent extends Component {
                 <Box
                   align="center"
                   pad="small"
-                  background="addTitle"
-                  style={{ borderRadius: 30 }}
+                  background="layer"
+                  round
+                  border={{ size: 'small', side: 'all', color: 'accent-1' }}
                 >
                   <Heading>about cinelot</Heading>
                   <Paragraph textAlign="center">

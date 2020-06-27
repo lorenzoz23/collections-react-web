@@ -8,7 +8,7 @@ import {
   Menu,
   Avatar
 } from 'grommet';
-import { Search, Filter, User } from 'grommet-icons';
+import { Search, Filter, User, Sort } from 'grommet-icons';
 import firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/database';
@@ -54,6 +54,7 @@ export default class HomePage extends Component {
     wishlist: boolean;
     searchVal: string;
     searchList: movie[];
+    loading: boolean;
   } = {
     uid: '',
     invalidRoute: false,
@@ -62,7 +63,8 @@ export default class HomePage extends Component {
     showSettings: false,
     wishlist: false,
     searchVal: '',
-    searchList: []
+    searchList: [],
+    loading: true
   };
 
   constructor(props: any) {
@@ -75,7 +77,8 @@ export default class HomePage extends Component {
       showSettings: false,
       wishlist: false,
       searchVal: '',
-      searchList: []
+      searchList: [],
+      loading: true
     };
     console.log('uid: ' + this.state.uid);
   }
@@ -106,7 +109,8 @@ export default class HomePage extends Component {
             });
 
             this.setState({
-              movies: lot
+              movies: lot,
+              loading: false
             });
           }
         });
@@ -255,6 +259,20 @@ export default class HomePage extends Component {
                             { label: '4k', onClick: () => {} }
                           ]}
                         />
+                        <Menu
+                          disabled
+                          hoverIndicator="accent-1"
+                          title="sort films"
+                          focusIndicator={false}
+                          dropAlign={{ top: 'bottom', left: 'right' }}
+                          icon={<Sort />}
+                          items={[
+                            { label: 'alphabetical', onClick: () => {} },
+                            { label: 'runtime', onClick: () => {} },
+                            { label: 'genre (alpha)', onClick: () => {} },
+                            { label: 'mpaa rating', onClick: () => {} }
+                          ]}
+                        />
                       </Box>
                     </Box>
                   ) : (
@@ -317,6 +335,7 @@ export default class HomePage extends Component {
                     searchList={this.state.searchList}
                     searchVal={this.state.searchVal}
                     handleDelete={(id: string) => this.handleDeleteMovie(id)}
+                    loading={this.state.loading}
                   />
                 </Box>
                 <FooterComponent />

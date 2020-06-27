@@ -80,19 +80,21 @@ export default class Settings extends Component<SettingsProps> {
       <ResponsiveContext.Consumer>
         {(size) => (
           <Layer
+            responsive={false}
             position="center"
             onClickOutside={this.props.toggleSettings}
             style={{ borderRadius: 30 }}
           >
             {this.state.showDeleteAccountLayer ? (
               <Layer
+                responsive={false}
                 position="bottom"
                 onClickOutside={() =>
                   this.setState({ showDeleteAccountLayer: false })
                 }
                 style={{ borderRadius: 30 }}
               >
-                <Box gap="small" pad="medium">
+                <Box gap="small" pad="medium" round>
                   <Text textAlign="center" weight="bold">
                     please type in your auto-generated user-id to confirm
                     account deletion
@@ -102,7 +104,7 @@ export default class Settings extends Component<SettingsProps> {
                     {this.props.uid}
                   </Text>
                   <TextInput
-                    placeholder="listen, we all know this is annoying and super extra but that's honestly the point..."
+                    placeholder="user-id"
                     value={this.state.uid}
                     onChange={(event) =>
                       this.setState({ uid: event.target.value })
@@ -111,7 +113,7 @@ export default class Settings extends Component<SettingsProps> {
                   <Button
                     primary
                     color="status-error"
-                    label="here's lookin' at you, kid"
+                    label="delete account"
                     disabled={this.state.uid === this.props.uid ? false : true}
                     onClick={this.props.handleAccountDelete}
                   />
@@ -119,11 +121,12 @@ export default class Settings extends Component<SettingsProps> {
               </Layer>
             ) : null}
             <Box
+              background="layer"
               justify="center"
               align="center"
               pad="small"
               round
-              border={{ color: 'accent-1', side: 'all', size: 'medium' }}
+              border={{ color: 'accent-1', side: 'all', size: 'small' }}
             >
               <Heading level="2">settings</Heading>
               <Box gap="small" alignContent="center">
@@ -172,6 +175,7 @@ export default class Settings extends Component<SettingsProps> {
                   <Box direction="row" align="center">
                     <Text weight="bold">import/export data</Text>
                     <Button
+                      disabled
                       onClick={() => {
                         this.setState({
                           showFileInfo: !this.state.showFileInfo

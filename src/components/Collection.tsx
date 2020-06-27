@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { Box, Text, ResponsiveContext, Grid, Layer } from 'grommet';
+import DotLoader from 'react-spinners/DotLoader';
+
 import type { movie } from './HomePage';
 import SingleMovieView from './SingleMovieView';
 
@@ -7,6 +9,7 @@ const columns: Record<string, string[]> = {
   small: ['auto', 'auto', 'auto', 'auto'],
   medium: ['auto', 'auto', 'auto', 'auto', 'auto', 'auto'],
   large: [
+    'auto',
     'auto',
     'auto',
     'auto',
@@ -38,6 +41,7 @@ interface CollectionProps {
   searchList: movie[];
   searchVal: string;
   handleDelete(movieId: string): void;
+  loading: boolean;
 }
 
 export default class Collection extends Component<CollectionProps> {
@@ -116,9 +120,13 @@ export default class Collection extends Component<CollectionProps> {
       <Box
         key={movie.id}
         title={movie.name + ' (' + movie.date.substring(0, 4) + ')'}
-        background={{ image: `url(${movie.poster})`, color: '#34495E' }}
-        border={{ size: 'small', color: '#34495E', side: 'all' }}
-        round="small"
+        background={{
+          image: `url(${movie.poster})`,
+          color: 'movieBorder',
+          size: 'cover'
+        }}
+        border={{ size: 'xsmall', color: 'lotBorder', side: 'all' }}
+        round="xsmall"
         onClick={() =>
           this.setState({ movieDetailsVisible: true, movieToShow: movie })
         }
@@ -154,34 +162,46 @@ export default class Collection extends Component<CollectionProps> {
       this.props.searchVal.length > 0
         ? this.props.searchList
         : this.props.movies;
-    return (
-      <ResponsiveContext.Consumer>
-        {(size) => (
-          <Box justify="start" alignContent="center" flex>
-            {this.state.movieDetailsVisible ? (
-              <Layer
-                onClickOutside={() =>
-                  this.setState({
-                    movieDetailsVisible: false
-                  })
-                }
-                position="center"
-                style={{ borderRadius: 30 }}
-              >
-                <SingleMovieView
-                  movie={this.state.movieToShow}
-                  add={false}
-                  handleDelete={(id: string) => this.handleDelete(id)}
-                />
-              </Layer>
-            ) : moviesToMap.length === 0 ? (
-              this.emptyState()
-            ) : (
-              this.movieCollection(size)
-            )}
-          </Box>
-        )}
-      </ResponsiveContext.Consumer>
-    );
+    if (this.props.loading) {
+      return (
+        <Box align="center" justify="center" flex>
+          <DotLoader
+            size={150}
+            color={'#6FFFB0'}
+            loading={this.props.loading}
+          />
+        </Box>
+      );
+    } else {
+      return (
+        <ResponsiveContext.Consumer>
+          {(size) => (
+            <Box justify="start" alignContent="center" flex>
+              {moviesToMap.length === 0
+                ? this.emptyState()
+                : this.movieCollection(size)}
+              {this.state.movieDetailsVisible ? (
+                <Layer
+                  responsive={false}
+                  onClickOutside={() =>
+                    this.setState({
+                      movieDetailsVisible: false
+                    })
+                  }
+                  position="center"
+                  style={{ borderRadius: 30 }}
+                >
+                  <SingleMovieView
+                    movie={this.state.movieToShow}
+                    add={false}
+                    handleDelete={(id: string) => this.handleDelete(id)}
+                  />
+                </Layer>
+              ) : null}
+            </Box>
+          )}
+        </ResponsiveContext.Consumer>
+      );
+    }
   }
 }

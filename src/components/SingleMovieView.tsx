@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Box, Heading, Button, Text, Image } from 'grommet';
+import { Box, Heading, Button, Text } from 'grommet';
 import { Previous, Trash } from 'grommet-icons';
 import { movie } from './HomePage';
 
@@ -43,19 +43,17 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
       <Box gap="small" pad="small" background="movieSearchResult" round>
         <Box direction="row" justify="start" gap="medium">
           <Box
+            round="xsmall"
             height={{ min: '225px', max: '225px' }}
             width={{ min: '150px', max: '150px' }}
-            style={{ backgroundColor: '#34495E', borderRadius: 10 }}
-            border={{ size: 'small', color: '#34495E', side: 'all' }}
+            background={{
+              image: `url(${this.state.movieView.movie.poster})`,
+              color: 'movieBorder',
+              size: 'cover'
+            }}
+            border={{ size: 'small', color: 'movieBorder', side: 'all' }}
             alignSelf="end"
-          >
-            <Image
-              fill
-              fit="cover"
-              src={this.state.movieView.movie.poster}
-              style={{ borderRadius: 10 }}
-            />
-          </Box>
+          />
           <Box justify="evenly" alignSelf="end">
             <Heading level="3">{this.state.movieView.movie.name}</Heading>
             <Box gap="small">
@@ -77,7 +75,7 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
         ) : (
           <Box>
             <Button
-              icon={<Trash color="#FF8686" />}
+              icon={<Trash color="deleteMovie" />}
               alignSelf="end"
               title="remove film from lot"
               onClick={() =>

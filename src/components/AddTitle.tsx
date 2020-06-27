@@ -94,6 +94,7 @@ export default class AddTitle extends Component<AddTitleProps> {
           <Layer
             style={{ borderRadius: 30 }}
             position="center"
+            responsive={false}
             onClickOutside={() => {
               this.setState({ visible: false });
             }}
@@ -111,7 +112,7 @@ export default class AddTitle extends Component<AddTitleProps> {
                 flex
                 pad="medium"
                 width="medium"
-                background="addTitle"
+                background="layer"
                 align="center"
                 justify="center"
                 overflow="auto"
