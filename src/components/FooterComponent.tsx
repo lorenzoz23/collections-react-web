@@ -23,7 +23,12 @@ export default class FooterComponent extends Component {
       <ResponsiveContext.Consumer>
         {(size) => (
           <Footer
-            pad="medium"
+            pad={{
+              top: 'medium',
+              bottom: 'medium',
+              left: 'small',
+              right: 'small'
+            }}
             gap="medium"
             background="footer"
             justify={size !== 'small' ? 'between' : 'center'}

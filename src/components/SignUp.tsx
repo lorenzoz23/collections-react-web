@@ -11,7 +11,8 @@ import firebase from 'firebase/app';
 import 'firebase/auth';
 
 interface SignUpProps {
-  handleUserSignUp(email: string, password: string, name: string): void;
+  handleUserSignUp(email: string, password: string): void;
+  rememberMe: boolean;
 }
 export default class SignUp extends Component<SignUpProps> {
   state = {
@@ -29,41 +30,55 @@ export default class SignUp extends Component<SignUpProps> {
   };
 
   handleSignUp = (email: string, password: string) => {
+    const type: string = this.props.rememberMe
+      ? firebase.auth.Auth.Persistence.LOCAL
+      : firebase.auth.Auth.Persistence.SESSION;
     firebase
       .auth()
-      .createUserWithEmailAndPassword(email, password)
+      .setPersistence(type)
       .then(() => {
-        const user = firebase.auth().currentUser;
-        if (user) {
-          const userRef = firebase.database().ref('/users/' + user.uid);
-          userRef.set({
-            name: this.state.name
+        firebase
+          .auth()
+          .createUserWithEmailAndPassword(email, password)
+          .then(() => {
+            const user = firebase.auth().currentUser;
+            if (user) {
+              const userRef = firebase.database().ref('/users/' + user.uid);
+              userRef.set({
+                name: this.state.name
+              });
+            }
+            this.props.handleUserSignUp(email, password);
+          })
+          .catch((error: any) => {
+            let message: string[] = ['', ''];
+            switch (error.code) {
+              case 'auth/email-already-in-use':
+                message = ['email', 'email already in use'];
+                break;
+              case 'auth/invalid-email':
+                message = ['email', 'invalid email'];
+                break;
+              case 'auth/operation-not-allowed':
+                message = [
+                  'password',
+                  'account creation is currently not allowed'
+                ];
+                break;
+              case 'auth/weak-password':
+                message = ['password', 'password is too weak'];
+                break;
+              default:
+                message = ['password', 'please try again'];
+                break;
+            }
+            this.setState({
+              errorMessage: message
+            });
           });
-        }
-        this.props.handleUserSignUp(email, password, this.state.name);
       })
       .catch((error: any) => {
-        let message: string[] = ['', ''];
-        switch (error.code) {
-          case 'auth/email-already-in-use':
-            message = ['email', 'email already in use'];
-            break;
-          case 'auth/invalid-email':
-            message = ['email', 'invalid email'];
-            break;
-          case 'auth/operation-not-allowed':
-            message = ['password', 'account creation is currently not allowed'];
-            break;
-          case 'auth/weak-password':
-            message = ['password', 'password is too weak'];
-            break;
-          default:
-            message = ['password', 'please try again'];
-            break;
-        }
-        this.setState({
-          errorMessage: message
-        });
+        console.log(error);
       });
   };
 

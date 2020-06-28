@@ -1,13 +1,11 @@
 import React, { Component } from 'react';
 import { ResponsiveContext, Box, Tabs, Tab } from 'grommet';
-import firebase from 'firebase';
-import 'firebase/database';
 
 import SignIn from './SignIn';
 import SignUp from './SignUp';
 
 interface LoginEmailProps {
-  handleLogin(name: string): void;
+  handleLogin(): void;
   handleRememberMe(checked: boolean): void;
   goBack(): void;
   rememberMe: boolean;
@@ -17,35 +15,17 @@ export default class LoginEmail extends Component<LoginEmailProps> {
   state = {
     email: '',
     password: '',
-    name: '',
     activeIndex: 0,
     created: false
   };
 
-  handleUserSignUp = (email: string, password: string, name: string) => {
+  handleUserSignUp = (email: string, password: string) => {
     this.setState({
       email: email,
       password: password,
-      name: name,
       activeIndex: 0,
       created: true
     });
-  };
-
-  handleLogin = () => {
-    let username: string = '';
-    const id = firebase.auth().currentUser?.uid;
-    firebase
-      .database()
-      .ref('/users/' + id)
-      .once('value')
-      .then((snapshot) => {
-        username = snapshot.val() && snapshot.val().name;
-      })
-      .catch(() => {
-        console.log('error');
-      });
-    this.props.handleLogin(username);
   };
 
   render() {
@@ -67,18 +47,17 @@ export default class LoginEmail extends Component<LoginEmailProps> {
                     this.props.handleRememberMe(checked)
                   }
                   password={this.state.password}
-                  handleLogin={this.handleLogin}
+                  handleLogin={this.props.handleLogin}
                   created={this.state.created}
                   rememberMe={this.props.rememberMe}
                 />
               </Tab>
               <Tab title="sign up">
                 <SignUp
-                  handleUserSignUp={(
-                    email: string,
-                    password: string,
-                    name: string
-                  ) => this.handleUserSignUp(email, password, name)}
+                  handleUserSignUp={(email: string, password: string) =>
+                    this.handleUserSignUp(email, password)
+                  }
+                  rememberMe={this.props.rememberMe}
                 />
               </Tab>
             </Tabs>

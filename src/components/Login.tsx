@@ -31,8 +31,7 @@ export default class Login extends Component {
     valid: false,
     width: 0,
     height: 0,
-    uid: '',
-    name: ''
+    uid: ''
   };
 
   updateWindowDimensions = () => {
@@ -48,25 +47,15 @@ export default class Login extends Component {
     window.removeEventListener('resize', this.updateWindowDimensions);
   };
 
-  handleLogin = (name?: string) => {
+  handleLogin = () => {
     let id: string = '';
-    let fullName: string = '';
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
         // User is signed in.
         id = user.uid;
-        if (name) {
-          fullName = name.toLowerCase();
-        } else {
-          fullName =
-            user.displayName === null
-              ? 'stranger'
-              : user.displayName.toLowerCase();
-        }
         this.setState({
           valid: true,
-          uid: id,
-          name: fullName
+          uid: id
         });
       } else {
         // No user is signed in.
@@ -76,7 +65,6 @@ export default class Login extends Component {
   };
 
   render() {
-    const url = '/home/' + this.state.uid;
     return (
       <ResponsiveContext.Consumer>
         {(size) => (
@@ -84,8 +72,8 @@ export default class Login extends Component {
             {this.state.valid ? (
               <Redirect
                 to={{
-                  pathname: url,
-                  state: { id: this.state.uid, name: this.state.name }
+                  pathname: '/',
+                  state: { id: this.state.uid }
                 }}
               />
             ) : (
@@ -109,9 +97,7 @@ export default class Login extends Component {
                   <Heading color="#FF6C88">cinelot</Heading>
                 </Box>
                 <Box align="center" justify="center">
-                  <LoginButtons
-                    handleLogin={(name?: string) => this.handleLogin(name)}
-                  />
+                  <LoginButtons handleLogin={this.handleLogin} />
                 </Box>
                 {this.state.width >= 500 ? (
                   <Box alignSelf="end" pad={{ right: 'medium' }}>
@@ -122,14 +108,14 @@ export default class Login extends Component {
                 ) : (
                   <Box alignSelf="center">
                     <Heading color="#FF6C88" level="3">
-                      your film collection on the go
+                      your films on the go
                     </Heading>
                   </Box>
                 )}
               </Box>
             )}
             <Switch>
-              <Route exact path={url} component={HomePage} />
+              <Route exact path="/" component={HomePage} />
             </Switch>
           </Router>
         )}

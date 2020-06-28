@@ -89,8 +89,8 @@ export default class App extends Component {
         >
           <Box fill>
             <Switch>
-              <Route exact path="/" component={Login} />
-              <Route exact path="/home/:id" component={HomePage} />
+              <Route exact path="/" component={HomePage} />
+              <Route exact path="/login" component={Login} />
               <Redirect to="/" from="/*" />
             </Switch>
           </Box>

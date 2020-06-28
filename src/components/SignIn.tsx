@@ -35,36 +35,47 @@ export default class SignIn extends Component<SignInProps> {
     if (this.state.created) {
       this.props.handleLogin();
     } else {
+      const type: string = this.props.rememberMe
+        ? firebase.auth.Auth.Persistence.LOCAL
+        : firebase.auth.Auth.Persistence.SESSION;
       firebase
         .auth()
-        .signInWithEmailAndPassword(email, password)
+        .setPersistence(type)
         .then(() => {
-          if (this.props.rememberMe)
-            localStorage.setItem('rememberMe', 'remember');
-          this.props.handleLogin();
+          firebase
+            .auth()
+            .signInWithEmailAndPassword(email, password)
+            .then(() => {
+              if (this.props.rememberMe)
+                localStorage.setItem('rememberMe', 'remember');
+              this.props.handleLogin();
+            })
+            .catch((error: any) => {
+              let message: string[] = ['', ''];
+              switch (error.code) {
+                case 'auth/invalid-email':
+                  message = ['email', 'invalid email'];
+                  break;
+                case 'auth/user-not-found':
+                  message = ['email', 'user not found'];
+                  break;
+                case 'auth/wrong-password':
+                  message = ['password', 'password is incorrect'];
+                  break;
+                case 'auth/user-disabled':
+                  message = ['password', 'user account is disabled'];
+                  break;
+                default:
+                  message = ['password', 'please try again'];
+                  break;
+              }
+              this.setState({
+                errorMessage: message
+              });
+            });
         })
         .catch((error: any) => {
-          let message: string[] = ['', ''];
-          switch (error.code) {
-            case 'auth/invalid-email':
-              message = ['email', 'invalid email'];
-              break;
-            case 'auth/user-not-found':
-              message = ['email', 'user not found'];
-              break;
-            case 'auth/wrong-password':
-              message = ['password', 'password is incorrect'];
-              break;
-            case 'auth/user-disabled':
-              message = ['password', 'user account is disabled'];
-              break;
-            default:
-              message = ['password', 'please try again'];
-              break;
-          }
-          this.setState({
-            errorMessage: message
-          });
+          console.log(error);
         });
     }
   };

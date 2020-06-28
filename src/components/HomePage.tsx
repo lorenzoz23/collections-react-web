@@ -10,9 +10,18 @@ import {
   Layer,
   CheckBox,
   Paragraph,
-  Button
+  Button,
+  Text
 } from 'grommet';
-import { Search, Filter, User, Sort, Next } from 'grommet-icons';
+import {
+  Search,
+  Filter,
+  User,
+  Sort,
+  Next,
+  StatusGood,
+  FormClose
+} from 'grommet-icons';
 import firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/database';
@@ -45,6 +54,9 @@ export type movie = {
   plot: string;
   date: string;
   poster: string;
+  rating?: string;
+  cast?: string[];
+  crew?: string[];
   id: string;
 };
 
@@ -62,6 +74,8 @@ export default class HomePage extends Component {
     loading: boolean;
     greeting: boolean;
     greetingChecked: boolean;
+    notification: boolean;
+    notificationText: string;
   } = {
     uid: '',
     name: '',
@@ -74,14 +88,16 @@ export default class HomePage extends Component {
     searchList: [],
     loading: true,
     greeting: false,
-    greetingChecked: false
+    greetingChecked: false,
+    notification: false,
+    notificationText: ''
   };
 
   constructor(props: any) {
     super(props);
     this.state = {
       uid: props.location.state === undefined ? '' : props.location.state.id,
-      name: props.location.state === undefined ? '' : props.location.state.name,
+      name: '',
       invalidRoute: false,
       loggedIn: true,
       movies: [],
@@ -91,27 +107,39 @@ export default class HomePage extends Component {
       searchList: [],
       loading: true,
       greeting: false,
-      greetingChecked: false
+      greetingChecked: false,
+      notification: false,
+      notificationText: ''
     };
     console.log('uid: ' + this.state.uid);
     console.log('name: ' + this.state.name);
   }
 
   componentDidMount = () => {
-    if (this.state.uid === '') {
+    const remember = localStorage.getItem('rememberMe');
+    if (this.state.uid === '' && !remember) {
       this.setState({ invalidRoute: true });
     } else {
-      const greeting = localStorage.getItem('greeting') || 'show';
-      const showGreeting = greeting === 'show' ? true : false;
       let userCollection: any[] = [];
       let lot: movie[] = [];
+      let name: string = '';
+      let uid =
+        this.state.uid === ''
+          ? firebase.auth().currentUser!.uid
+          : this.state.uid;
+
+      const greeting = localStorage.getItem('greeting') || 'show';
+      const showGreeting = greeting === 'show' ? true : false;
 
       firebase
         .database()
-        .ref('/users/' + this.state.uid)
+        .ref('/users/' + uid)
         .once('value')
         .then((snapshot) => {
+          const displayName =
+            firebase.auth().currentUser!.displayName || 'stranger';
           userCollection = snapshot.val() && snapshot.val().collection;
+          name = (snapshot.val() && snapshot.val().name) || displayName;
           if (userCollection) {
             lot = userCollection.map((movie) => {
               const entry: movie = {
@@ -123,11 +151,19 @@ export default class HomePage extends Component {
               };
               return entry;
             });
-
             this.setState({
               movies: lot,
               loading: false,
-              greeting: showGreeting
+              greeting: showGreeting,
+              name: name.toLowerCase(),
+              uid: uid
+            });
+          } else {
+            this.setState({
+              name: name.toLowerCase(),
+              loading: false,
+              greeting: showGreeting,
+              uid: uid
             });
           }
         });
@@ -141,7 +177,9 @@ export default class HomePage extends Component {
       collection.push(movies[i]);
     }
     this.setState({
-      movies: collection
+      movies: collection,
+      notification: true,
+      notificationText: `${movies.length} movies added to your lot!`
     });
   };
 
@@ -170,7 +208,9 @@ export default class HomePage extends Component {
 
   handleWishlist = () => {
     this.setState({
-      wishlist: !this.state.wishlist
+      wishlist: !this.state.wishlist,
+      notification: true,
+      notificationText: 'switched to wishlist view'
     });
   };
 
@@ -204,7 +244,9 @@ export default class HomePage extends Component {
       collection: newLot
     });
     this.setState({
-      movies: newLot
+      movies: newLot,
+      notification: true,
+      notificationText: 'film successfully deleted'
     });
   };
 
@@ -232,8 +274,14 @@ export default class HomePage extends Component {
     });
   };
 
+  onNotificationClose = () => {
+    this.setState({
+      notification: false,
+      notificationText: ''
+    });
+  };
+
   render() {
-    const home = '/home/' + this.state.uid;
     const title = this.state.wishlist ? 'my wishlist' : 'my lot';
     const greeting =
       this.state.name !== ''
@@ -242,7 +290,7 @@ export default class HomePage extends Component {
     return (
       <Router>
         {!this.state.loggedIn || this.state.invalidRoute ? (
-          <Redirect exact to="/" />
+          <Redirect exact to="/login" />
         ) : (
           <ResponsiveContext.Consumer>
             {(size) => (
@@ -251,13 +299,13 @@ export default class HomePage extends Component {
                   pad={
                     size === 'small'
                       ? { right: 'small', left: 'medium', vertical: 'small' }
-                      : { left: 'medium', right: 'medium' }
+                      : { left: 'small', right: 'small' }
                   }
                 >
                   {size !== 'small' ? (
                     <Box direction="row" gap="medium" align="center">
                       <Heading level="3" margin="none" alignSelf="center">
-                        <Anchor title="home" color="light-1" href={home}>
+                        <Anchor title="home" color="light-1" href="/">
                           {title}
                         </Anchor>
                       </Heading>
@@ -285,23 +333,86 @@ export default class HomePage extends Component {
                           dropAlign={{ top: 'bottom', left: 'right' }}
                           icon={<Filter />}
                           items={[
-                            { label: 'blu ray', onClick: () => {} },
-                            { label: 'dvd', onClick: () => {} },
-                            { label: '4k', onClick: () => {} }
+                            {
+                              label: 'blu ray',
+                              onClick: () => {},
+                              hoverIndicator: 'accent-1'
+                            },
+                            {
+                              label: 'dvd',
+                              onClick: () => {},
+                              hoverIndicator: 'accent-1'
+                            },
+                            {
+                              label: '4k',
+                              onClick: () => {},
+                              hoverIndicator: 'accent-1'
+                            }
                           ]}
                         />
                         <Menu
-                          disabled
+                          //disabled
                           hoverIndicator="accent-1"
                           title="sort films by..."
                           focusIndicator={false}
                           dropAlign={{ top: 'bottom', left: 'right' }}
                           icon={<Sort />}
                           items={[
-                            { label: 'alphabetical', onClick: () => {} },
-                            { label: 'runtime', onClick: () => {} },
-                            { label: 'genre (alpha)', onClick: () => {} },
-                            { label: 'mpaa rating', onClick: () => {} }
+                            {
+                              label: 'title',
+                              onClick: () => {
+                                this.setState({
+                                  notification: true,
+                                  notificationText:
+                                    'film lot successfully sorted by title'
+                                });
+                              },
+                              hoverIndicator: 'accent-1'
+                            },
+                            {
+                              label: 'runtime',
+                              onClick: () => {
+                                this.setState({
+                                  notification: true,
+                                  notificationText:
+                                    'film lot successfully sorted by runtime'
+                                });
+                              },
+                              hoverIndicator: 'accent-1'
+                            },
+                            {
+                              label: 'genre',
+                              onClick: () => {
+                                this.setState({
+                                  notification: true,
+                                  notificationText:
+                                    'film lot successfully sorted by genre'
+                                });
+                              },
+                              hoverIndicator: 'accent-1'
+                            },
+                            {
+                              label: 'mpaa rating',
+                              onClick: () => {
+                                this.setState({
+                                  notification: true,
+                                  notificationText:
+                                    'film lot successfully sorted by mpaa rating'
+                                });
+                              },
+                              hoverIndicator: 'accent-1'
+                            },
+                            {
+                              label: 'reset',
+                              onClick: () => {
+                                this.setState({
+                                  notification: true,
+                                  notificationText:
+                                    'film lot successfully reset to original order'
+                                });
+                              },
+                              hoverIndicator: 'brand'
+                            }
                           ]}
                         />
                       </Box>
@@ -382,11 +493,7 @@ export default class HomePage extends Component {
                   />
                 ) : null}
                 {this.state.greeting ? (
-                  <Layer
-                    position="center"
-                    responsive={false}
-                    style={{ borderRadius: 30 }}
-                  >
+                  <Layer position="center" style={{ borderRadius: 30 }}>
                     <Box
                       background="layer"
                       justify="center"
@@ -418,7 +525,7 @@ export default class HomePage extends Component {
                           }
                         />
                         <Button
-                          label="continue collecting"
+                          label="continue"
                           icon={<Next />}
                           reverse
                           primary
@@ -428,12 +535,42 @@ export default class HomePage extends Component {
                     </Box>
                   </Layer>
                 ) : null}
+                {this.state.notification && (
+                  <Layer
+                    position="bottom"
+                    modal={false}
+                    margin={{ bottom: 'small' }}
+                    responsive={false}
+                    style={{ borderRadius: 30 }}
+                  >
+                    <Box
+                      align="center"
+                      direction="row"
+                      gap="small"
+                      justify="between"
+                      round
+                      elevation="medium"
+                      pad={{ vertical: 'xsmall', horizontal: 'small' }}
+                      background="accent-1"
+                    >
+                      <Box align="center" direction="row" gap="xsmall">
+                        <StatusGood />
+                        <Text>{this.state.notificationText}</Text>
+                      </Box>
+                      <Button
+                        focusIndicator={false}
+                        icon={<FormClose />}
+                        onClick={this.onNotificationClose}
+                      />
+                    </Box>
+                  </Layer>
+                )}
               </Box>
             )}
           </ResponsiveContext.Consumer>
         )}
         <Switch>
-          <Route exact path="/" component={Login} />
+          <Route exact path="/login" component={Login} />
         </Switch>
       </Router>
     );
