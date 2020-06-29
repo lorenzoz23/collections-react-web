@@ -54,9 +54,9 @@ export type movie = {
   plot: string;
   date: string;
   poster: string;
-  rating?: string;
-  cast?: string[];
-  crew?: string[];
+  rating: string;
+  runtime: number;
+  genre: string[];
   id: string;
 };
 
@@ -147,6 +147,9 @@ export default class HomePage extends Component {
                 plot: movie.plot,
                 date: movie.date,
                 poster: movie.poster,
+                rating: movie.rating,
+                runtime: movie.runtime,
+                genre: movie.genre,
                 id: movie.id
               };
               return entry;
@@ -171,13 +174,8 @@ export default class HomePage extends Component {
   };
 
   moviesAdded = (movies: movie[]) => {
-    let collection: movie[] = this.state.movies;
-
-    for (let i = 0; i < movies.length; i++) {
-      collection.push(movies[i]);
-    }
     this.setState({
-      movies: collection,
+      movies: movies,
       notification: true,
       notificationText: `${movies.length} movies added to your lot!`
     });
@@ -319,6 +317,7 @@ export default class HomePage extends Component {
                         />
                         <Box>
                           <AddTitle
+                            lot={this.state.movies}
                             uid={this.state.uid}
                             moviesAdded={(movies: movie[]) =>
                               this.moviesAdded(movies)
@@ -430,6 +429,7 @@ export default class HomePage extends Component {
                         onChange={(event) => this.handleSearch(event)}
                       />
                       <AddTitle
+                        lot={this.state.movies}
                         uid={this.state.uid}
                         moviesAdded={(movies: movie[]) =>
                           this.moviesAdded(movies)

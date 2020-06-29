@@ -54,6 +54,9 @@ export default class Collection extends Component<CollectionProps> {
       plot: '',
       date: '',
       poster: '',
+      rating: '',
+      runtime: 0,
+      genre: [],
       id: ''
     }
   };

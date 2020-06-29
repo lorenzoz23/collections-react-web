@@ -42,6 +42,9 @@ export default class MovieSearchResult extends Component<
       plot: '',
       date: '',
       poster: '',
+      rating: '',
+      runtime: 0,
+      genre: [],
       id: ''
     },
     numToAdd: 0,
@@ -63,6 +66,9 @@ export default class MovieSearchResult extends Component<
             plot: item.overview,
             date: item.release_date,
             poster: 'https://image.tmdb.org/t/p/w500' + item.poster_path,
+            rating: '',
+            runtime: 0,
+            genre: [],
             id: item.id
           };
           const newSearchResultMovie: searchResultMovie = {

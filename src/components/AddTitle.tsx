@@ -10,6 +10,7 @@ import { movie } from './HomePage';
 interface AddTitleProps {
   moviesAdded(movies: movie[]): void;
   uid: string;
+  lot: movie[];
 }
 
 export default class AddTitle extends Component<AddTitleProps> {
@@ -46,37 +47,35 @@ export default class AddTitle extends Component<AddTitleProps> {
   moviesAdded = (movies: movie[]) => {
     this.closeAddTitle();
 
-    let userCollection: any[] = [];
-    let lot: movie[] = [];
-
-    const userRef = firebase.database().ref('/users/' + this.props.uid);
-    userRef.once('value').then((snapshot) => {
-      userCollection = snapshot.val() && snapshot.val().collection;
-      if (userCollection) {
-        lot = userCollection.map((movie) => {
-          const entry: movie = {
-            name: movie.name,
-            plot: movie.plot,
-            date: movie.date,
-            poster: movie.poster,
-            id: movie.id
-          };
-          return entry;
+    movies.forEach((element) => {
+      fetch(
+        `https://api.themoviedb.org/3/movie/${element.id}?api_key=${process.env.REACT_APP_TMDB_API_KEY}&language=en-US&append_to_response=release_dates`
+      )
+        .then((resp) => resp.json())
+        .then((data) => {
+          element.rating = data.release_dates.results.map((item: any) => {
+            if (item.iso_3166_1 === 'US') {
+              return item.release_dates[0].certification;
+            }
+          });
+          element.runtime = data.runtime;
+          element.genre = data.genres.map((genre: any) => {
+            return genre.name;
+          });
+          this.props.lot.push(element);
+          console.log(data);
+        })
+        .catch((err) => {
+          console.log(err);
         });
-        movies.forEach((element) => {
-          lot.push(element);
-        });
-        userRef.set({
-          collection: lot
-        });
-      } else {
-        userRef.set({
-          collection: movies
-        });
-      }
     });
 
-    this.props.moviesAdded(movies);
+    const userRef = firebase.database().ref('/users/' + this.props.uid);
+    userRef.set({
+      collection: this.props.lot
+    });
+
+    this.props.moviesAdded(this.props.lot);
   };
 
   render() {
