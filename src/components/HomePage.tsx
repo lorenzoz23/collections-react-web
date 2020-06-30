@@ -58,6 +58,7 @@ export type movie = {
   runtime: number;
   genre: string[];
   id: string;
+  key?: string;
 };
 
 export default class HomePage extends Component {
@@ -120,7 +121,6 @@ export default class HomePage extends Component {
     if (this.state.uid === '' && !remember) {
       this.setState({ invalidRoute: true });
     } else {
-      let userCollection: any[] = [];
       let lot: movie[] = [];
       let name: string = '';
       let uid =
@@ -131,53 +131,60 @@ export default class HomePage extends Component {
       const greeting = localStorage.getItem('greeting') || 'show';
       const showGreeting = greeting === 'show' ? true : false;
 
-      firebase
-        .database()
-        .ref('/users/' + uid)
-        .once('value')
-        .then((snapshot) => {
-          const displayName =
-            firebase.auth().currentUser!.displayName || 'stranger';
-          userCollection = snapshot.val() && snapshot.val().collection;
-          name = (snapshot.val() && snapshot.val().name) || displayName;
-          if (userCollection) {
-            lot = userCollection.map((movie) => {
-              const entry: movie = {
-                name: movie.name,
-                plot: movie.plot,
-                date: movie.date,
-                poster: movie.poster,
-                rating: movie.rating,
-                runtime: movie.runtime,
-                genre: movie.genre,
-                id: movie.id
-              };
-              return entry;
-            });
-            this.setState({
-              movies: lot,
-              loading: false,
-              greeting: showGreeting,
-              name: name.toLowerCase(),
-              uid: uid
-            });
-          } else {
-            this.setState({
-              name: name.toLowerCase(),
-              loading: false,
-              greeting: showGreeting,
-              uid: uid
-            });
-          }
+      const userRef = firebase.database().ref('users/' + uid);
+      const nameRef = userRef.child('name');
+      nameRef.once('value').then((snapshot) => {
+        const displayName =
+          firebase.auth().currentUser!.displayName || 'stranger';
+        name = (snapshot.val() && snapshot.val().name) || displayName;
+      });
+
+      const collectionRef = userRef.child('collection');
+      collectionRef.once('value', (snapshot) => {
+        snapshot.forEach((childSnapshot) => {
+          const childKey = childSnapshot.key!;
+          const movie = childSnapshot.val().movie;
+          const entry: movie = {
+            name: movie.name,
+            plot: movie.plot,
+            date: movie.date,
+            poster: movie.poster,
+            rating: movie.rating,
+            runtime: movie.runtime,
+            genre: movie.genre,
+            id: movie.id,
+            key: childKey
+          };
+          lot.push(entry);
         });
+        this.setState({
+          movies: lot,
+          loading: false,
+          greeting: showGreeting,
+          name: name.toLowerCase(),
+          uid: uid
+        });
+      });
     }
   };
 
   moviesAdded = (movies: movie[]) => {
+    let lot: movie[] = this.state.movies;
+    const userRef = firebase.database().ref('users/' + this.state.uid);
+    const collectionRef = userRef.child('collection');
+    for (let i = 0; i < movies.length; i++) {
+      const newMovieRef = collectionRef.push();
+      newMovieRef.set({ movie: movies[i] });
+      lot.push(movies[i]);
+    }
+    console.log(lot);
+
     this.setState({
-      movies: movies,
+      movies: lot,
       notification: true,
-      notificationText: `${movies.length} movies added to your lot!`
+      notificationText: `${movies.length} ${
+        movies.length === 1 ? 'movie' : 'movies'
+      } added to your lot!`
     });
   };
 
@@ -237,10 +244,20 @@ export default class HomePage extends Component {
       }
     }
 
-    const userRef = firebase.database().ref('/users/' + this.state.uid);
-    userRef.set({
-      collection: newLot
+    const userRef = firebase.database().ref('users/' + this.state.uid);
+    const collectionRef = userRef.child('collection');
+    collectionRef.once('value', (snapshot) => {
+      snapshot.forEach((childSnapshot) => {
+        const childKey = childSnapshot.key!;
+        const movie = childSnapshot.val().movie;
+
+        if (movie.id === id) {
+          collectionRef.child(childKey).remove();
+          return true;
+        }
+      });
     });
+
     this.setState({
       movies: newLot,
       notification: true,
@@ -311,14 +328,14 @@ export default class HomePage extends Component {
                         <TextInput
                           value={this.state.searchVal}
                           title="search your film lot!"
-                          placeholder={`search ${this.state.movies.length} films...`}
+                          placeholder={`search ${this.state.movies.length} ${
+                            this.state.movies.length === 1 ? 'film' : 'films'
+                          }...`}
                           icon={<Search />}
                           onChange={(event) => this.handleSearch(event)}
                         />
                         <Box>
                           <AddTitle
-                            lot={this.state.movies}
-                            uid={this.state.uid}
                             moviesAdded={(movies: movie[]) =>
                               this.moviesAdded(movies)
                             }
@@ -429,8 +446,6 @@ export default class HomePage extends Component {
                         onChange={(event) => this.handleSearch(event)}
                       />
                       <AddTitle
-                        lot={this.state.movies}
-                        uid={this.state.uid}
                         moviesAdded={(movies: movie[]) =>
                           this.moviesAdded(movies)
                         }
@@ -525,9 +540,10 @@ export default class HomePage extends Component {
                           }
                         />
                         <Button
-                          label="continue"
+                          hoverIndicator="neutral-3"
+                          alignSelf="center"
+                          style={{ borderRadius: 30 }}
                           icon={<Next />}
-                          reverse
                           primary
                           onClick={this.dismissGreeting}
                         />

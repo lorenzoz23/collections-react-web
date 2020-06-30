@@ -245,6 +245,7 @@ export default class MovieSearchResult extends Component<
                 ) : (
                   this.state.movieList.movies.map((item) => (
                     <Box
+                      key={item.movie.id}
                       height={{ min: 'small', max: 'small' }}
                       pad="small"
                       direction="row"

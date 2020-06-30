@@ -6,6 +6,7 @@ import {
   Switch,
   Route
 } from 'react-router-dom';
+import { motion } from 'framer-motion';
 
 import HomePage from './HomePage';
 import LoginButtons from './LoginButtons';
@@ -94,16 +95,38 @@ export default class Login extends Component {
                   alignSelf={this.state.width < 500 ? 'center' : 'start'}
                   pad={{ left: 'medium' }}
                 >
-                  <Heading color="#FF6C88">cinelot</Heading>
+                  <motion.div
+                    drag
+                    dragConstraints={{
+                      top: -10,
+                      left: -10,
+                      right: 500,
+                      bottom: 500
+                    }}
+                  >
+                    <Heading color="#FF6C88">cinelot</Heading>
+                  </motion.div>
                 </Box>
-                <Box align="center" justify="center">
-                  <LoginButtons handleLogin={this.handleLogin} />
-                </Box>
+                <motion.div>
+                  <Box align="center" justify="center">
+                    <LoginButtons handleLogin={this.handleLogin} />
+                  </Box>
+                </motion.div>
                 {this.state.width >= 500 ? (
                   <Box alignSelf="end" pad={{ right: 'medium' }}>
-                    <Heading color="#FF6C88" level="2">
-                      your film collection on the go
-                    </Heading>
+                    <motion.div
+                      drag
+                      dragConstraints={{
+                        top: -500,
+                        left: -500,
+                        right: 10,
+                        bottom: 10
+                      }}
+                    >
+                      <Heading color="#FF6C88" level="2">
+                        your film collection on the go
+                      </Heading>
+                    </motion.div>
                   </Box>
                 ) : (
                   <Box alignSelf="center">

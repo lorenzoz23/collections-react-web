@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { ResponsiveContext, Box, Button, CheckBox } from 'grommet';
+import { motion } from 'framer-motion';
 import { MailOption } from 'grommet-icons';
+
 import LoginEmail from './LoginEmail';
 import LoginGoogle from './LoginGoogle';
 import LoginFacebook from './LoginFacebook';
@@ -49,16 +51,20 @@ export default class LoginButtons extends Component<LoginButtonProps> {
               />
             ) : (
               <Box gap="medium">
-                <Button
-                  primary
-                  size={size === 'small' ? 'medium' : 'large'}
-                  label="continue with email"
-                  icon={<MailOption />}
-                  reverse
-                  onClick={() => {
-                    this.setState({ show: true });
-                  }}
-                />
+                <motion.div whileTap={{ scale: 0.9 }}>
+                  <Box>
+                    <Button
+                      primary
+                      size={size === 'small' ? 'medium' : 'large'}
+                      label="continue with email"
+                      icon={<MailOption />}
+                      reverse
+                      onClick={() => {
+                        this.setState({ show: true });
+                      }}
+                    />
+                  </Box>
+                </motion.div>
                 <LoginGoogle
                   handleLogin={this.props.handleLogin}
                   rememberMe={this.state.rememberMe}
@@ -67,15 +73,17 @@ export default class LoginButtons extends Component<LoginButtonProps> {
                   handleLogin={this.props.handleLogin}
                   rememberMe={this.state.rememberMe}
                 />
-                <Box align="center">
-                  <CheckBox
-                    label="remember me?"
-                    checked={this.state.rememberMe}
-                    onChange={(event) =>
-                      this.setState({ rememberMe: event.target.checked })
-                    }
-                  />
-                </Box>
+                <motion.div whileTap={{ scale: 0.9 }}>
+                  <Box align="center">
+                    <CheckBox
+                      label="remember me?"
+                      checked={this.state.rememberMe}
+                      onChange={(event) =>
+                        this.setState({ rememberMe: event.target.checked })
+                      }
+                    />
+                  </Box>
+                </motion.div>
               </Box>
             )}
           </Box>

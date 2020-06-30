@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
 import { Box, Button, Heading, TextInput, Layer, FormField } from 'grommet';
-import firebase from 'firebase/app';
-import 'firebase/database';
 import { Add, FormNextLink } from 'grommet-icons';
 
 import MovieSearchResult from './MovieSearchResult';
@@ -9,8 +7,6 @@ import { movie } from './HomePage';
 
 interface AddTitleProps {
   moviesAdded(movies: movie[]): void;
-  uid: string;
-  lot: movie[];
 }
 
 export default class AddTitle extends Component<AddTitleProps> {
@@ -44,38 +40,53 @@ export default class AddTitle extends Component<AddTitleProps> {
     });
   };
 
-  moviesAdded = (movies: movie[]) => {
-    this.closeAddTitle();
-
-    movies.forEach((element) => {
-      fetch(
-        `https://api.themoviedb.org/3/movie/${element.id}?api_key=${process.env.REACT_APP_TMDB_API_KEY}&language=en-US&append_to_response=release_dates`
-      )
-        .then((resp) => resp.json())
-        .then((data) => {
-          element.rating = data.release_dates.results.map((item: any) => {
-            if (item.iso_3166_1 === 'US') {
-              return item.release_dates[0].certification;
+  updateMovieFields = async (movies: movie[]) => {
+    let updatedMovies: movie[] = [];
+    for (let n = 0; n < movies.length; n++) {
+      const response = await fetch(
+        `https://api.themoviedb.org/3/movie/${movies[n].id}?api_key=${process.env.REACT_APP_TMDB_API_KEY}&language=en-US&append_to_response=release_dates`
+      );
+      const data = await response.json();
+      let rating: string = '?';
+      let found: boolean = false;
+      for (let i = 0; i < data.release_dates.results.length; i++) {
+        if (!found) {
+          console.log(data.release_dates.results[i]);
+          if (data.release_dates.results[i].iso_3166_1 === 'US') {
+            for (
+              let j = 0;
+              j < data.release_dates.results[i].release_dates.length;
+              j++
+            ) {
+              console.log(data.release_dates.results[i].release_dates);
+              if (
+                data.release_dates.results[i].release_dates[j].certification
+                  .length > 0
+              ) {
+                rating =
+                  data.release_dates.results[i].release_dates[j].certification;
+                found = true;
+                break;
+              }
             }
-          });
-          element.runtime = data.runtime;
-          element.genre = data.genres.map((genre: any) => {
-            return genre.name;
-          });
-          this.props.lot.push(element);
-          console.log(data);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    });
+          }
+        } else break;
+      }
+      movies[n].rating = rating;
+      movies[n].runtime = data.runtime;
+      movies[n].genre = data.genres.map((genre: any) => {
+        return genre.name;
+      });
+      updatedMovies.push(movies[n]);
+    }
+    return updatedMovies;
+  };
 
-    const userRef = firebase.database().ref('/users/' + this.props.uid);
-    userRef.set({
-      collection: this.props.lot
-    });
+  moviesAdded = async (movies: movie[]) => {
+    this.closeAddTitle();
+    const updatedMovies: movie[] = await this.updateMovieFields(movies);
 
-    this.props.moviesAdded(this.props.lot);
+    this.props.moviesAdded(updatedMovies);
   };
 
   render() {

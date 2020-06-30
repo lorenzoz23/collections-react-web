@@ -11,6 +11,12 @@ import {
 import { Next, Previous } from 'grommet-icons';
 import firebase from 'firebase/app';
 import 'firebase/auth';
+import { motion } from 'framer-motion';
+
+const variants = {
+  visible: { opacity: 1 },
+  hidden: { opacity: 0 }
+};
 
 interface SignInProps {
   handleLogin(): void;
@@ -91,80 +97,94 @@ export default class SignIn extends Component<SignInProps> {
     return (
       <ResponsiveContext.Consumer>
         {(size) => (
-          <Box>
-            <Form
-              value={this.state}
-              onSubmit={() =>
-                this.handleLogin(this.state.email, this.state.password)
-              }
-              onChange={(nextFormValue: {}) => this.setState(nextFormValue)}
-            >
-              <FormField
-                label="email"
-                required
-                name="email"
-                error={
-                  this.state.errorMessage[0] === 'email'
-                    ? this.state.errorMessage[1]
-                    : ''
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={variants}
+            transition={{ ease: 'easeOut', duration: 2 }}
+          >
+            <Box>
+              <Form
+                value={this.state}
+                onSubmit={() =>
+                  this.handleLogin(this.state.email, this.state.password)
                 }
+                onChange={(nextFormValue: {}) => this.setState(nextFormValue)}
               >
-                <TextInput
+                <FormField
+                  label="email"
+                  required
                   name="email"
-                  size={size === 'small' ? 'medium' : 'xlarge'}
-                  value={this.state.email}
-                  onChange={(e: any) => {
-                    this.setState({ email: e.target.value });
-                  }}
-                />
-              </FormField>
-              <FormField
-                label="password"
-                required
-                name="password"
-                error={
-                  this.state.errorMessage[0] === 'password'
-                    ? this.state.errorMessage[1]
-                    : ''
-                }
-              >
-                <TextInput
+                  error={
+                    this.state.errorMessage[0] === 'email'
+                      ? this.state.errorMessage[1]
+                      : ''
+                  }
+                >
+                  <TextInput
+                    name="email"
+                    size={size === 'small' ? 'medium' : 'xlarge'}
+                    value={this.state.email}
+                    onChange={(e: any) => {
+                      this.setState({ email: e.target.value });
+                    }}
+                  />
+                </FormField>
+                <FormField
+                  label="password"
+                  required
                   name="password"
-                  size={size === 'small' ? 'medium' : 'xlarge'}
-                  type="password"
-                  value={this.state.password}
-                  onChange={(e: any) => {
-                    this.setState({ password: e.target.value });
-                  }}
-                />
-              </FormField>
-              <Box direction="row" justify="between" pad="small" align="center">
-                <Button
-                  onClick={() => this.props.goBack()}
-                  icon={<Previous />}
-                  title="back"
-                  style={{ borderRadius: 30 }}
-                  hoverIndicator="accent-1"
-                  size={size === 'small' ? 'small' : 'medium'}
-                />
-                <Button
-                  icon={<Next />}
-                  type="submit"
-                  style={{ borderRadius: 30 }}
-                  title="continue"
-                  hoverIndicator="accent-1"
-                  size={size === 'small' ? 'small' : 'medium'}
-                />
-              </Box>
-              <Box align="center">
-                <CheckBox
-                  label="remember me?"
-                  checked={this.state.rememberMe}
-                  onChange={(event) => this.handleRemember(event)}
-                />
-              </Box>
-            </Form>
-          </Box>
+                  error={
+                    this.state.errorMessage[0] === 'password'
+                      ? this.state.errorMessage[1]
+                      : ''
+                  }
+                >
+                  <TextInput
+                    name="password"
+                    size={size === 'small' ? 'medium' : 'xlarge'}
+                    type="password"
+                    value={this.state.password}
+                    onChange={(e: any) => {
+                      this.setState({ password: e.target.value });
+                    }}
+                  />
+                </FormField>
+                <Box
+                  direction="row"
+                  justify="between"
+                  pad="small"
+                  align="center"
+                >
+                  <Button
+                    onClick={() => this.props.goBack()}
+                    icon={<Previous />}
+                    title="back"
+                    style={{ borderRadius: 30 }}
+                    hoverIndicator="accent-1"
+                    size={size === 'small' ? 'small' : 'medium'}
+                  />
+                  <Button
+                    icon={<Next />}
+                    type="submit"
+                    style={{ borderRadius: 30 }}
+                    title="continue"
+                    hoverIndicator="accent-1"
+                    size={size === 'small' ? 'small' : 'medium'}
+                  />
+                </Box>
+                <motion.div whileTap={{ scale: 0.9 }}>
+                  <Box align="center">
+                    <CheckBox
+                      label="remember me?"
+                      checked={this.state.rememberMe}
+                      onChange={(event) => this.handleRemember(event)}
+                    />
+                  </Box>
+                </motion.div>
+              </Form>
+            </Box>
+          </motion.div>
         )}
       </ResponsiveContext.Consumer>
     );

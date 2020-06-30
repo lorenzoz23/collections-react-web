@@ -3,6 +3,7 @@ import { ResponsiveContext, Box, Button } from 'grommet';
 import { Facebook } from 'grommet-icons';
 import firebase from 'firebase/app';
 import 'firebase/auth';
+import { motion } from 'framer-motion';
 
 interface LoginFacebookProps {
   handleLogin(): void;
@@ -45,17 +46,19 @@ export default class LoginFacebook extends Component<LoginFacebookProps> {
     return (
       <ResponsiveContext.Consumer>
         {(size) => (
-          <Box>
-            <Button
-              primary
-              color="#006AFF"
-              size={size === 'small' ? 'medium' : 'large'}
-              label="continue with facebook"
-              icon={<Facebook color="#00E0FF" />}
-              reverse
-              onClick={() => this.signInWithFb()}
-            />
-          </Box>
+          <motion.div whileTap={{ scale: 0.9 }}>
+            <Box>
+              <Button
+                primary
+                color="#006AFF"
+                size={size === 'small' ? 'medium' : 'large'}
+                label="continue with facebook"
+                icon={<Facebook color="#00E0FF" />}
+                reverse
+                onClick={() => this.signInWithFb()}
+              />
+            </Box>
+          </motion.div>
         )}
       </ResponsiveContext.Consumer>
     );

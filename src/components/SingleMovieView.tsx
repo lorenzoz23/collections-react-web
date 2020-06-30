@@ -39,6 +39,7 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
   };
 
   render() {
+    const numGenre = this.state.movieView.movie.genre.length;
     return (
       <Box gap="small" pad="small" background="movieSearchResult" round>
         <Box direction="row" justify="start" gap="medium">
@@ -56,12 +57,42 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
           />
           <Box justify="evenly" alignSelf="end">
             <Heading level="3">{this.state.movieView.movie.name}</Heading>
-            <Box gap="small">
-              <Text weight="bold">
-                {this.state.movieView.movie.date.substring(0, 4)}
-              </Text>
-              <Text size="small">{this.state.movieView.movie.plot}</Text>
-            </Box>
+            {this.props.add ? (
+              <Box gap="small">
+                <Text weight="bold">
+                  {this.state.movieView.movie.date.substring(0, 4)}
+                </Text>
+                <Text size="small">{this.state.movieView.movie.plot}</Text>
+              </Box>
+            ) : (
+              <Box gap="small">
+                <Box direction="row" border="between" gap="medium">
+                  <Box direction="row" gap="xsmall">
+                    {this.state.movieView.movie.genre.map(
+                      (genre: string, i: number) => (
+                        <Text weight="bold" key={genre}>
+                          {numGenre === i + 1 ? genre : `${genre},`}
+                        </Text>
+                      )
+                    )}
+                  </Box>
+                  <Box direction="row" gap="small">
+                    <Text weight="bold">
+                      {this.state.movieView.movie.date.substring(0, 4)}
+                    </Text>
+                    {this.state.movieView.movie.rating !== '?' ? (
+                      <Text weight="bold">
+                        {this.state.movieView.movie.rating}
+                      </Text>
+                    ) : null}
+                    <Text weight="bold">
+                      {this.state.movieView.movie.runtime} min
+                    </Text>
+                  </Box>
+                </Box>
+                <Text size="small">{this.state.movieView.movie.plot}</Text>
+              </Box>
+            )}
           </Box>
         </Box>
         {this.props.add ? (
