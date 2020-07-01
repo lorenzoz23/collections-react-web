@@ -91,6 +91,7 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
               )}
               <Box
                 justify="evenly"
+                align={size === 'small' ? 'center' : undefined}
                 alignSelf={size === 'small' ? 'center' : 'end'}
               >
                 <Heading
@@ -117,6 +118,9 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                       {this.state.movieView.movie.date.substring(0, 4)}
                     </Text>
                     <Text
+                      margin={{
+                        horizontal: size === 'small' ? 'small' : 'none'
+                      }}
                       size="small"
                       textAlign={size === 'small' ? 'center' : undefined}
                       color={
@@ -200,6 +204,9 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                           ? 'black'
                           : undefined
                       }
+                      margin={{
+                        horizontal: size === 'small' ? 'small' : 'none'
+                      }}
                     >
                       {this.state.movieView.movie.plot}
                     </Text>
@@ -216,7 +223,7 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                     ? { position: 'fixed', bottom: 0, left: 0, width: '100%' }
                     : undefined
                 }
-                pad={size === 'small' ? 'small' : 'none'}
+                pad={size === 'small' ? 'medium' : 'none'}
               >
                 <Button
                   title="back"
@@ -228,7 +235,7 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
               <Box
                 direction="row"
                 justify="between"
-                pad={size === 'small' ? 'small' : 'none'}
+                pad={size === 'small' ? 'medium' : 'none'}
                 style={
                   size === 'small'
                     ? { position: 'fixed', bottom: 0, left: 0, width: '100%' }

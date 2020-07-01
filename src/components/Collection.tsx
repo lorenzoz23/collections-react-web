@@ -7,7 +7,7 @@ import SingleMovieView from './SingleMovieView';
 
 const columns: Record<string, string[]> = {
   small: ['auto', 'auto', 'auto'],
-  medium: ['auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto'],
+  medium: ['auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto'],
   large: [
     'auto',
     'auto',
@@ -44,6 +44,7 @@ interface CollectionProps {
   searchVal: string;
   handleDelete(movieId: string): void;
   loading: boolean;
+  width: number;
 }
 
 export default class Collection extends Component<CollectionProps> {
@@ -146,7 +147,11 @@ export default class Collection extends Component<CollectionProps> {
     return (
       <Grid
         gap="small"
-        columns={columns[size]}
+        columns={
+          this.props.width >= 500 && size === 'small'
+            ? columns['medium']
+            : columns[size]
+        }
         rows={this.getRows(size)}
         areas={undefined}
         pad="small"

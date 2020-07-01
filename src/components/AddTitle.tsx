@@ -101,7 +101,7 @@ export default class AddTitle extends Component<AddTitleProps> {
     return (
       <ResponsiveContext.Consumer>
         {(size) => (
-          <Box title="add a film!" align="center" flex>
+          <Box title="add a film!" align="center">
             <Button
               focusIndicator={false}
               hoverIndicator="accent-1"
@@ -136,6 +136,7 @@ export default class AddTitle extends Component<AddTitleProps> {
                     align="center"
                     justify="center"
                     overflow="auto"
+                    fill
                     round={size === 'small' ? false : true}
                   >
                     <Heading textAlign="center" level="3">

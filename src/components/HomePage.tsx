@@ -77,6 +77,7 @@ export default class HomePage extends Component {
     greetingChecked: boolean;
     notification: boolean;
     notificationText: string;
+    width: number;
   } = {
     uid: '',
     name: '',
@@ -91,7 +92,8 @@ export default class HomePage extends Component {
     greeting: false,
     greetingChecked: false,
     notification: false,
-    notificationText: ''
+    notificationText: '',
+    width: 0
   };
 
   constructor(props: any) {
@@ -110,7 +112,8 @@ export default class HomePage extends Component {
       greeting: false,
       greetingChecked: false,
       notification: false,
-      notificationText: ''
+      notificationText: '',
+      width: 0
     };
     console.log('uid: ' + this.state.uid);
     console.log('name: ' + this.state.name);
@@ -121,6 +124,9 @@ export default class HomePage extends Component {
     if (this.state.uid === '' && !remember) {
       this.setState({ invalidRoute: true });
     } else {
+      this.updateWindowDimensions();
+      window.addEventListener('resize', this.updateWindowDimensions);
+
       let lot: movie[] = [];
       let name: string = '';
       let uid =
@@ -166,6 +172,14 @@ export default class HomePage extends Component {
         });
       });
     }
+  };
+
+  componentWillUnmount = () => {
+    window.removeEventListener('resize', this.updateWindowDimensions);
+  };
+
+  updateWindowDimensions = () => {
+    this.setState({ width: window.innerWidth });
   };
 
   moviesAdded = (movies: movie[]) => {
@@ -572,6 +586,7 @@ export default class HomePage extends Component {
                     searchVal={this.state.searchVal}
                     handleDelete={(id: string) => this.handleDeleteMovie(id)}
                     loading={this.state.loading}
+                    width={this.state.width}
                   />
                 </Box>
                 <FooterComponent />
