@@ -20,8 +20,9 @@ export default class LoginGoogle extends Component<LoginGoogleProps> {
     await firebase.auth().setPersistence(type);
     let result: any;
     if (this.props.size === 'small') {
-      await firebase.auth().signInWithRedirect(providerGoogle);
-      result = await firebase.auth().getRedirectResult();
+      // await firebase.auth().signInWithRedirect(providerGoogle);
+      // result = await firebase.auth().getRedirectResult();
+      result = await firebase.auth().signInWithPopup(providerGoogle);
     } else {
       result = await firebase.auth().signInWithPopup(providerGoogle);
     }
