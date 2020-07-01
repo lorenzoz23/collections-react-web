@@ -42,6 +42,7 @@ export default class Login extends Component {
   componentDidMount = () => {
     this.updateWindowDimensions();
     window.addEventListener('resize', this.updateWindowDimensions);
+    this.handleLogin();
   };
 
   componentWillUnmount = () => {
@@ -88,30 +89,28 @@ export default class Login extends Component {
                     : 'medium'
                 }
                 overflow="hidden"
-                justify="between"
+                justify={this.state.width >= 500 ? 'between' : 'evenly'}
                 round={size === 'small' ? true : false}
               >
                 <Box
                   alignSelf={this.state.width < 500 ? 'center' : 'start'}
-                  pad={{ left: 'medium' }}
+                  pad={{ left: this.state.width >= 500 ? 'medium' : 'none' }}
                 >
                   <motion.div
                     drag
                     dragConstraints={{
-                      top: -10,
-                      left: -10,
-                      right: 500,
-                      bottom: 500
+                      top: this.state.width >= 500 ? -10 : -50,
+                      left: this.state.width >= 500 ? -10 : -50,
+                      right: this.state.width >= 500 ? 500 : 50,
+                      bottom: this.state.width >= 500 ? 500 : 50
                     }}
                   >
                     <Heading color="#FF6C88">cinelot</Heading>
                   </motion.div>
                 </Box>
-                <motion.div>
-                  <Box align="center" justify="center">
-                    <LoginButtons handleLogin={this.handleLogin} />
-                  </Box>
-                </motion.div>
+                <Box align="center" justify="center">
+                  <LoginButtons handleLogin={this.handleLogin} />
+                </Box>
                 {this.state.width >= 500 ? (
                   <Box alignSelf="end" pad={{ right: 'medium' }}>
                     <motion.div
@@ -130,9 +129,19 @@ export default class Login extends Component {
                   </Box>
                 ) : (
                   <Box alignSelf="center">
-                    <Heading color="#FF6C88" level="3">
-                      your films on the go
-                    </Heading>
+                    <motion.div
+                      drag
+                      dragConstraints={{
+                        top: -50,
+                        left: -50,
+                        right: 50,
+                        bottom: 50
+                      }}
+                    >
+                      <Heading color="#FF6C88" level="3">
+                        your films on the go
+                      </Heading>
+                    </motion.div>
                   </Box>
                 )}
               </Box>

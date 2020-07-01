@@ -50,41 +50,52 @@ export default class LoginButtons extends Component<LoginButtonProps> {
                 }
               />
             ) : (
-              <Box gap="medium">
-                <motion.div whileTap={{ scale: 0.9 }}>
-                  <Box>
-                    <Button
-                      primary
-                      size={size === 'small' ? 'medium' : 'large'}
-                      label="continue with email"
-                      icon={<MailOption />}
-                      reverse
-                      onClick={() => {
-                        this.setState({ show: true });
-                      }}
-                    />
-                  </Box>
-                </motion.div>
-                <LoginGoogle
-                  handleLogin={this.props.handleLogin}
-                  rememberMe={this.state.rememberMe}
-                />
-                <LoginFacebook
-                  handleLogin={this.props.handleLogin}
-                  rememberMe={this.state.rememberMe}
-                />
-                <motion.div whileTap={{ scale: 0.9 }}>
-                  <Box align="center">
-                    <CheckBox
-                      label="remember me?"
-                      checked={this.state.rememberMe}
-                      onChange={(event) =>
-                        this.setState({ rememberMe: event.target.checked })
-                      }
-                    />
-                  </Box>
-                </motion.div>
-              </Box>
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ rotate: 360, scale: 1 }}
+                transition={{
+                  type: 'spring',
+                  stiffness: 100
+                }}
+              >
+                <Box gap="medium">
+                  <motion.div whileTap={{ scale: 0.9 }}>
+                    <Box>
+                      <Button
+                        primary
+                        size={size === 'small' ? 'medium' : 'large'}
+                        label="continue with email"
+                        icon={<MailOption />}
+                        reverse
+                        onClick={() => {
+                          this.setState({ show: true });
+                        }}
+                      />
+                    </Box>
+                  </motion.div>
+                  <LoginGoogle
+                    size={size}
+                    handleLogin={this.props.handleLogin}
+                    rememberMe={this.state.rememberMe}
+                  />
+                  <LoginFacebook
+                    size={size}
+                    handleLogin={this.props.handleLogin}
+                    rememberMe={this.state.rememberMe}
+                  />
+                  <motion.div whileTap={{ scale: 0.9 }}>
+                    <Box align="center">
+                      <CheckBox
+                        label="remember me?"
+                        checked={this.state.rememberMe}
+                        onChange={(event) =>
+                          this.setState({ rememberMe: event.target.checked })
+                        }
+                      />
+                    </Box>
+                  </motion.div>
+                </Box>
+              </motion.div>
             )}
           </Box>
         )}

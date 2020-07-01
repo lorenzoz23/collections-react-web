@@ -1,6 +1,14 @@
 import React, { Component } from 'react';
-import { Box, Button, Heading, TextInput, Layer, FormField } from 'grommet';
-import { Add, FormNextLink } from 'grommet-icons';
+import {
+  Box,
+  Button,
+  Heading,
+  TextInput,
+  Layer,
+  FormField,
+  ResponsiveContext
+} from 'grommet';
+import { Add, FormNextLink, FormClose } from 'grommet-icons';
 
 import MovieSearchResult from './MovieSearchResult';
 import { movie } from './HomePage';
@@ -91,93 +99,109 @@ export default class AddTitle extends Component<AddTitleProps> {
 
   render() {
     return (
-      <Box title="add a film!" align="center">
-        <Button
-          focusIndicator={false}
-          hoverIndicator="accent-1"
-          onClick={() => {
-            this.setState({ visible: true });
-          }}
-          icon={<Add />}
-        />
-        {this.state.visible ? (
-          <Layer
-            style={{ borderRadius: 30 }}
-            position="center"
-            responsive={false}
-            onClickOutside={() => {
-              this.setState({ visible: false });
-            }}
-          >
-            {this.state.searched ? (
-              <MovieSearchResult
-                title={this.state.searchTitle}
-                year={this.state.searchYear}
-                closeAdd={this.closeAddTitle}
-                closeResult={this.closeMovieSearchResult}
-                moviesAdded={(movies: movie[]) => this.moviesAdded(movies)}
-              />
-            ) : (
-              <Box
-                flex
-                pad="medium"
-                width="medium"
-                background="layer"
-                align="center"
-                justify="center"
-                overflow="auto"
-                round
+      <ResponsiveContext.Consumer>
+        {(size) => (
+          <Box title="add a film!" align="center">
+            <Button
+              size={size !== 'small' ? 'medium' : 'small'}
+              focusIndicator={false}
+              hoverIndicator="accent-1"
+              onClick={() => {
+                this.setState({ visible: true });
+              }}
+              icon={<Add size={size !== 'small' ? 'medium' : 'small'} />}
+            />
+            {this.state.visible ? (
+              <Layer
+                style={{ borderRadius: size === 'small' ? 0 : 30 }}
+                position="center"
+                responsive={size === 'small' ? true : false}
+                onClickOutside={() => {
+                  this.setState({ visible: false });
+                }}
               >
-                <Heading textAlign="center" level="3">
-                  search a film to add!
-                </Heading>
-                <Box gap="small">
-                  <FormField label="title">
-                    <TextInput
-                      placeholder="parasite"
-                      value={this.state.searchTitle}
-                      onChange={(e) => {
-                        this.setState({
-                          searchTitle: e.target.value
-                        });
-                      }}
-                    />
-                  </FormField>
-                  <FormField label="year">
-                    <TextInput
-                      title="recommended for better results"
-                      placeholder="2019"
-                      value={this.state.searchYear}
-                      onChange={(e) => {
-                        this.setState({
-                          searchYear: e.target.value
-                        });
-                      }}
-                    />
-                  </FormField>
-                </Box>
-                <Box pad={{ top: 'medium' }}>
-                  <Button
-                    style={{ borderRadius: 100 }}
-                    size="small"
-                    hoverIndicator={{
-                      color: 'accent-1'
-                    }}
-                    primary
-                    disabled={
-                      this.state.searchTitle.length === 0 ? true : false
-                    }
-                    icon={<FormNextLink />}
-                    onClick={() => {
-                      this.search();
-                    }}
+                {this.state.searched ? (
+                  <MovieSearchResult
+                    title={this.state.searchTitle}
+                    year={this.state.searchYear}
+                    closeAdd={this.closeAddTitle}
+                    closeResult={this.closeMovieSearchResult}
+                    moviesAdded={(movies: movie[]) => this.moviesAdded(movies)}
                   />
-                </Box>
-              </Box>
-            )}
-          </Layer>
-        ) : null}
-      </Box>
+                ) : (
+                  <Box
+                    flex
+                    pad="medium"
+                    width="medium"
+                    background="layer"
+                    align="center"
+                    justify="center"
+                    overflow="auto"
+                    round={size === 'small' ? false : true}
+                  >
+                    <Heading textAlign="center" level="3">
+                      search a film to add!
+                    </Heading>
+                    <Box gap="small">
+                      <FormField label="title">
+                        <TextInput
+                          placeholder="parasite"
+                          value={this.state.searchTitle}
+                          onChange={(e) => {
+                            this.setState({
+                              searchTitle: e.target.value
+                            });
+                          }}
+                        />
+                      </FormField>
+                      <FormField label="year">
+                        <TextInput
+                          title="recommended for better results"
+                          placeholder="2019"
+                          value={this.state.searchYear}
+                          onChange={(e) => {
+                            this.setState({
+                              searchYear: e.target.value
+                            });
+                          }}
+                        />
+                      </FormField>
+                    </Box>
+                    <Box
+                      pad={{ top: 'medium' }}
+                      gap={size === 'small' ? 'medium' : 'none'}
+                    >
+                      <Button
+                        style={{ borderRadius: 100 }}
+                        size="small"
+                        hoverIndicator={{
+                          color: 'accent-1'
+                        }}
+                        primary
+                        disabled={
+                          this.state.searchTitle.length === 0 ? true : false
+                        }
+                        icon={<FormNextLink />}
+                        onClick={() => {
+                          this.search();
+                        }}
+                      />
+                      {size === 'small' ? (
+                        <Button
+                          icon={<FormClose />}
+                          onClick={() => {
+                            this.setState({ visible: false });
+                          }}
+                        />
+                      ) : null}
+                    </Box>
+                  </Box>
+                )}
+              </Layer>
+            ) : null}
+          </Box>
+        )}
+      </ResponsiveContext.Consumer>
     );
   }
 }

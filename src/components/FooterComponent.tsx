@@ -11,7 +11,7 @@ import {
   Heading,
   Paragraph
 } from 'grommet';
-import { Multimedia, CircleQuestion } from 'grommet-icons';
+import { Multimedia, CircleQuestion, FormClose } from 'grommet-icons';
 
 export default class FooterComponent extends Component {
   state = {
@@ -31,7 +31,7 @@ export default class FooterComponent extends Component {
             }}
             gap="medium"
             background="footer"
-            justify={size !== 'small' ? 'between' : 'center'}
+            justify="between"
             height="10px"
           >
             <Box direction="row" align="center" gap="small">
@@ -49,26 +49,32 @@ export default class FooterComponent extends Component {
               ) : null}
               <Button
                 title="about"
-                icon={<CircleQuestion />}
+                icon={
+                  <CircleQuestion
+                    size={size !== 'small' ? 'medium' : 'small'}
+                  />
+                }
                 focusIndicator={false}
                 onClick={() => this.setState({ showAbout: true })}
               />
             </Box>
             {this.state.showAbout ? (
               <Layer
-                responsive={false}
+                responsive={size !== 'small' ? false : true}
                 position="center"
                 onClickOutside={() => this.setState({ showAbout: false })}
                 style={{ borderRadius: 30 }}
               >
                 <Box
                   align="center"
+                  flex
                   pad="small"
                   background="layer"
-                  round
+                  round={size !== 'small' ? true : false}
+                  overflow="auto"
                   border={{ size: 'small', side: 'all', color: 'accent-1' }}
                 >
-                  <Heading>about cinelot</Heading>
+                  <Heading textAlign="center">about cinelot</Heading>
                   <Paragraph textAlign="center">
                     cinelot allows you to browse, search, and maintain your
                     physical film collection on the go. gone are the days of
@@ -84,6 +90,12 @@ export default class FooterComponent extends Component {
                     search bar with a film title to quickly see if you own it or
                     not!
                   </Paragraph>
+                  {size === 'small' ? (
+                    <Button
+                      icon={<FormClose />}
+                      onClick={() => this.setState({ showAbout: false })}
+                    />
+                  ) : null}
                 </Box>
               </Layer>
             ) : null}

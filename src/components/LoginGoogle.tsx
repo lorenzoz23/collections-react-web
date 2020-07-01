@@ -6,40 +6,33 @@ import 'firebase/auth';
 import { motion } from 'framer-motion';
 
 interface LoginGoogleProps {
+  size: string;
   handleLogin(): void;
   rememberMe: boolean;
 }
 
 export default class LoginGoogle extends Component<LoginGoogleProps> {
-  signInWithGoogle = () => {
+  signInWithGoogle = async () => {
     const providerGoogle = new firebase.auth.GoogleAuthProvider();
     const type: string = this.props.rememberMe
       ? firebase.auth.Auth.Persistence.LOCAL
       : firebase.auth.Auth.Persistence.SESSION;
-    firebase
-      .auth()
-      .setPersistence(type)
-      .then(() => {
-        firebase
-          .auth()
-          .signInWithPopup(providerGoogle)
-          .then((result: any) => {
-            // This gives you a Google Access Token. You can use it to access the Google API.
-            const token = result.credential.accessToken;
-            console.log(token);
-            // The signed-in user info.
-            const user = result.user;
-            console.log(user);
-            if (this.props.rememberMe)
-              localStorage.setItem('rememberMe', 'remember');
-            this.props.handleLogin();
-          })
-          .catch((error: any) => {
-            // Handle Errors here.
-            const errorMessage = error.message;
-            console.log(errorMessage);
-          });
-      });
+    await firebase.auth().setPersistence(type);
+    let result: any;
+    if (this.props.size === 'small') {
+      await firebase.auth().signInWithRedirect(providerGoogle);
+      result = await firebase.auth().getRedirectResult();
+    } else {
+      result = await firebase.auth().signInWithPopup(providerGoogle);
+    }
+    // This gives you a Google Access Token. You can use it to access the Google API.
+    const token = result.credential.accessToken;
+    console.log(token);
+    // The signed-in user info.
+    const user = result.user;
+    console.log(user);
+    if (this.props.rememberMe) localStorage.setItem('rememberMe', 'remember');
+    this.props.handleLogin();
   };
 
   render() {
@@ -55,7 +48,7 @@ export default class LoginGoogle extends Component<LoginGoogleProps> {
                 label="continue with google"
                 icon={<Google color="plain" />}
                 reverse
-                onClick={() => this.signInWithGoogle()}
+                onClick={async () => await this.signInWithGoogle()}
               />
             </Box>
           </motion.div>

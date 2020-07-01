@@ -312,9 +312,9 @@ export default class HomePage extends Component {
               <Box fill>
                 <AppBar
                   pad={
-                    size === 'small'
-                      ? { right: 'small', left: 'medium', vertical: 'small' }
-                      : { left: 'small', right: 'small' }
+                    size !== 'small'
+                      ? { right: 'small', left: 'small' }
+                      : { vertical: 'xsmall', left: 'small', right: 'small' }
                   }
                 >
                   {size !== 'small' ? (
@@ -434,34 +434,117 @@ export default class HomePage extends Component {
                       </Box>
                     </Box>
                   ) : (
-                    <Box direction="row" gap="small" align="center">
-                      <TextInput
-                        value={this.state.searchVal}
-                        focusIndicator={false}
-                        placeholder="my collection"
-                        icon={<Search />}
-                        suggestions={[
-                          `search ${this.state.movies.length} films...`
-                        ]}
-                        onChange={(event) => this.handleSearch(event)}
-                      />
-                      <AddTitle
-                        moviesAdded={(movies: movie[]) =>
-                          this.moviesAdded(movies)
-                        }
-                      />
-                      <Menu
-                        disabled
-                        title="filter by tags"
-                        focusIndicator={false}
-                        dropAlign={{ top: 'bottom', left: 'right' }}
-                        icon={<Filter />}
-                        items={[
-                          { label: 'blu ray', onClick: () => {} },
-                          { label: 'dvd', onClick: () => {} },
-                          { label: '4k', onClick: () => {} }
-                        ]}
-                      />
+                    <Box direction="row" align="center" justify="start">
+                      <Box width="small">
+                        <TextInput
+                          size="small"
+                          value={this.state.searchVal}
+                          focusIndicator={false}
+                          placeholder="my collection"
+                          icon={<Search size="small" />}
+                          suggestions={[
+                            `search ${this.state.movies.length} films...`
+                          ]}
+                          onChange={(event) => this.handleSearch(event)}
+                        />
+                      </Box>
+                      <Box align="center" direction="row">
+                        <Box>
+                          <AddTitle
+                            moviesAdded={(movies: movie[]) =>
+                              this.moviesAdded(movies)
+                            }
+                          />
+                        </Box>
+                        <Menu
+                          title="filter by tags"
+                          focusIndicator={false}
+                          dropAlign={{ top: 'bottom', right: 'left' }}
+                          icon={<Filter size="small" />}
+                          items={[
+                            {
+                              label: 'blu ray',
+                              onClick: () => {},
+                              hoverIndicator: 'accent-1'
+                            },
+                            {
+                              label: 'dvd',
+                              onClick: () => {},
+                              hoverIndicator: 'accent-1'
+                            },
+                            {
+                              label: '4k',
+                              onClick: () => {},
+                              hoverIndicator: 'accent-1'
+                            }
+                          ]}
+                        />
+                        <Menu
+                          //disabled
+                          hoverIndicator="accent-1"
+                          title="sort films by..."
+                          focusIndicator={false}
+                          dropAlign={{ top: 'bottom', right: 'left' }}
+                          icon={<Sort size="small" />}
+                          items={[
+                            {
+                              label: 'title',
+                              onClick: () => {
+                                this.setState({
+                                  notification: true,
+                                  notificationText:
+                                    'film lot successfully sorted by title'
+                                });
+                              },
+                              hoverIndicator: 'accent-1'
+                            },
+                            {
+                              label: 'runtime',
+                              onClick: () => {
+                                this.setState({
+                                  notification: true,
+                                  notificationText:
+                                    'film lot successfully sorted by runtime'
+                                });
+                              },
+                              hoverIndicator: 'accent-1'
+                            },
+                            {
+                              label: 'genre',
+                              onClick: () => {
+                                this.setState({
+                                  notification: true,
+                                  notificationText:
+                                    'film lot successfully sorted by genre'
+                                });
+                              },
+                              hoverIndicator: 'accent-1'
+                            },
+                            {
+                              label: 'mpaa rating',
+                              onClick: () => {
+                                this.setState({
+                                  notification: true,
+                                  notificationText:
+                                    'film lot successfully sorted by mpaa rating'
+                                });
+                              },
+                              hoverIndicator: 'accent-1'
+                            },
+                            {
+                              label: 'reset',
+                              onClick: () => {
+                                this.setState({
+                                  notification: true,
+                                  notificationText:
+                                    'film lot successfully reset to original order'
+                                });
+                              },
+                              hoverIndicator: 'brand'
+                            }
+                          ]}
+                        />
+                      </Box>
                     </Box>
                   )}
                   <Box>
@@ -471,11 +554,11 @@ export default class HomePage extends Component {
                       onClick={this.toggleSettings}
                       title="settings"
                       align="center"
-                      size={size === 'small' ? '40px' : 'medium'}
+                      size={size === 'small' ? 'small' : 'medium'}
                     >
                       <User
                         color="accent-1"
-                        size={size === 'small' ? '20px' : 'medium'}
+                        size={size === 'small' ? 'small' : 'medium'}
                       />
                     </Avatar>
                   </Box>
@@ -510,12 +593,17 @@ export default class HomePage extends Component {
                 {this.state.greeting ? (
                   <Layer position="center" style={{ borderRadius: 30 }}>
                     <Box
+                      flex
                       background="layer"
                       justify="center"
                       align="center"
                       pad="small"
-                      round
-                      border={{ color: 'accent-1', side: 'all', size: 'small' }}
+                      round={size !== 'small' ? true : false}
+                      border={{
+                        color: 'accent-1',
+                        side: 'all',
+                        size: size !== 'small' ? 'small' : 'medium'
+                      }}
                     >
                       <Heading>{greeting}</Heading>
                       <Paragraph textAlign="center">
@@ -570,12 +658,20 @@ export default class HomePage extends Component {
                       background="accent-1"
                     >
                       <Box align="center" direction="row" gap="xsmall">
-                        <StatusGood />
-                        <Text>{this.state.notificationText}</Text>
+                        <StatusGood
+                          size={size !== 'small' ? 'medium' : 'small'}
+                        />
+                        <Text size={size !== 'small' ? 'medium' : 'xsmall'}>
+                          {this.state.notificationText}
+                        </Text>
                       </Box>
                       <Button
                         focusIndicator={false}
-                        icon={<FormClose />}
+                        icon={
+                          <FormClose
+                            size={size !== 'small' ? 'medium' : 'small'}
+                          />
+                        }
                         onClick={this.onNotificationClose}
                       />
                     </Box>

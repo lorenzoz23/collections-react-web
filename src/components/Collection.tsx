@@ -6,7 +6,7 @@ import type { movie } from './HomePage';
 import SingleMovieView from './SingleMovieView';
 
 const columns: Record<string, string[]> = {
-  small: ['auto', 'auto', 'auto', 'auto'],
+  small: ['auto', 'auto', 'auto'],
   medium: ['auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto'],
   large: [
     'auto',
@@ -83,11 +83,12 @@ export default class Collection extends Component<CollectionProps> {
 
     let i: number = 0;
     for (i = 0; i < numRows; i++) {
-      if (size === 'small') {
-        rows.push('xsmall');
-      } else {
-        rows.push('small');
-      }
+      // if (size === 'small') {
+      //   rows.push('xsmall');
+      // } else {
+      //   rows.push('small');
+      // }
+      rows.push('small');
     }
 
     return rows;
@@ -169,13 +170,17 @@ export default class Collection extends Component<CollectionProps> {
         : this.props.movies;
     if (this.props.loading) {
       return (
-        <Box align="center" justify="center" flex>
-          <DotLoader
-            size={150}
-            color={'#6FFFB0'}
-            loading={this.props.loading}
-          />
-        </Box>
+        <ResponsiveContext.Consumer>
+          {(size) => (
+            <Box align="center" justify="center" flex>
+              <DotLoader
+                size={size !== 'small' ? 150 : 100}
+                color={'#6FFFB0'}
+                loading={this.props.loading}
+              />
+            </Box>
+          )}
+        </ResponsiveContext.Consumer>
       );
     } else {
       return (
@@ -187,19 +192,24 @@ export default class Collection extends Component<CollectionProps> {
                 : this.movieCollection(size)}
               {this.state.movieDetailsVisible ? (
                 <Layer
-                  responsive={false}
+                  responsive={size !== 'small' ? false : true}
                   onClickOutside={() =>
                     this.setState({
                       movieDetailsVisible: false
                     })
                   }
                   position="center"
-                  style={{ borderRadius: 30 }}
+                  style={{
+                    borderRadius: size !== 'small' ? 30 : 0
+                  }}
                 >
                   <SingleMovieView
                     movie={this.state.movieToShow}
                     add={false}
                     handleDelete={(id: string) => this.handleDelete(id)}
+                    closeDetailView={() =>
+                      this.setState({ movieDetailsVisible: false })
+                    }
                   />
                 </Layer>
               ) : null}

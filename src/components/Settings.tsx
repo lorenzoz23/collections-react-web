@@ -93,6 +93,7 @@ export default class Settings extends Component<SettingsProps> {
                   this.setState({ showDeleteAccountLayer: false })
                 }
                 style={{ borderRadius: 30 }}
+                margin={{ bottom: 'medium' }}
               >
                 <Box gap="small" pad="medium" round>
                   <Text textAlign="center" weight="bold">
