@@ -449,9 +449,8 @@ export default class HomePage extends Component {
                     </Box>
                   ) : (
                     <Box direction="row" align="center">
-                      <Box width="small">
+                      <Box>
                         <TextInput
-                          size="small"
                           value={this.state.searchVal}
                           focusIndicator={false}
                           placeholder="my collection"
@@ -616,7 +615,7 @@ export default class HomePage extends Component {
                         size: size !== 'small' ? 'small' : 'medium'
                       }}
                     >
-                      <Heading>{greeting}</Heading>
+                      <Heading textAlign="center">{greeting}</Heading>
                       <Paragraph textAlign="center">
                         we at cinelot (it's just one person, actually), couldn't
                         bee happier that you chose us to help you keep track of

@@ -149,7 +149,7 @@ export default class Collection extends Component<CollectionProps> {
         gap="small"
         columns={
           this.props.width >= 500 && size === 'small'
-            ? columns['medium']
+            ? columns['medium'].slice(0, 5)
             : columns[size]
         }
         rows={this.getRows(size)}
