@@ -434,14 +434,14 @@ export default class HomePage extends Component {
                       </Box>
                     </Box>
                   ) : (
-                    <Box direction="row" align="center" justify="start">
+                    <Box direction="row" align="center">
                       <Box width="small">
                         <TextInput
                           size="small"
                           value={this.state.searchVal}
                           focusIndicator={false}
                           placeholder="my collection"
-                          icon={<Search size="small" />}
+                          icon={<Search />}
                           suggestions={[
                             `search ${this.state.movies.length} films...`
                           ]}
@@ -460,7 +460,7 @@ export default class HomePage extends Component {
                           title="filter by tags"
                           focusIndicator={false}
                           dropAlign={{ top: 'bottom', right: 'left' }}
-                          icon={<Filter size="small" />}
+                          icon={<Filter />}
                           items={[
                             {
                               label: 'blu ray',
@@ -485,7 +485,7 @@ export default class HomePage extends Component {
                           title="sort films by..."
                           focusIndicator={false}
                           dropAlign={{ top: 'bottom', right: 'left' }}
-                          icon={<Sort size="small" />}
+                          icon={<Sort />}
                           items={[
                             {
                               label: 'title',
@@ -554,12 +554,8 @@ export default class HomePage extends Component {
                       onClick={this.toggleSettings}
                       title="settings"
                       align="center"
-                      size={size === 'small' ? 'small' : 'medium'}
                     >
-                      <User
-                        color="accent-1"
-                        size={size === 'small' ? 'small' : 'medium'}
-                      />
+                      <User color="accent-1" />
                     </Avatar>
                   </Box>
                 </AppBar>
@@ -652,6 +648,7 @@ export default class HomePage extends Component {
                       direction="row"
                       gap="small"
                       justify="between"
+                      flex
                       round
                       elevation="medium"
                       pad={{ vertical: 'xsmall', horizontal: 'small' }}

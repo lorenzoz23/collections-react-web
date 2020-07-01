@@ -24,15 +24,12 @@ export default class FooterComponent extends Component {
         {(size) => (
           <Footer
             pad={{
-              top: 'medium',
-              bottom: 'medium',
               left: 'small',
               right: 'small'
             }}
             gap="medium"
             background="footer"
             justify="between"
-            height="10px"
           >
             <Box direction="row" align="center" gap="small">
               {size !== 'small' ? (
@@ -49,18 +46,13 @@ export default class FooterComponent extends Component {
               ) : null}
               <Button
                 title="about"
-                icon={
-                  <CircleQuestion
-                    size={size !== 'small' ? 'medium' : 'small'}
-                  />
-                }
+                icon={<CircleQuestion />}
                 focusIndicator={false}
                 onClick={() => this.setState({ showAbout: true })}
               />
             </Box>
             {this.state.showAbout ? (
               <Layer
-                responsive={size !== 'small' ? false : true}
                 position="center"
                 onClickOutside={() => this.setState({ showAbout: false })}
                 style={{ borderRadius: 30 }}
@@ -70,6 +62,7 @@ export default class FooterComponent extends Component {
                   flex
                   pad="small"
                   background="layer"
+                  justify="center"
                   round={size !== 'small' ? true : false}
                   overflow="auto"
                   border={{ size: 'small', side: 'all', color: 'accent-1' }}
@@ -90,11 +83,16 @@ export default class FooterComponent extends Component {
                     search bar with a film title to quickly see if you own it or
                     not!
                   </Paragraph>
+
                   {size === 'small' ? (
-                    <Button
-                      icon={<FormClose />}
-                      onClick={() => this.setState({ showAbout: false })}
-                    />
+                    <Box round>
+                      <Button
+                        style={{ borderRadius: 30 }}
+                        primary
+                        icon={<FormClose />}
+                        onClick={() => this.setState({ showAbout: false })}
+                      />
+                    </Box>
                   ) : null}
                 </Box>
               </Layer>
@@ -104,14 +102,12 @@ export default class FooterComponent extends Component {
               align="center"
               gap={size !== 'small' ? 'small' : 'xsmall'}
             >
-              <Multimedia size={size !== 'small' ? 'medium' : 'small'} />
-              <Text size={size !== 'small' ? 'small' : 'xsmall'}>
-                movie data provided by:
-              </Text>
+              <Multimedia />
+              <Text size="small">movie data provided by:</Text>
               <Anchor
                 href="https://www.themoviedb.org/"
                 target="_blank"
-                size={size !== 'small' ? 'small' : 'xsmall'}
+                size="small"
               >
                 {size !== 'small' ? 'The Movie Database (tMDB)' : 'tMDB'}
               </Anchor>

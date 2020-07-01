@@ -6,7 +6,6 @@ import 'firebase/auth';
 import { motion } from 'framer-motion';
 
 interface LoginFacebookProps {
-  size: string;
   handleLogin(): void;
   rememberMe: boolean;
 }
@@ -19,12 +18,7 @@ export default class LoginFacebook extends Component<LoginFacebookProps> {
       : firebase.auth.Auth.Persistence.SESSION;
     await firebase.auth().setPersistence(type);
     let result: any;
-    if (this.props.size === 'small') {
-      await firebase.auth().signInWithRedirect(providerFb);
-      result = await firebase.auth().getRedirectResult();
-    } else {
-      result = await firebase.auth().signInWithPopup(providerFb);
-    }
+    result = await firebase.auth().signInWithPopup(providerFb);
     // This gives you a Google Access Token. You can use it to access the Google API.
     const token = result.credential.accessToken;
     console.log(token);

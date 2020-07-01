@@ -101,15 +101,14 @@ export default class AddTitle extends Component<AddTitleProps> {
     return (
       <ResponsiveContext.Consumer>
         {(size) => (
-          <Box title="add a film!" align="center">
+          <Box title="add a film!" align="center" flex>
             <Button
-              size={size !== 'small' ? 'medium' : 'small'}
               focusIndicator={false}
               hoverIndicator="accent-1"
               onClick={() => {
                 this.setState({ visible: true });
               }}
-              icon={<Add size={size !== 'small' ? 'medium' : 'small'} />}
+              icon={<Add />}
             />
             {this.state.visible ? (
               <Layer

@@ -40,6 +40,7 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
 
   render() {
     const numGenre = this.state.movieView.movie.genre.length;
+    const mode = localStorage.getItem('visualModeValue') || 'gradient';
     return (
       <ResponsiveContext.Consumer>
         {(size) => (
@@ -84,7 +85,7 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                     fit="cover"
                     fill
                     src={this.state.movieView.movie.poster}
-                    opacity="0.3"
+                    opacity="0.2"
                   />
                 </Box>
               )}
@@ -93,7 +94,9 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                 alignSelf={size === 'small' ? 'center' : 'end'}
               >
                 <Heading
-                  color={size === 'small' ? 'black' : undefined}
+                  color={
+                    size === 'small' && mode === 'solid' ? 'black' : undefined
+                  }
                   level="3"
                   textAlign={size === 'small' ? 'center' : undefined}
                 >
@@ -105,14 +108,22 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                       weight="bold"
                       size={size === 'small' ? 'small' : 'medium'}
                       textAlign={size === 'small' ? 'center' : undefined}
-                      color={size === 'small' ? 'black' : undefined}
+                      color={
+                        size === 'small' && mode === 'solid'
+                          ? 'black'
+                          : undefined
+                      }
                     >
                       {this.state.movieView.movie.date.substring(0, 4)}
                     </Text>
                     <Text
                       size="small"
                       textAlign={size === 'small' ? 'center' : undefined}
-                      color={size === 'small' ? 'black' : undefined}
+                      color={
+                        size === 'small' && mode === 'solid'
+                          ? 'black'
+                          : undefined
+                      }
                     >
                       {this.state.movieView.movie.plot}
                     </Text>
@@ -132,7 +143,11 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                               weight="bold"
                               key={genre}
                               size={size === 'small' ? 'small' : 'medium'}
-                              color={size === 'small' ? 'black' : undefined}
+                              color={
+                                size === 'small' && mode === 'solid'
+                                  ? 'black'
+                                  : undefined
+                              }
                             >
                               {numGenre === i + 1 ? genre : `${genre},`}
                             </Text>
@@ -143,7 +158,11 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                         <Text
                           weight="bold"
                           size={size === 'small' ? 'small' : 'medium'}
-                          color={size === 'small' ? 'black' : undefined}
+                          color={
+                            size === 'small' && mode === 'solid'
+                              ? 'black'
+                              : undefined
+                          }
                         >
                           {this.state.movieView.movie.date.substring(0, 4)}
                         </Text>
@@ -151,7 +170,11 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                           <Text
                             weight="bold"
                             size={size === 'small' ? 'small' : 'medium'}
-                            color={size === 'small' ? 'black' : undefined}
+                            color={
+                              size === 'small' && mode === 'solid'
+                                ? 'black'
+                                : undefined
+                            }
                           >
                             {this.state.movieView.movie.rating}
                           </Text>
@@ -159,7 +182,11 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                         <Text
                           weight="bold"
                           size={size === 'small' ? 'small' : 'medium'}
-                          color={size === 'small' ? 'black' : undefined}
+                          color={
+                            size === 'small' && mode === 'solid'
+                              ? 'black'
+                              : undefined
+                          }
                         >
                           {this.state.movieView.movie.runtime} min
                         </Text>
@@ -168,7 +195,11 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                     <Text
                       size="small"
                       textAlign={size === 'small' ? 'center' : undefined}
-                      color={size === 'small' ? 'black' : undefined}
+                      color={
+                        size === 'small' && mode === 'solid'
+                          ? 'black'
+                          : undefined
+                      }
                     >
                       {this.state.movieView.movie.plot}
                     </Text>
@@ -185,7 +216,7 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                     ? { position: 'fixed', bottom: 0, left: 0, width: '100%' }
                     : undefined
                 }
-                pad="small"
+                pad={size === 'small' ? 'small' : 'none'}
               >
                 <Button
                   title="back"
@@ -197,7 +228,7 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
               <Box
                 direction="row"
                 justify="between"
-                pad="small"
+                pad={size === 'small' ? 'small' : 'none'}
                 style={
                   size === 'small'
                     ? { position: 'fixed', bottom: 0, left: 0, width: '100%' }

@@ -74,12 +74,10 @@ export default class LoginButtons extends Component<LoginButtonProps> {
                     </Box>
                   </motion.div>
                   <LoginGoogle
-                    size={size}
                     handleLogin={this.props.handleLogin}
                     rememberMe={this.state.rememberMe}
                   />
                   <LoginFacebook
-                    size={size}
                     handleLogin={this.props.handleLogin}
                     rememberMe={this.state.rememberMe}
                   />
