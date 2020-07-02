@@ -404,7 +404,12 @@ export default class HomePage extends Component {
                   }
                 >
                   {size !== 'small' ? (
-                    <Box direction="row" gap="medium" align="center">
+                    <Box
+                      direction="row"
+                      gap="medium"
+                      align="center"
+                      justify="evenly"
+                    >
                       <Heading level="3" margin="none" alignSelf="center">
                         <Anchor title="home" color="light-1" href="/">
                           {title}
@@ -414,7 +419,11 @@ export default class HomePage extends Component {
                         <TextInput
                           value={this.state.searchVal}
                           title="search your film lot!"
-                          placeholder={`search ${this.state.movies.length} ${
+                          placeholder={`search ${
+                            this.state.showWishlist
+                              ? this.state.wishlist.length
+                              : this.state.movies.length
+                          } ${
                             this.state.movies.length === 1 ? 'film' : 'films'
                           }...`}
                           icon={<Search />}
@@ -521,12 +530,14 @@ export default class HomePage extends Component {
                       </Box>
                     </Box>
                   ) : (
-                    <Box direction="row" align="center">
+                    <Box direction="row" align="center" justify="evenly">
                       <Box>
                         <TextInput
                           value={this.state.searchVal}
                           focusIndicator={false}
-                          placeholder="my collection"
+                          placeholder={
+                            this.state.showWishlist ? 'my wishlist' : 'my lot'
+                          }
                           icon={<Search />}
                           suggestions={[
                             `search ${this.state.movies.length} films...`
@@ -534,7 +545,7 @@ export default class HomePage extends Component {
                           onChange={(event) => this.handleSearch(event)}
                         />
                       </Box>
-                      <Box align="center" direction="row">
+                      <Box align="center" direction="row" justify="evenly">
                         <Box>
                           <AddTitle
                             moviesAdded={(

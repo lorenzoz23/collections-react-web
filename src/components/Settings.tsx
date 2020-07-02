@@ -151,7 +151,7 @@ export default class Settings extends Component<SettingsProps> {
                         });
                       }}
                       title="click for a deeper understanding"
-                      icon={<CircleQuestion color="brand" />}
+                      icon={<CircleQuestion />}
                       focusIndicator={false}
                     />
                   </Box>
@@ -181,7 +181,7 @@ export default class Settings extends Component<SettingsProps> {
                         });
                       }}
                       title="click for a deeper understanding"
-                      icon={<CircleQuestion color="brand" />}
+                      icon={<CircleQuestion />}
                       focusIndicator={false}
                     />
                   </Box>
@@ -229,9 +229,10 @@ export default class Settings extends Component<SettingsProps> {
                 </Box>
                 <Box align="center">
                   <Button
+                    primary={size !== 'small' ? false : true}
                     label="delete account"
                     color="status-error"
-                    hoverIndicator="status-error"
+                    hoverIndicator={size !== 'small' ? 'status-error' : false}
                     onClick={this.handleDeleteAccount}
                   />
                 </Box>

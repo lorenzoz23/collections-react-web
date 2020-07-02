@@ -7,6 +7,7 @@ import {
   Route
 } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import GridLoader from 'react-spinners/GridLoader';
 
 import HomePage from './HomePage';
 import LoginButtons from './LoginButtons';
@@ -32,11 +33,16 @@ export default class Login extends Component {
     valid: false,
     width: 0,
     height: 0,
-    uid: ''
+    uid: '',
+    loading: false
   };
 
   updateWindowDimensions = () => {
-    this.setState({ width: window.innerWidth, height: window.innerHeight });
+    this.setState({
+      width: window.innerWidth,
+      height: window.innerHeight,
+      loading: true
+    });
   };
 
   componentDidMount = () => {
@@ -61,6 +67,9 @@ export default class Login extends Component {
         });
       } else {
         // No user is signed in.
+        this.setState({
+          loading: false
+        });
         console.log('error: user has bad credentials');
       }
     });
@@ -108,9 +117,20 @@ export default class Login extends Component {
                     <Heading color="#FF6C88">cinelot</Heading>
                   </motion.div>
                 </Box>
-                <Box align="center" justify="center">
-                  <LoginButtons handleLogin={this.handleLogin} />
-                </Box>
+                {!this.state.loading ? (
+                  <Box align="center" justify="center">
+                    <LoginButtons handleLogin={this.handleLogin} />
+                  </Box>
+                ) : (
+                  <Box align="center" justify="center">
+                    <GridLoader
+                      size={size !== 'small' ? 15 : 10}
+                      margin={20}
+                      color={'#6FFFB0'}
+                      loading={this.state.loading}
+                    />
+                  </Box>
+                )}
                 {this.state.width >= 500 ? (
                   <Box alignSelf="end" pad={{ right: 'medium' }}>
                     <motion.div

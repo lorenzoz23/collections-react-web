@@ -65,7 +65,7 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                   background={{
                     image: `url(${this.state.movieView.movie.poster})`,
                     color: 'movieBorder',
-                    size: 'cover'
+                    size: 'contain'
                   }}
                   border={{ size: 'small', color: 'movieBorder', side: 'all' }}
                   alignSelf="end"
@@ -135,12 +135,12 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                 ) : (
                   <Box gap="small">
                     <Box
-                      direction="row"
-                      border="between"
-                      gap="medium"
+                      gap={size !== 'small' ? 'medium' : 'none'}
                       justify={size === 'small' ? 'center' : undefined}
+                      border={size !== 'small' ? 'between' : undefined}
+                      direction={size !== 'small' ? 'row' : 'column'}
                     >
-                      <Box direction="row" gap="xsmall">
+                      <Box direction="row" gap="xsmall" justify="center">
                         {this.state.movieView.movie.genre.map(
                           (genre: string, i: number) => (
                             <Text
@@ -158,7 +158,7 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                           )
                         )}
                       </Box>
-                      <Box direction="row" gap="small">
+                      <Box direction="row" gap="small" justify="center">
                         <Text
                           weight="bold"
                           size={size === 'small' ? 'small' : 'medium'}
@@ -235,6 +235,7 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
               <Box
                 direction="row"
                 justify="between"
+                alignSelf="end"
                 pad={size === 'small' ? 'medium' : 'none'}
                 style={
                   size === 'small'

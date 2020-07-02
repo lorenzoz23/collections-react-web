@@ -7,34 +7,9 @@ import SingleMovieView from './SingleMovieView';
 
 const columns: Record<string, string[]> = {
   small: ['auto', 'auto', 'auto'],
-  medium: ['auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto'],
-  large: [
-    'auto',
-    'auto',
-    'auto',
-    'auto',
-    'auto',
-    'auto',
-    'auto',
-    'auto',
-    'auto',
-    'auto',
-    'auto'
-  ],
-  xlarge: [
-    'auto',
-    'auto',
-    'auto',
-    'auto',
-    'auto',
-    'auto',
-    'auto',
-    'auto',
-    'auto',
-    'auto',
-    'auto',
-    'auto'
-  ]
+  medium: ['auto', 'auto', 'auto', 'auto', 'auto'],
+  large: ['auto', 'auto', 'auto', 'auto', 'auto', 'auto'],
+  xlarge: ['auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto']
 };
 
 interface CollectionProps {
@@ -48,7 +23,11 @@ interface CollectionProps {
 }
 
 export default class Collection extends Component<CollectionProps> {
-  state: { movieDetailsVisible: boolean; movieToShow: movie } = {
+  state: {
+    movieDetailsVisible: boolean;
+    movieToShow: movie;
+    //movies: movie[];
+  } = {
     movieDetailsVisible: false,
     movieToShow: {
       name: '',
@@ -60,6 +39,7 @@ export default class Collection extends Component<CollectionProps> {
       genre: [],
       id: ''
     }
+    //movies: []
   };
 
   emptyState = () => {
@@ -84,12 +64,7 @@ export default class Collection extends Component<CollectionProps> {
 
     let i: number = 0;
     for (i = 0; i < numRows; i++) {
-      // if (size === 'small') {
-      //   rows.push('xsmall');
-      // } else {
-      //   rows.push('small');
-      // }
-      rows.push('small');
+      rows.push('medium');
     }
 
     return rows;
@@ -101,13 +76,16 @@ export default class Collection extends Component<CollectionProps> {
 
   // getMovieCollection = () => {
   //   let movies: movie[] = [];
-  //   for (let i = 0; i < 10; i++) {
+  //   for (let i = 0; i < 55; i++) {
   //     movies.push({
   //       name: '',
   //       plot: '',
   //       date: '',
   //       poster:
   //         'https://image.tmdb.org/t/p/w500/8j58iEBw9pOXFD2L0nt0ZXeHviB.jpg',
+  //       rating: '',
+  //       runtime: 0,
+  //       genre: [],
   //       id: ''
   //     });
   //   }
@@ -116,7 +94,6 @@ export default class Collection extends Component<CollectionProps> {
   //   });
   // };
 
-  // Create box for each movie
   listMovieBoxes = () => {
     let boxArr = [];
     const moviesToMap: movie[] =
@@ -129,11 +106,12 @@ export default class Collection extends Component<CollectionProps> {
         title={movie.name + ' (' + movie.date.substring(0, 4) + ')'}
         background={{
           image: `url(${movie.poster})`,
-          color: 'movieBorder',
-          size: 'cover'
+          color: 'header',
+          size: 'cover',
+          position: 'center'
         }}
-        border={{ size: 'xsmall', color: 'lotBorder', side: 'all' }}
-        round="xsmall"
+        border={{ size: 'small', color: 'lotBorder', side: 'all' }}
+        round={{ corner: 'bottom', size: 'xlarge' }}
         onClick={() =>
           this.setState({ movieDetailsVisible: true, movieToShow: movie })
         }
@@ -144,17 +122,21 @@ export default class Collection extends Component<CollectionProps> {
   };
 
   movieCollection = (size: string) => {
+    let col: string[] = [];
+    if (size === 'small' && this.props.width < 400) {
+      col = columns['small'].slice(0, 2);
+    } else if (size === 'medium' && this.props.width < 1000) {
+      col = columns['medium'].slice(0, 4);
+    } else {
+      col = columns[size];
+    }
     return (
       <Grid
-        gap="small"
-        columns={
-          this.props.width >= 500 && size === 'small'
-            ? columns['medium'].slice(0, 5)
-            : columns[size]
-        }
+        gap="medium"
+        columns={col}
         rows={this.getRows(size)}
         areas={undefined}
-        pad="small"
+        pad="medium"
       >
         {this.listMovieBoxes()}
       </Grid>
@@ -191,7 +173,7 @@ export default class Collection extends Component<CollectionProps> {
       return (
         <ResponsiveContext.Consumer>
           {(size) => (
-            <Box justify="start" alignContent="center" flex>
+            <Box justify="start" flex alignContent="center">
               {moviesToMap.length === 0
                 ? this.emptyState()
                 : this.movieCollection(size)}

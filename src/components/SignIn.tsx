@@ -173,15 +173,15 @@ export default class SignIn extends Component<SignInProps> {
                     size={size === 'small' ? 'small' : 'medium'}
                   />
                 </Box>
-                <motion.div whileTap={{ scale: 0.9 }}>
-                  <Box align="center">
+                <Box align="center">
+                  <motion.div whileTap={{ scale: 0.9 }}>
                     <CheckBox
                       label="remember me?"
                       checked={this.state.rememberMe}
                       onChange={(event) => this.handleRemember(event)}
                     />
-                  </Box>
-                </motion.div>
+                  </motion.div>
+                </Box>
               </Form>
             </Box>
           </motion.div>

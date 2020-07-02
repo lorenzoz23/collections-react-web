@@ -101,6 +101,7 @@ export default class MovieSearchResult extends Component<
   };
 
   checkedMovie = (movie: searchResultMovie, wishlist: boolean) => {
+    const bothUnchecked = !movie.checkedLot && !movie.checkedWishlist;
     let results: searchResultMovie[] = [];
     let updatedMovie = movie;
     updatedMovie.checkedLot = wishlist
@@ -121,10 +122,21 @@ export default class MovieSearchResult extends Component<
     const newMovieList: searchResults = {
       movies: results
     };
-    const numToAdd =
-      updatedMovie.checkedLot || updatedMovie.checkedWishlist
-        ? this.state.numToAdd + 1
-        : this.state.numToAdd - 1;
+
+    let numToAdd = this.state.numToAdd;
+    if (
+      (!updatedMovie.checkedLot &&
+        updatedMovie.checkedWishlist &&
+        bothUnchecked) ||
+      (updatedMovie.checkedLot &&
+        !updatedMovie.checkedWishlist &&
+        bothUnchecked)
+    ) {
+      numToAdd++;
+    } else if (!updatedMovie.checkedLot && !updatedMovie.checkedWishlist) {
+      numToAdd--;
+    }
+
     this.setState({
       movieList: newMovieList,
       numToAdd: numToAdd
@@ -262,7 +274,7 @@ export default class MovieSearchResult extends Component<
                     gap="small"
                     overflow={{ horizontal: 'hidden', vertical: 'auto' }}
                     pad="small"
-                    margin={{ top: 'large', bottom: 'small' }}
+                    margin={{ top: 'large' }}
                     flex
                     fill
                   >
@@ -306,14 +318,20 @@ export default class MovieSearchResult extends Component<
                             <Box direction="row" gap="small" alignSelf="start">
                               <CheckBox
                                 checked={item.checkedLot}
-                                label="add film to lot?"
+                                label={
+                                  size === 'small' ? 'lot?' : 'add film to lot?'
+                                }
                                 onChange={() => {
                                   this.checkedMovie(item, false);
                                 }}
                               />
                               <CheckBox
                                 checked={item.checkedWishlist}
-                                label="add film to wishlist?"
+                                label={
+                                  size === 'small'
+                                    ? 'wishlist?'
+                                    : 'add film to wishlist?'
+                                }
                                 onChange={() => {
                                   this.checkedMovie(item, true);
                                 }}

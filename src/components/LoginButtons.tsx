@@ -59,20 +59,18 @@ export default class LoginButtons extends Component<LoginButtonProps> {
                 }}
               >
                 <Box gap="medium">
-                  <motion.div whileTap={{ scale: 0.9 }}>
-                    <Box>
-                      <Button
-                        primary
-                        size={size === 'small' ? 'medium' : 'large'}
-                        label="continue with email"
-                        icon={<MailOption />}
-                        reverse
-                        onClick={() => {
-                          this.setState({ show: true });
-                        }}
-                      />
-                    </Box>
-                  </motion.div>
+                  <Box>
+                    <Button
+                      primary
+                      size={size === 'small' ? 'medium' : 'large'}
+                      label="continue with email"
+                      icon={<MailOption />}
+                      reverse
+                      onClick={() => {
+                        this.setState({ show: true });
+                      }}
+                    />
+                  </Box>
                   <LoginGoogle
                     handleLogin={this.props.handleLogin}
                     rememberMe={this.state.rememberMe}
@@ -81,8 +79,8 @@ export default class LoginButtons extends Component<LoginButtonProps> {
                     handleLogin={this.props.handleLogin}
                     rememberMe={this.state.rememberMe}
                   />
-                  <motion.div whileTap={{ scale: 0.9 }}>
-                    <Box align="center">
+                  <Box align="center">
+                    <motion.div whileTap={{ scale: 0.9 }}>
                       <CheckBox
                         label="remember me?"
                         checked={this.state.rememberMe}
@@ -90,8 +88,8 @@ export default class LoginButtons extends Component<LoginButtonProps> {
                           this.setState({ rememberMe: event.target.checked })
                         }
                       />
-                    </Box>
-                  </motion.div>
+                    </motion.div>
+                  </Box>
                 </Box>
               </motion.div>
             )}

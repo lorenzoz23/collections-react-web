@@ -3,7 +3,6 @@ import { ResponsiveContext, Box, Button } from 'grommet';
 import { Google } from 'grommet-icons';
 import firebase from 'firebase/app';
 import 'firebase/auth';
-import { motion } from 'framer-motion';
 
 interface LoginGoogleProps {
   handleLogin(): void;
@@ -11,41 +10,77 @@ interface LoginGoogleProps {
 }
 
 export default class LoginGoogle extends Component<LoginGoogleProps> {
-  signInWithGoogle = async () => {
+  signInWithGoogle = (size: string) => {
+    if (size === 'small') this.redirect();
+    else this.popup();
+  };
+
+  redirect = () => {
     const providerGoogle = new firebase.auth.GoogleAuthProvider();
     const type: string = this.props.rememberMe
       ? firebase.auth.Auth.Persistence.LOCAL
       : firebase.auth.Auth.Persistence.SESSION;
-    await firebase.auth().setPersistence(type);
-    let result: any;
-    result = await firebase.auth().signInWithPopup(providerGoogle);
-    // This gives you a Google Access Token. You can use it to access the Google API.
-    const token = result.credential.accessToken;
-    console.log(token);
-    // The signed-in user info.
-    const user = result.user;
-    console.log(user);
-    if (this.props.rememberMe) localStorage.setItem('rememberMe', 'remember');
-    this.props.handleLogin();
+    firebase.auth().setPersistence(type);
+    firebase.auth().signInWithRedirect(providerGoogle);
+    firebase
+      .auth()
+      .getRedirectResult()
+      .then((result: any) => {
+        const token = result.credential.accessToken || undefined;
+        console.log(token);
+        // The signed-in user info.
+        const user = result.user;
+        console.log(user);
+        if (this.props.rememberMe)
+          localStorage.setItem('rememberMe', 'remember');
+        this.props.handleLogin();
+      })
+      .catch((error) => {
+        var errorMessage = error.message;
+        console.log(errorMessage);
+      });
+  };
+
+  popup = () => {
+    const providerGoogle = new firebase.auth.GoogleAuthProvider();
+    const type: string = this.props.rememberMe
+      ? firebase.auth.Auth.Persistence.LOCAL
+      : firebase.auth.Auth.Persistence.SESSION;
+    firebase.auth().setPersistence(type);
+    firebase
+      .auth()
+      .signInWithPopup(providerGoogle)
+      .then((result: any) => {
+        const token = result.credential.accessToken || undefined;
+        console.log(token);
+        // The signed-in user info.
+        const user = result.user;
+        console.log(user);
+        if (this.props.rememberMe)
+          localStorage.setItem('rememberMe', 'remember');
+        this.props.handleLogin();
+      })
+      .catch((error) => {
+        var errorMessage = error.message;
+        console.log(errorMessage);
+      });
   };
 
   render() {
     return (
       <ResponsiveContext.Consumer>
         {(size) => (
-          <motion.div whileTap={{ scale: 0.9 }}>
-            <Box>
-              <Button
-                primary
-                color="#CDFEE2"
-                size={size === 'small' ? 'medium' : 'large'}
-                label="continue with google"
-                icon={<Google color="plain" />}
-                reverse
-                onClick={async () => await this.signInWithGoogle()}
-              />
-            </Box>
-          </motion.div>
+          <Box>
+            <Button
+              primary
+              color="#CDFEE2"
+              size={size === 'small' ? 'medium' : 'large'}
+              label="continue with google"
+              icon={<Google color="plain" />}
+              reverse
+              onClick={() => this.signInWithGoogle(size)}
+            />
+          </Box>
         )}
       </ResponsiveContext.Consumer>
     );
