@@ -14,7 +14,7 @@ import MovieSearchResult from './MovieSearchResult';
 import { movie } from './HomePage';
 
 interface AddTitleProps {
-  moviesAdded(movies: movie[]): void;
+  moviesAdded(lotMovies: movie[], wishlistMovies: movie[]): void;
 }
 
 export default class AddTitle extends Component<AddTitleProps> {
@@ -90,11 +90,18 @@ export default class AddTitle extends Component<AddTitleProps> {
     return updatedMovies;
   };
 
-  moviesAdded = async (movies: movie[]) => {
+  moviesAdded = async (lotMovies: movie[], wishlistMovies: movie[]) => {
     this.closeAddTitle();
-    const updatedMovies: movie[] = await this.updateMovieFields(movies);
+    let updatedLotMovies: movie[] = [];
+    let updatedWishlistMovies: movie[] = [];
+    if (lotMovies) {
+      updatedLotMovies = await this.updateMovieFields(lotMovies);
+    }
+    if (wishlistMovies) {
+      updatedWishlistMovies = await this.updateMovieFields(wishlistMovies);
+    }
 
-    this.props.moviesAdded(updatedMovies);
+    this.props.moviesAdded(updatedLotMovies, updatedWishlistMovies);
   };
 
   render() {
@@ -125,7 +132,10 @@ export default class AddTitle extends Component<AddTitleProps> {
                     year={this.state.searchYear}
                     closeAdd={this.closeAddTitle}
                     closeResult={this.closeMovieSearchResult}
-                    moviesAdded={(movies: movie[]) => this.moviesAdded(movies)}
+                    moviesAdded={(
+                      lotMovies: movie[],
+                      wishlistMovies: movie[]
+                    ) => this.moviesAdded(lotMovies, wishlistMovies)}
                   />
                 ) : (
                   <Box

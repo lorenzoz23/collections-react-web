@@ -17,7 +17,7 @@ interface SettingsProps {
   logOut(): void;
   toggleSettings(): void;
   loggedIn: boolean;
-  handleWishlist(): void;
+  handleWishlist(checked: boolean): void;
   wishlist: boolean;
   uid: string;
   handleAccountDelete(): void;
@@ -60,7 +60,7 @@ export default class Settings extends Component<SettingsProps> {
       wishlistChecked: event.target.checked
     });
 
-    this.props.handleWishlist();
+    this.props.handleWishlist(event.target.checked);
   };
 
   handleThemeChange = (mode: string) => {
@@ -145,7 +145,6 @@ export default class Settings extends Component<SettingsProps> {
                   <Box direction="row" align="center">
                     <Text weight="bold">wishlist view</Text>
                     <Button
-                      disabled
                       onClick={() => {
                         this.setState({
                           showViewInfo: !this.state.showViewInfo
@@ -165,7 +164,6 @@ export default class Settings extends Component<SettingsProps> {
                     </Box>
                   ) : null}
                   <CheckBox
-                    disabled
                     checked={this.state.wishlistChecked}
                     toggle
                     reverse

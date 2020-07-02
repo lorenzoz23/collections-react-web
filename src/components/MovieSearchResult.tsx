@@ -18,12 +18,13 @@ interface MovieSearchResultProps {
   year: string;
   closeAdd(): void;
   closeResult(): void;
-  moviesAdded(movies: movie[]): void;
+  moviesAdded(lotMovies: movie[], wishlistMovies: movie[]): void;
 }
 
 type searchResultMovie = {
   movie: movie;
-  checked: boolean;
+  checkedLot: boolean;
+  checkedWishlist: boolean;
 };
 
 type searchResults = {
@@ -80,7 +81,8 @@ export default class MovieSearchResult extends Component<
           };
           const newSearchResultMovie: searchResultMovie = {
             movie: newMovie,
-            checked: false
+            checkedLot: false,
+            checkedWishlist: false
           };
           return newSearchResultMovie;
         });
@@ -98,10 +100,15 @@ export default class MovieSearchResult extends Component<
       });
   };
 
-  checkedMovie = (movie: searchResultMovie) => {
+  checkedMovie = (movie: searchResultMovie, wishlist: boolean) => {
     let results: searchResultMovie[] = [];
     let updatedMovie = movie;
-    updatedMovie.checked = !updatedMovie.checked;
+    updatedMovie.checkedLot = wishlist
+      ? updatedMovie.checkedLot
+      : !updatedMovie.checkedLot;
+    updatedMovie.checkedWishlist = wishlist
+      ? !updatedMovie.checkedWishlist
+      : updatedMovie.checkedWishlist;
 
     this.state.movieList.movies.forEach((element) => {
       if (element.movie.id !== movie.movie.id) {
@@ -114,9 +121,10 @@ export default class MovieSearchResult extends Component<
     const newMovieList: searchResults = {
       movies: results
     };
-    const numToAdd = updatedMovie.checked
-      ? this.state.numToAdd + 1
-      : this.state.numToAdd - 1;
+    const numToAdd =
+      updatedMovie.checkedLot || updatedMovie.checkedWishlist
+        ? this.state.numToAdd + 1
+        : this.state.numToAdd - 1;
     this.setState({
       movieList: newMovieList,
       numToAdd: numToAdd
@@ -147,8 +155,11 @@ export default class MovieSearchResult extends Component<
     let movies = this.state.movieList.movies;
 
     for (let i = 0; i < movies.length; i++) {
-      if (movies[i].checked) {
-        movies[i].checked = false;
+      if (movies[i].checkedLot) {
+        movies[i].checkedLot = false;
+      }
+      if (movies[i].checkedWishlist) {
+        movies[i].checkedWishlist = false;
       }
     }
 
@@ -162,15 +173,19 @@ export default class MovieSearchResult extends Component<
   };
 
   moviesToAdd = () => {
-    let movies: movie[] = [];
+    let lotMovies: movie[] = [];
+    let wishlistMovies: movie[] = [];
 
     this.state.movieList.movies.forEach((element) => {
-      if (element.checked) {
-        movies.push(element.movie);
+      if (element.checkedLot) {
+        lotMovies.push(element.movie);
+      }
+      if (element.checkedWishlist) {
+        wishlistMovies.push(element.movie);
       }
     });
 
-    this.props.moviesAdded(movies);
+    this.props.moviesAdded(lotMovies, wishlistMovies);
   };
 
   render() {
@@ -290,10 +305,17 @@ export default class MovieSearchResult extends Component<
                             </Heading>
                             <Box direction="row" gap="small" alignSelf="start">
                               <CheckBox
-                                checked={item.checked}
-                                label="add film?"
+                                checked={item.checkedLot}
+                                label="add film to lot?"
                                 onChange={() => {
-                                  this.checkedMovie(item);
+                                  this.checkedMovie(item, false);
+                                }}
+                              />
+                              <CheckBox
+                                checked={item.checkedWishlist}
+                                label="add film to wishlist?"
+                                onChange={() => {
+                                  this.checkedMovie(item, true);
                                 }}
                               />
                               <Button

@@ -69,7 +69,8 @@ export default class HomePage extends Component {
     loggedIn: boolean;
     movies: movie[];
     showSettings: boolean;
-    wishlist: boolean;
+    wishlist: movie[];
+    showWishlist: boolean;
     searchVal: string;
     searchList: movie[];
     loading: boolean;
@@ -78,6 +79,7 @@ export default class HomePage extends Component {
     notification: boolean;
     notificationText: string;
     width: number;
+    fetchedWishlist: boolean;
   } = {
     uid: '',
     name: '',
@@ -85,7 +87,8 @@ export default class HomePage extends Component {
     loggedIn: true,
     movies: [],
     showSettings: false,
-    wishlist: false,
+    wishlist: [],
+    showWishlist: false,
     searchVal: '',
     searchList: [],
     loading: true,
@@ -93,7 +96,8 @@ export default class HomePage extends Component {
     greetingChecked: false,
     notification: false,
     notificationText: '',
-    width: 0
+    width: 0,
+    fetchedWishlist: false
   };
 
   constructor(props: any) {
@@ -105,7 +109,8 @@ export default class HomePage extends Component {
       loggedIn: true,
       movies: [],
       showSettings: false,
-      wishlist: false,
+      wishlist: [],
+      showWishlist: false,
       searchVal: '',
       searchList: [],
       loading: true,
@@ -113,7 +118,8 @@ export default class HomePage extends Component {
       greetingChecked: false,
       notification: false,
       notificationText: '',
-      width: 0
+      width: 0,
+      fetchedWishlist: false
     };
     console.log('uid: ' + this.state.uid);
     console.log('name: ' + this.state.name);
@@ -182,23 +188,40 @@ export default class HomePage extends Component {
     this.setState({ width: window.innerWidth });
   };
 
-  moviesAdded = (movies: movie[]) => {
-    let lot: movie[] = this.state.movies;
+  moviesAdded = (lotMovies: movie[], wishlistMovies: movie[]) => {
+    let newLot: movie[] = this.state.movies;
+    let newWishlist: movie[] = this.state.wishlist;
+    let notificationText: string = '';
     const userRef = firebase.database().ref('users/' + this.state.uid);
-    const collectionRef = userRef.child('collection');
-    for (let i = 0; i < movies.length; i++) {
-      const newMovieRef = collectionRef.push();
-      newMovieRef.set({ movie: movies[i] });
-      lot.push(movies[i]);
+    if (lotMovies) {
+      const collectionRef = userRef.child('collection');
+      for (let i = 0; i < lotMovies.length; i++) {
+        const newMovieRef = collectionRef.push();
+        newMovieRef.set({ movie: lotMovies[i] });
+        newLot.push(lotMovies[i]);
+      }
     }
-    console.log(lot);
+    if (wishlistMovies) {
+      const wishlistRef = userRef.child('wishlist');
+      for (let i = 0; i < wishlistMovies.length; i++) {
+        const newMovieRef = wishlistRef.push();
+        newMovieRef.set({ movie: wishlistMovies[i] });
+        newWishlist.push(wishlistMovies[i]);
+      }
+    }
 
+    notificationText =
+      lotMovies.length +
+      ` ${lotMovies.length === 1 ? 'movie' : 'movies'} added to your lot and ` +
+      wishlistMovies.length +
+      ` ${
+        wishlistMovies.length === 1 ? 'movie' : 'movies'
+      } added to your wishlist!`;
     this.setState({
-      movies: lot,
+      movies: newLot,
+      wishlist: newWishlist,
       notification: true,
-      notificationText: `${movies.length} ${
-        movies.length === 1 ? 'movie' : 'movies'
-      } added to your lot!`
+      notificationText: notificationText
     });
   };
 
@@ -225,23 +248,59 @@ export default class HomePage extends Component {
     });
   };
 
-  handleWishlist = () => {
-    this.setState({
-      wishlist: !this.state.wishlist,
-      notification: true,
-      notificationText: 'switched to wishlist view'
-    });
+  handleWishlist = (checked: boolean) => {
+    if (checked && !this.state.fetchedWishlist) {
+      const wishlistMovies: movie[] = [];
+      const userRef = firebase.database().ref('users/' + this.state.uid);
+      const wishlistRef = userRef.child('wishlist');
+      wishlistRef.once('value', (snapshot) => {
+        snapshot.forEach((childSnapshot) => {
+          const childKey = childSnapshot.key!;
+          const movie = childSnapshot.val().movie;
+          const entry: movie = {
+            name: movie.name,
+            plot: movie.plot,
+            date: movie.date,
+            poster: movie.poster,
+            rating: movie.rating,
+            runtime: movie.runtime,
+            genre: movie.genre,
+            id: movie.id,
+            key: childKey
+          };
+          wishlistMovies.push(entry);
+        });
+        this.setState({
+          showWishlist: checked,
+          wishlist: wishlistMovies,
+          fetchedWishlist: true,
+          notification: true,
+          notificationText: 'switched to wishlist view!'
+        });
+      });
+    } else {
+      this.setState({
+        showWishlist: checked,
+        notification: true,
+        notificationText: checked
+          ? 'switched to wishlist view!'
+          : 'switched to lot view!'
+      });
+    }
   };
 
   handleSearch = (event: any) => {
     let searchList: movie[] = [];
-    for (let i = 0; i < this.state.movies.length; i++) {
+    const moviesToSearch: movie[] = this.state.showWishlist
+      ? this.state.wishlist
+      : this.state.movies;
+    for (let i = 0; i < moviesToSearch.length; i++) {
       if (
-        this.state.movies[i].name
+        moviesToSearch[i].name
           .toLowerCase()
           .includes(event.target.value.toLowerCase())
       ) {
-        searchList.push(this.state.movies[i]);
+        searchList.push(moviesToSearch[i]);
       }
     }
     this.setState({
@@ -251,32 +310,45 @@ export default class HomePage extends Component {
   };
 
   handleDeleteMovie = (id: string) => {
-    let newLot: movie[] = [];
-    for (let i = 0; i < this.state.movies.length; i++) {
-      if (this.state.movies[i].id !== id) {
-        newLot.push(this.state.movies[i]);
+    let newMovies: movie[] = [];
+    const moviesToDelete: movie[] = this.state.showWishlist
+      ? this.state.wishlist
+      : this.state.movies;
+    for (let i = 0; i < moviesToDelete.length; i++) {
+      if (moviesToDelete[i].id !== id) {
+        newMovies.push(moviesToDelete[i]);
       }
     }
 
     const userRef = firebase.database().ref('users/' + this.state.uid);
-    const collectionRef = userRef.child('collection');
-    collectionRef.once('value', (snapshot) => {
+    const movieRef = this.state.showWishlist
+      ? userRef.child('wishlist')
+      : userRef.child('collection');
+    movieRef.once('value', (snapshot) => {
       snapshot.forEach((childSnapshot) => {
         const childKey = childSnapshot.key!;
         const movie = childSnapshot.val().movie;
 
         if (movie.id === id) {
-          collectionRef.child(childKey).remove();
+          movieRef.child(childKey).remove();
           return true;
         }
       });
     });
 
-    this.setState({
-      movies: newLot,
-      notification: true,
-      notificationText: 'film successfully deleted'
-    });
+    if (this.state.showWishlist) {
+      this.setState({
+        wishlist: newMovies,
+        notification: true,
+        notificationText: 'film successfully deleted from wishlist'
+      });
+    } else {
+      this.setState({
+        movies: newMovies,
+        notification: true,
+        notificationText: 'film successfully deleted from lot'
+      });
+    }
   };
 
   handleAccountDelete = () => {
@@ -311,7 +383,7 @@ export default class HomePage extends Component {
   };
 
   render() {
-    const title = this.state.wishlist ? 'my wishlist' : 'my lot';
+    const title = this.state.showWishlist ? 'my wishlist' : 'my lot';
     const greeting =
       this.state.name !== ''
         ? 'greetings ' + this.state.name.split(' ', 1) + '!'
@@ -350,9 +422,10 @@ export default class HomePage extends Component {
                         />
                         <Box>
                           <AddTitle
-                            moviesAdded={(movies: movie[]) =>
-                              this.moviesAdded(movies)
-                            }
+                            moviesAdded={(
+                              lotMovies: movie[],
+                              wishlistMovies: movie[]
+                            ) => this.moviesAdded(lotMovies, wishlistMovies)}
                           />
                         </Box>
                         <Menu
@@ -464,9 +537,10 @@ export default class HomePage extends Component {
                       <Box align="center" direction="row">
                         <Box>
                           <AddTitle
-                            moviesAdded={(movies: movie[]) =>
-                              this.moviesAdded(movies)
-                            }
+                            moviesAdded={(
+                              lotMovies: movie[],
+                              wishlistMovies: movie[]
+                            ) => this.moviesAdded(lotMovies, wishlistMovies)}
                           />
                         </Box>
                         <Menu
@@ -579,8 +653,12 @@ export default class HomePage extends Component {
                   flex
                 >
                   <Collection
-                    wishlist={this.state.wishlist}
-                    movies={this.state.movies}
+                    wishlist={this.state.showWishlist}
+                    movies={
+                      this.state.showWishlist
+                        ? this.state.wishlist
+                        : this.state.movies
+                    }
                     searchList={this.state.searchList}
                     searchVal={this.state.searchVal}
                     handleDelete={(id: string) => this.handleDeleteMovie(id)}
@@ -594,8 +672,10 @@ export default class HomePage extends Component {
                     loggedIn={this.state.loggedIn}
                     logOut={this.logOut}
                     toggleSettings={this.toggleSettings}
-                    handleWishlist={this.handleWishlist}
-                    wishlist={this.state.wishlist}
+                    handleWishlist={(checked: boolean) =>
+                      this.handleWishlist(checked)
+                    }
+                    wishlist={this.state.showWishlist}
                     uid={this.state.uid}
                     handleAccountDelete={this.handleAccountDelete}
                   />
