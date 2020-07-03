@@ -60,7 +60,15 @@ export default class Collection extends Component<CollectionProps> {
   getRows = (size: string) => {
     let rows: string[] = [];
     const numMovies: number = this.props.movies.length;
-    const numRows: number = Math.ceil(numMovies / columns[size].length);
+    let numRows: number = 0;
+    if (
+      (size === 'small' && this.props.width < 450) ||
+      (size === 'medium' && this.props.width < 1000)
+    ) {
+      numRows = Math.ceil(numMovies / columns[size].length) + 1;
+    } else {
+      numRows = Math.ceil(numMovies / columns[size].length);
+    }
 
     let i: number = 0;
     for (i = 0; i < numRows; i++) {
@@ -123,7 +131,7 @@ export default class Collection extends Component<CollectionProps> {
 
   movieCollection = (size: string) => {
     let col: string[] = [];
-    if (size === 'small' && this.props.width < 400) {
+    if (size === 'small' && this.props.width < 450) {
       col = columns['small'].slice(0, 2);
     } else if (size === 'medium' && this.props.width < 1000) {
       col = columns['medium'].slice(0, 4);
