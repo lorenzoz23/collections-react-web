@@ -8,10 +8,11 @@ import {
   FormField,
   ResponsiveContext
 } from 'grommet';
-import { Add, FormNextLink, FormClose } from 'grommet-icons';
+import { Add, FormNextLink, FormClose, CircleQuestion } from 'grommet-icons';
 
 import MovieSearchResult from './MovieSearchResult';
 import { movie } from './HomePage';
+import { TooltipButton } from './TooltipButton';
 
 interface AddTitleProps {
   moviesAdded(lotMovies: movie[], wishlistMovies: movie[]): void;
@@ -140,12 +141,13 @@ export default class AddTitle extends Component<AddTitleProps> {
                 ) : (
                   <Box
                     flex
+                    fill={size === 'small' ? true : false}
                     pad="medium"
                     width="medium"
                     background="layer"
                     align="center"
                     justify="center"
-                    overflow="hidden"
+                    overflow="auto"
                     round={size === 'small' ? false : true}
                   >
                     <Heading textAlign="center" level="3">
@@ -178,7 +180,7 @@ export default class AddTitle extends Component<AddTitleProps> {
                     </Box>
                     <Box
                       pad={{ top: 'medium' }}
-                      gap={size === 'small' ? 'medium' : 'none'}
+                      gap={size === 'small' ? 'medium' : 'small'}
                     >
                       <Button
                         style={{ borderRadius: 100 }}
@@ -196,13 +198,26 @@ export default class AddTitle extends Component<AddTitleProps> {
                         }}
                       />
                       {size === 'small' ? (
-                        <Button
-                          icon={<FormClose />}
-                          onClick={() => {
-                            this.setState({ visible: false });
-                          }}
+                        <Box alignContent="center">
+                          <Button
+                            icon={<FormClose />}
+                            onClick={() => {
+                              this.setState({ visible: false });
+                            }}
+                          />
+                          <TooltipButton
+                            title=""
+                            icon={<CircleQuestion />}
+                            focus={true}
+                          />
+                        </Box>
+                      ) : (
+                        <TooltipButton
+                          title=""
+                          icon={<CircleQuestion />}
+                          focus={false}
                         />
-                      ) : null}
+                      )}
                     </Box>
                   </Box>
                 )}
