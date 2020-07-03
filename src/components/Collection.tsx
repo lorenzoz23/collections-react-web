@@ -4,6 +4,7 @@ import DotLoader from 'react-spinners/DotLoader';
 
 import type { movie } from './HomePage';
 import SingleMovieView from './SingleMovieView';
+import { Movie } from './Movie';
 
 const columns: Record<string, string[]> = {
   small: ['auto', 'auto', 'auto'],
@@ -61,10 +62,7 @@ export default class Collection extends Component<CollectionProps> {
     let rows: string[] = [];
     const numMovies: number = this.props.movies.length;
     let numRows: number = 0;
-    if (
-      (size === 'small' && this.props.width < 450) ||
-      (size === 'medium' && this.props.width < 1000)
-    ) {
+    if (size === 'medium' && this.props.width < 1000) {
       numRows = Math.ceil(numMovies / columns[size].length) + 1;
     } else {
       numRows = Math.ceil(numMovies / columns[size].length);
@@ -72,7 +70,9 @@ export default class Collection extends Component<CollectionProps> {
 
     let i: number = 0;
     for (i = 0; i < numRows; i++) {
-      rows.push('medium');
+      if (size === 'small' && this.props.width < 500) {
+        rows.push('small');
+      } else rows.push('medium');
     }
 
     return rows;
@@ -109,19 +109,14 @@ export default class Collection extends Component<CollectionProps> {
         ? this.props.searchList
         : this.props.movies;
     boxArr = moviesToMap.map((movie) => (
-      <Box
+      <Movie
         key={movie.id}
-        title={movie.name + ' (' + movie.date.substring(0, 4) + ')'}
-        background={{
-          image: `url(${movie.poster})`,
-          color: 'header',
-          size: 'cover',
-          position: 'center'
-        }}
-        border={{ size: 'small', color: 'lotBorder', side: 'all' }}
-        round={{ corner: 'bottom', size: 'xlarge' }}
-        onClick={() =>
-          this.setState({ movieDetailsVisible: true, movieToShow: movie })
+        movie={movie}
+        showMovie={() =>
+          this.setState({
+            movieDetailsVisible: true,
+            movieToShow: movie
+          })
         }
       />
     ));
@@ -131,9 +126,7 @@ export default class Collection extends Component<CollectionProps> {
 
   movieCollection = (size: string) => {
     let col: string[] = [];
-    if (size === 'small' && this.props.width < 450) {
-      col = columns['small'].slice(0, 2);
-    } else if (size === 'medium' && this.props.width < 1000) {
+    if (size === 'medium' && this.props.width < 1000) {
       col = columns['medium'].slice(0, 4);
     } else {
       col = columns[size];

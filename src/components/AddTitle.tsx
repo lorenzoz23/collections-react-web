@@ -145,8 +145,7 @@ export default class AddTitle extends Component<AddTitleProps> {
                     background="layer"
                     align="center"
                     justify="center"
-                    overflow="auto"
-                    fill
+                    overflow="hidden"
                     round={size === 'small' ? false : true}
                   >
                     <Heading textAlign="center" level="3">

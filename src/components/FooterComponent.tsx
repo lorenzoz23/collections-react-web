@@ -72,16 +72,20 @@ export default class FooterComponent extends Component {
                     cinelot allows you to browse, search, and maintain your
                     physical film collection on the go. gone are the days of
                     double purchasing blu-rays due to unforseen lapses in
-                    memory. cinelot is here for you, forever and always...
+                    memory.
                   </Paragraph>
                   <Paragraph textAlign="center">
-                    to add a film to your lot, click on the + button at the top
-                    of the app and search by film title and year (year is an
-                    optional field but is highly recommended for better, more
-                    concise results.) once you've added so many movies that
-                    lazily scrolling through them becomes a hassle, query the
-                    search bar with a film title to quickly see if you own it or
-                    not!
+                    cinelot is here for you, forever and always...
+                  </Paragraph>
+                  <Paragraph textAlign="center">
+                    looking to add a film to your lot or wishlist? click on the
+                    + button at the top of the app and search by film title and
+                    year (year is an optional field but is highly recommended
+                    for better, more concise results.) once you've added so many
+                    movies that lazily scrolling through them becomes a hassle,
+                    query the search bar with a film title to quickly see
+                    whether you own it, and if you don't, make sure to add it to
+                    your wishlist!
                   </Paragraph>
 
                   {size === 'small' ? (
