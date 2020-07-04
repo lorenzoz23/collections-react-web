@@ -59,6 +59,7 @@ export type movie = {
   genre: string[];
   id: string;
   key?: string;
+  starCount?: number;
 };
 
 export default class HomePage extends Component {
@@ -165,7 +166,8 @@ export default class HomePage extends Component {
             runtime: movie.runtime,
             genre: movie.genre,
             id: movie.id,
-            key: childKey
+            key: childKey,
+            starCount: movie.starCount || undefined
           };
           lot.push(entry);
         });
@@ -336,19 +338,51 @@ export default class HomePage extends Component {
       });
     });
 
-    if (this.state.showWishlist) {
-      this.setState({
-        wishlist: newMovies,
-        notification: true,
-        notificationText: 'film successfully deleted from wishlist'
-      });
-    } else {
-      this.setState({
-        movies: newMovies,
-        notification: true,
-        notificationText: 'film successfully deleted from lot'
-      });
+    this.setState({
+      wishlist: newMovies,
+      notification: true,
+      notificationText:
+        'film successfully deleted from ' + this.state.showWishlist
+          ? 'wishlist'
+          : 'lot'
+    });
+  };
+
+  handleRate = (updatedMovie: movie) => {
+    let newMovies: movie[] = [];
+    const moviesToUpdate: movie[] = this.state.showWishlist
+      ? this.state.wishlist
+      : this.state.movies;
+    for (let i = 0; i < moviesToUpdate.length; i++) {
+      if (moviesToUpdate[i].id !== updatedMovie.id) {
+        newMovies.push(moviesToUpdate[i]);
+      }
     }
+
+    const userRef = firebase.database().ref('users/' + this.state.uid);
+    const movieRef = this.state.showWishlist
+      ? userRef.child('wishlist')
+      : userRef.child('collection');
+    movieRef.once('value', (snapshot) => {
+      snapshot.forEach((childSnapshot) => {
+        const childKey = childSnapshot.key!;
+        const movie = childSnapshot.val().movie;
+
+        if (movie.id === updatedMovie.id) {
+          movieRef.child(childKey).update({ movie: updatedMovie });
+          return true;
+        }
+      });
+    });
+
+    const text = `${
+      this.state.showWishlist ? 'wishlist' : 'lot'
+    } film successfully updated`;
+    this.setState({
+      wishlist: newMovies,
+      notification: true,
+      notificationText: text
+    });
   };
 
   handleAccountDelete = () => {
@@ -673,6 +707,9 @@ export default class HomePage extends Component {
                     searchList={this.state.searchList}
                     searchVal={this.state.searchVal}
                     handleDelete={(id: string) => this.handleDeleteMovie(id)}
+                    handleRate={(updatedMovie: movie) =>
+                      this.handleRate(updatedMovie)
+                    }
                     loading={this.state.loading}
                     width={this.state.width}
                   />

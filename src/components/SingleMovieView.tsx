@@ -2,45 +2,22 @@ import React, { Component } from 'react';
 import { Box, Heading, Button, Text, ResponsiveContext, Image } from 'grommet';
 import { Previous, Trash } from 'grommet-icons';
 import { movie } from './HomePage';
+import RateFilm from './RateFilm';
 
 interface SingleMovieViewProps {
   closeDetailView?(): void;
   movieAdded?(movie: movie): void;
   handleDelete?(movieId: string): void;
+  handleRate?(updatedMovie: movie): void;
   movie: movie;
   add: boolean;
 }
 
-export type movieView = {
-  movie: movie;
-  checked: boolean;
-};
-
 export default class SingleMovieView extends Component<SingleMovieViewProps> {
-  state: { movieView: movieView } = {
-    movieView: {
-      movie: this.props.movie,
-      checked: false
-    }
-  };
-
-  checkedMovie = () => {
-    const checkedMovie: movieView = {
-      ...this.state.movieView,
-      checked: !this.state.movieView.checked
-    };
-    this.setState({
-      movieView: checkedMovie
-    });
-    const movieToAdd: movie = {
-      ...this.state.movieView.movie
-    };
-    this.props.movieAdded!(movieToAdd);
-  };
-
   render() {
-    const numGenre = this.state.movieView.movie.genre.length;
+    const numGenre = this.props.movie.genre.length;
     const mode = localStorage.getItem('visualModeValue') || 'gradient';
+
     return (
       <ResponsiveContext.Consumer>
         {(size) => (
@@ -63,7 +40,7 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                   height={{ min: '225px', max: '225px' }}
                   width={{ min: '150px', max: '150px' }}
                   background={{
-                    image: `url(${this.state.movieView.movie.poster})`,
+                    image: `url(${this.props.movie.poster})`,
                     color: 'movieBorder',
                     size: 'contain'
                   }}
@@ -84,7 +61,7 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                   <Image
                     fit="cover"
                     fill
-                    src={this.state.movieView.movie.poster}
+                    src={this.props.movie.poster}
                     opacity="0.2"
                   />
                 </Box>
@@ -101,7 +78,7 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                   level="3"
                   textAlign={size === 'small' ? 'center' : undefined}
                 >
-                  {this.state.movieView.movie.name}
+                  {this.props.movie.name}
                 </Heading>
                 {this.props.add ? (
                   <Box gap="small">
@@ -115,7 +92,7 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                           : undefined
                       }
                     >
-                      {this.state.movieView.movie.date.substring(0, 4)}
+                      {this.props.movie.date.substring(0, 4)}
                     </Text>
                     <Text
                       margin={{
@@ -129,7 +106,7 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                           : undefined
                       }
                     >
-                      {this.state.movieView.movie.plot}
+                      {this.props.movie.plot}
                     </Text>
                   </Box>
                 ) : (
@@ -141,7 +118,7 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                       direction={size !== 'small' ? 'row' : 'column'}
                     >
                       <Box direction="row" gap="xsmall" justify="center">
-                        {this.state.movieView.movie.genre.map(
+                        {this.props.movie.genre.map(
                           (genre: string, i: number) => (
                             <Text
                               weight="bold"
@@ -168,9 +145,9 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                               : undefined
                           }
                         >
-                          {this.state.movieView.movie.date.substring(0, 4)}
+                          {this.props.movie.date.substring(0, 4)}
                         </Text>
-                        {this.state.movieView.movie.rating !== '?' ? (
+                        {this.props.movie.rating !== '?' ? (
                           <Text
                             weight="bold"
                             size={size === 'small' ? 'small' : 'medium'}
@@ -180,7 +157,7 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                                 : undefined
                             }
                           >
-                            {this.state.movieView.movie.rating}
+                            {this.props.movie.rating}
                           </Text>
                         ) : null}
                         <Text
@@ -192,7 +169,7 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                               : undefined
                           }
                         >
-                          {this.state.movieView.movie.runtime} min
+                          {this.props.movie.runtime} min
                         </Text>
                       </Box>
                     </Box>
@@ -208,7 +185,7 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                         horizontal: size === 'small' ? 'small' : 'none'
                       }}
                     >
-                      {this.state.movieView.movie.plot}
+                      {this.props.movie.plot}
                     </Text>
                   </Box>
                 )}
@@ -250,14 +227,22 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                     onClick={() => this.props.closeDetailView!()}
                   />
                 ) : null}
-                <Button
-                  icon={<Trash color="deleteMovie" />}
-                  alignSelf="end"
-                  title="remove film from lot"
-                  onClick={() =>
-                    this.props.handleDelete!(this.state.movieView.movie.id)
-                  }
-                />
+                <Box direction="row" gap="xsmall" align="center">
+                  <RateFilm
+                    movie={this.props.movie}
+                    handleRate={(updatedMovie: movie) =>
+                      this.props.handleRate!(updatedMovie)
+                    }
+                  />
+                  <Button
+                    icon={<Trash color="deleteMovie" />}
+                    alignSelf="end"
+                    title="remove film from lot"
+                    onClick={() =>
+                      this.props.handleDelete!(this.props.movie.id)
+                    }
+                  />
+                </Box>
               </Box>
             )}
           </Box>

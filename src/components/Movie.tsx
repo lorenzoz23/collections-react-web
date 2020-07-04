@@ -28,9 +28,15 @@ export const Movie = (props: any) => {
           onMouseOut={() => setOver(false)}
         >
           {ref.current && over && size !== 'small' && (
-            <Drop align={{ bottom: 'bottom' }} target={ref.current} plain>
+            <Drop
+              align={{ bottom: 'bottom' }}
+              target={ref.current}
+              plain
+              overflow="hidden"
+            >
               <Box
                 margin="xsmall"
+                animation={{ type: 'slideDown', duration: 1000 }}
                 pad="small"
                 background="dark-2"
                 elevation="small"

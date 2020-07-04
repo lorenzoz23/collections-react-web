@@ -19,6 +19,7 @@ interface CollectionProps {
   searchList: movie[];
   searchVal: string;
   handleDelete(movieId: string): void;
+  handleRate(updatedMovie: movie): void;
   loading: boolean;
   width: number;
 }
@@ -195,6 +196,9 @@ export default class Collection extends Component<CollectionProps> {
                     movie={this.state.movieToShow}
                     add={false}
                     handleDelete={(id: string) => this.handleDelete(id)}
+                    handleRate={(updatedMovie: movie) =>
+                      this.props.handleRate(updatedMovie)
+                    }
                     closeDetailView={() =>
                       this.setState({ movieDetailsVisible: false })
                     }
