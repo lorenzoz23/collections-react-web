@@ -134,9 +134,17 @@ export default class RateFilm extends Component<RateFilmProps> {
                     {this.props.movie.name}?
                   </Text>
                   <Box
+                    background="miniLayer"
                     direction="row"
                     margin={{ bottom: 'small' }}
                     overflow="auto"
+                    border={{
+                      side: 'all',
+                      color: 'movieBorder',
+                      size: 'medium',
+                      style: 'outset'
+                    }}
+                    round
                   >
                     {this.state.stars}
                   </Box>

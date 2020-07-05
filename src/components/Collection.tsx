@@ -5,6 +5,7 @@ import DotLoader from 'react-spinners/DotLoader';
 import type { movie } from './HomePage';
 import SingleMovieView from './SingleMovieView';
 import { Movie } from './Movie';
+import { Sort } from './Sort';
 
 const columns: Record<string, string[]> = {
   small: ['auto', 'auto', 'auto'],
@@ -22,6 +23,7 @@ interface CollectionProps {
   handleRate(updatedMovie: movie): void;
   loading: boolean;
   width: number;
+  sortBy: string;
 }
 
 export default class Collection extends Component<CollectionProps> {
@@ -104,25 +106,27 @@ export default class Collection extends Component<CollectionProps> {
   // };
 
   listMovieBoxes = () => {
-    let boxArr = [];
     const moviesToMap: movie[] =
       this.props.searchVal.length > 0
         ? this.props.searchList
         : this.props.movies;
-    boxArr = moviesToMap.map((movie) => (
-      <Movie
-        key={movie.id}
-        movie={movie}
-        showMovie={() =>
-          this.setState({
-            movieDetailsVisible: true,
-            movieToShow: movie
-          })
-        }
-      />
-    ));
 
-    return boxArr;
+    return (
+      <Sort by={this.props.sortBy}>
+        {moviesToMap.map((movie) => (
+          <Movie
+            key={movie.id}
+            movie={movie}
+            showMovie={() =>
+              this.setState({
+                movieDetailsVisible: true,
+                movieToShow: movie
+              })
+            }
+          />
+        ))}
+      </Sort>
+    );
   };
 
   movieCollection = (size: string) => {

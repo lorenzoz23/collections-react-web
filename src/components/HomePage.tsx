@@ -81,6 +81,7 @@ export default class HomePage extends Component {
     notificationText: string;
     width: number;
     fetchedWishlist: boolean;
+    sortBy: string;
   } = {
     uid: '',
     name: '',
@@ -98,7 +99,8 @@ export default class HomePage extends Component {
     notification: false,
     notificationText: '',
     width: 0,
-    fetchedWishlist: false
+    fetchedWishlist: false,
+    sortBy: ''
   };
 
   constructor(props: any) {
@@ -120,7 +122,8 @@ export default class HomePage extends Component {
       notification: false,
       notificationText: '',
       width: 0,
-      fetchedWishlist: false
+      fetchedWishlist: false,
+      sortBy: ''
     };
     console.log('uid: ' + this.state.uid);
     console.log('name: ' + this.state.name);
@@ -338,14 +341,19 @@ export default class HomePage extends Component {
       });
     });
 
-    this.setState({
-      wishlist: newMovies,
-      notification: true,
-      notificationText:
-        'film successfully deleted from ' + this.state.showWishlist
-          ? 'wishlist'
-          : 'lot'
-    });
+    if (this.state.showWishlist) {
+      this.setState({
+        wishlist: newMovies,
+        notification: true,
+        notificationText: 'film successfully deleted from wishlist'
+      });
+    } else {
+      this.setState({
+        movies: newMovies,
+        notification: true,
+        notificationText: 'film successfully deleted from lot'
+      });
+    }
   };
 
   handleRate = (updatedMovie: movie) => {
@@ -375,14 +383,19 @@ export default class HomePage extends Component {
       });
     });
 
-    const text = `${
-      this.state.showWishlist ? 'wishlist' : 'lot'
-    } film successfully updated`;
-    this.setState({
-      wishlist: newMovies,
-      notification: true,
-      notificationText: text
-    });
+    if (this.state.showWishlist) {
+      this.setState({
+        wishlist: newMovies,
+        notification: true,
+        notificationText: 'wishlist film successfully updated'
+      });
+    } else {
+      this.setState({
+        movies: newMovies,
+        notification: true,
+        notificationText: 'lot film successfully updated'
+      });
+    }
   };
 
   handleAccountDelete = () => {
@@ -497,7 +510,6 @@ export default class HomePage extends Component {
                           ]}
                         />
                         <Menu
-                          //disabled
                           hoverIndicator="accent-1"
                           title="sort films by..."
                           focusIndicator={false}
@@ -505,9 +517,10 @@ export default class HomePage extends Component {
                           icon={<Sort />}
                           items={[
                             {
-                              label: 'title',
+                              label: 'title (asc)',
                               onClick: () => {
                                 this.setState({
+                                  sortBy: 'nameAsc',
                                   notification: true,
                                   notificationText:
                                     'film lot successfully sorted by title'
@@ -516,9 +529,22 @@ export default class HomePage extends Component {
                               hoverIndicator: 'accent-1'
                             },
                             {
-                              label: 'runtime',
+                              label: 'title (desc)',
                               onClick: () => {
                                 this.setState({
+                                  sortBy: 'nameDesc',
+                                  notification: true,
+                                  notificationText:
+                                    'film lot successfully sorted by title'
+                                });
+                              },
+                              hoverIndicator: 'accent-1'
+                            },
+                            {
+                              label: 'runtime (asc)',
+                              onClick: () => {
+                                this.setState({
+                                  sortBy: 'runtimeAsc',
                                   notification: true,
                                   notificationText:
                                     'film lot successfully sorted by runtime'
@@ -527,20 +553,34 @@ export default class HomePage extends Component {
                               hoverIndicator: 'accent-1'
                             },
                             {
-                              label: 'genre',
+                              label: 'runtime (desc)',
                               onClick: () => {
                                 this.setState({
+                                  sortBy: 'runtimeDesc',
                                   notification: true,
                                   notificationText:
-                                    'film lot successfully sorted by genre'
+                                    'film lot successfully sorted by runtime'
                                 });
                               },
                               hoverIndicator: 'accent-1'
                             },
                             {
-                              label: 'mpaa rating',
+                              label: 'mpaa rating (g - nc17)',
                               onClick: () => {
                                 this.setState({
+                                  sortBy: 'mpaaAsc',
+                                  notification: true,
+                                  notificationText:
+                                    'film lot successfully sorted by mpaa rating'
+                                });
+                              },
+                              hoverIndicator: 'accent-1'
+                            },
+                            {
+                              label: 'mpaa rating (nc17 - g)',
+                              onClick: () => {
+                                this.setState({
+                                  sortBy: 'mpaaDesc',
                                   notification: true,
                                   notificationText:
                                     'film lot successfully sorted by mpaa rating'
@@ -552,6 +592,7 @@ export default class HomePage extends Component {
                               label: 'reset',
                               onClick: () => {
                                 this.setState({
+                                  sortBy: '',
                                   notification: true,
                                   notificationText:
                                     'film lot successfully reset to original order'
@@ -612,7 +653,6 @@ export default class HomePage extends Component {
                           ]}
                         />
                         <Menu
-                          //disabled
                           hoverIndicator="accent-1"
                           title="sort films by..."
                           focusIndicator={false}
@@ -620,9 +660,10 @@ export default class HomePage extends Component {
                           icon={<Sort />}
                           items={[
                             {
-                              label: 'title',
+                              label: 'title (asc)',
                               onClick: () => {
                                 this.setState({
+                                  sortBy: 'nameAsc',
                                   notification: true,
                                   notificationText:
                                     'film lot successfully sorted by title'
@@ -631,9 +672,22 @@ export default class HomePage extends Component {
                               hoverIndicator: 'accent-1'
                             },
                             {
-                              label: 'runtime',
+                              label: 'title (desc)',
                               onClick: () => {
                                 this.setState({
+                                  sortBy: 'nameDesc',
+                                  notification: true,
+                                  notificationText:
+                                    'film lot successfully sorted by title'
+                                });
+                              },
+                              hoverIndicator: 'accent-1'
+                            },
+                            {
+                              label: 'runtime (asc)',
+                              onClick: () => {
+                                this.setState({
+                                  sortBy: 'runtimeAsc',
                                   notification: true,
                                   notificationText:
                                     'film lot successfully sorted by runtime'
@@ -642,20 +696,34 @@ export default class HomePage extends Component {
                               hoverIndicator: 'accent-1'
                             },
                             {
-                              label: 'genre',
+                              label: 'runtime (desc)',
                               onClick: () => {
                                 this.setState({
+                                  sortBy: 'runtimeDesc',
                                   notification: true,
                                   notificationText:
-                                    'film lot successfully sorted by genre'
+                                    'film lot successfully sorted by runtime'
                                 });
                               },
                               hoverIndicator: 'accent-1'
                             },
                             {
-                              label: 'mpaa rating',
+                              label: 'mpaa rating (g - nc17)',
                               onClick: () => {
                                 this.setState({
+                                  sortBy: 'mpaaAsc',
+                                  notification: true,
+                                  notificationText:
+                                    'film lot successfully sorted by mpaa rating'
+                                });
+                              },
+                              hoverIndicator: 'accent-1'
+                            },
+                            {
+                              label: 'mpaa rating (nc17 - g)',
+                              onClick: () => {
+                                this.setState({
+                                  sortBy: 'mpaaDesc',
                                   notification: true,
                                   notificationText:
                                     'film lot successfully sorted by mpaa rating'
@@ -667,6 +735,7 @@ export default class HomePage extends Component {
                               label: 'reset',
                               onClick: () => {
                                 this.setState({
+                                  sortBy: '',
                                   notification: true,
                                   notificationText:
                                     'film lot successfully reset to original order'
@@ -712,6 +781,7 @@ export default class HomePage extends Component {
                     }
                     loading={this.state.loading}
                     width={this.state.width}
+                    sortBy={this.state.sortBy}
                   />
                 </Box>
                 <FooterComponent />
