@@ -54,6 +54,7 @@ export type movie = {
   plot: string;
   date: string;
   poster: string;
+  backDrop?: string[];
   rating: string;
   runtime: number;
   genre: string[];
@@ -165,6 +166,7 @@ export default class HomePage extends Component {
             plot: movie.plot,
             date: movie.date,
             poster: movie.poster,
+            backDrop: movie.backDrop || [],
             rating: movie.rating,
             runtime: movie.runtime,
             genre: movie.genre,
@@ -267,6 +269,7 @@ export default class HomePage extends Component {
             plot: movie.plot,
             date: movie.date,
             poster: movie.poster,
+            backDrop: movie.backDrop || [],
             rating: movie.rating,
             runtime: movie.runtime,
             genre: movie.genre,
@@ -796,6 +799,9 @@ export default class HomePage extends Component {
                     wishlist={this.state.showWishlist}
                     uid={this.state.uid}
                     handleAccountDelete={this.handleAccountDelete}
+                    lot={this.state.movies}
+                    wishlistFilms={this.state.wishlist}
+                    name={this.state.name}
                   />
                 ) : null}
                 {this.state.greeting ? (
@@ -810,7 +816,7 @@ export default class HomePage extends Component {
                       border={{
                         color: 'accent-1',
                         side: 'all',
-                        size: size !== 'small' ? 'small' : 'medium'
+                        size: 'medium'
                       }}
                     >
                       <Heading textAlign="center">{greeting}</Heading>

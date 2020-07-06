@@ -26,7 +26,6 @@ const themeGradient = {
       resultBorder: 'accent-1',
       lotBorder: '#ADB9C6',
       movieBorder: '#396897',
-      miniLayer: 'linear-gradient(90deg, #e3ffe7 0%, #d9e7ff 100%)',
       rateFilm:
         'linear-gradient(135deg, rgba(121,215,255,1) 0%, rgba(225,237,255,1) 75%)'
     },
@@ -53,7 +52,7 @@ const themeSolid = {
       movieBorder: '#34495E',
       deleteMovie: '#FF3F3F',
       resultBorder: 'brand',
-      miniLayer: 'linear-gradient(90deg, #e3ffe7 0%, #d9e7ff 100%)'
+      rateFilm: 'linear-gradient(90deg, #e3ffe7 0%, #d9e7ff 100%)'
     },
     font: {
       family: 'Roboto',

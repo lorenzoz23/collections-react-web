@@ -49,6 +49,24 @@ export default class AddTitle extends Component<AddTitleProps> {
     });
   };
 
+  getBackDrops = async (movie: movie) => {
+    const response = await fetch(
+      `https://api.themoviedb.org/3/movie/${movie.id}/images?api_key=${process.env.REACT_APP_TMDB_API_KEY}&language=en-US&include_image_language=include_image_language%3Den%2Cnull`
+    );
+    const data = await response.json();
+    const images: string[] = [];
+    let image: string = '';
+    for (let i = 0; i < 3; i++) {
+      if (data.backdrops[i].file_path) {
+        image =
+          'https://image.tmdb.org/t/p/original' + data.backdrops[i].file_path;
+        images.push(image);
+      }
+    }
+
+    return images;
+  };
+
   updateMovieFields = async (movies: movie[]) => {
     let updatedMovies: movie[] = [];
     for (let n = 0; n < movies.length; n++) {
@@ -86,6 +104,7 @@ export default class AddTitle extends Component<AddTitleProps> {
       movies[n].genre = data.genres.map((genre: any) => {
         return genre.name;
       });
+      movies[n].backDrop = await this.getBackDrops(movies[n]);
       updatedMovies.push(movies[n]);
     }
     return updatedMovies;

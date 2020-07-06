@@ -12,6 +12,8 @@ import {
   TextInput
 } from 'grommet';
 import { CircleQuestion, Magic } from 'grommet-icons';
+import CSV from './CSV';
+import { movie } from './HomePage';
 
 interface SettingsProps {
   logOut(): void;
@@ -21,6 +23,9 @@ interface SettingsProps {
   wishlist: boolean;
   uid: string;
   handleAccountDelete(): void;
+  lot: movie[];
+  wishlistFilms: movie[];
+  name: string;
 }
 
 export default class Settings extends Component<SettingsProps> {
@@ -39,20 +44,11 @@ export default class Settings extends Component<SettingsProps> {
     this.setState({ theme: mode });
   };
 
-  logOut = async () => {
-    await this.setState({
+  logOut = () => {
+    this.setState({
       loggedIn: false
     });
     this.props.logOut();
-  };
-
-  handleImport = () => {
-    document.getElementById('fileSystem')?.click();
-  };
-
-  handleImportChange = (event: any) => {
-    const fileUploaded = event.target.files[0];
-    console.log('file ' + fileUploaded);
   };
 
   handleWishlist = (event: any) => {
@@ -127,7 +123,7 @@ export default class Settings extends Component<SettingsProps> {
               align="center"
               pad="small"
               round
-              border={{ color: 'accent-1', side: 'all', size: 'small' }}
+              border={{ color: 'accent-1', side: 'all', size: 'medium' }}
             >
               <Heading level="2">settings</Heading>
               <Box gap="small" alignContent="center">
@@ -174,7 +170,6 @@ export default class Settings extends Component<SettingsProps> {
                   <Box direction="row" align="center">
                     <Text weight="bold">import/export data</Text>
                     <Button
-                      disabled
                       onClick={() => {
                         this.setState({
                           showFileInfo: !this.state.showFileInfo
@@ -200,21 +195,11 @@ export default class Settings extends Component<SettingsProps> {
                       </Text>
                     </Box>
                   ) : null}
-                  <Box gap="small" direction="row">
-                    <Button
-                      disabled
-                      label="import"
-                      size="small"
-                      onClick={this.handleImport}
-                    />
-                    <Button disabled label="export" size="small" />
-                    <input
-                      type="file"
-                      style={{ display: 'none' }}
-                      id="fileSystem"
-                      onChange={this.handleImportChange}
-                    />
-                  </Box>
+                  <CSV
+                    lot={this.props.lot}
+                    wishlist={this.props.wishlistFilms}
+                    name={this.props.name}
+                  />
                 </Box>
                 <Box gap="xsmall" align="center" margin={{ bottom: 'medium' }}>
                   <Text weight="bold">theme</Text>

@@ -11,7 +11,7 @@ import {
   Heading,
   Paragraph
 } from 'grommet';
-import { Multimedia, CircleQuestion, FormClose } from 'grommet-icons';
+import { Multimedia, FormClose, CircleInformation } from 'grommet-icons';
 
 export default class FooterComponent extends Component {
   state = {
@@ -46,7 +46,7 @@ export default class FooterComponent extends Component {
               ) : null}
               <Button
                 title="about"
-                icon={<CircleQuestion />}
+                icon={<CircleInformation />}
                 focusIndicator={false}
                 onClick={() => this.setState({ showAbout: true })}
               />
@@ -65,7 +65,7 @@ export default class FooterComponent extends Component {
                   justify="center"
                   round={size !== 'small' ? true : false}
                   overflow="auto"
-                  border={{ size: 'small', side: 'all', color: 'accent-1' }}
+                  border={{ size: 'medium', side: 'all', color: 'accent-1' }}
                 >
                   <Heading textAlign="center">about cinelot</Heading>
                   <Paragraph textAlign="center">

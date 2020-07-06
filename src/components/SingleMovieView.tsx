@@ -17,12 +17,13 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
   render() {
     const numGenre = this.props.movie.genre.length;
     const mode = localStorage.getItem('visualModeValue') || 'gradient';
+    const rand = Math.floor(Math.random() * Math.floor(3));
 
     return (
       <ResponsiveContext.Consumer>
         {(size) => (
           <Box
-            gap="small"
+            gap="medium"
             pad="small"
             background="movieSearchResult"
             round={size === 'small' ? false : true}
@@ -191,6 +192,25 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                 )}
               </Box>
             </Box>
+            {size !== 'small' && (
+              <Box
+                style={{
+                  position: 'fixed',
+                  top: 0,
+                  bottom: 0,
+                  right: 0,
+                  left: 0,
+                  zIndex: 0
+                }}
+              >
+                <Image
+                  fit="cover"
+                  src={this.props.movie.backDrop![rand]}
+                  opacity="0.2"
+                  style={{ borderRadius: 25 }}
+                />
+              </Box>
+            )}
             {this.props.add ? (
               <Box
                 align="center"
@@ -213,7 +233,6 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                 direction="row"
                 justify="between"
                 alignSelf="end"
-                pad={size === 'small' ? 'medium' : 'none'}
                 style={
                   size === 'small'
                     ? { position: 'fixed', bottom: 0, left: 0, width: '100%' }
@@ -227,7 +246,22 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                     onClick={() => this.props.closeDetailView!()}
                   />
                 ) : null}
-                <Box direction="row" gap="xsmall" align="center">
+                <Box
+                  direction="row"
+                  gap="xsmall"
+                  align="center"
+                  alignSelf="end"
+                  pad={size !== 'small' ? 'small' : 'none'}
+                  style={
+                    size !== 'small'
+                      ? {
+                          position: 'fixed',
+                          bottom: 0,
+                          right: 0
+                        }
+                      : undefined
+                  }
+                >
                   <RateFilm
                     movie={this.props.movie}
                     handleRate={(updatedMovie: movie) =>
@@ -237,7 +271,7 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                   <Button
                     icon={<Trash color="deleteMovie" />}
                     alignSelf="end"
-                    title="remove film from lot"
+                    title="remove film"
                     onClick={() =>
                       this.props.handleDelete!(this.props.movie.id)
                     }

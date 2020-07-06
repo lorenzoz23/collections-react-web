@@ -92,6 +92,7 @@ export default class RateFilm extends Component<RateFilmProps> {
   };
 
   render() {
+    const mode = localStorage.getItem('visualModeValue') || 'gradient';
     return (
       <ResponsiveContext.Consumer>
         {(size) => (
@@ -106,7 +107,7 @@ export default class RateFilm extends Component<RateFilmProps> {
               }
               title="rate film"
               label={this.state.rateLabel}
-              hoverIndicator="neutral-3"
+              hoverIndicator={mode === 'solid' ? 'accent-1' : 'neutral-3'}
               onClick={this.rateFilm}
             />
             {this.state.showRate && (
@@ -123,18 +124,20 @@ export default class RateFilm extends Component<RateFilmProps> {
                 <Box
                   round={size !== 'small' ? true : false}
                   background="rateFilm"
-                  fill
                   pad="small"
+                  fill
                   flex
                   align="center"
-                  justify="evenly"
                 >
-                  <Text size="large">how would you rate</Text>
-                  <Text weight="bold" size="large">
-                    {this.props.movie.name}?
-                  </Text>
+                  <Box align="center" pad="small">
+                    <Text size="large">how would you rate</Text>
+                    <Text weight="bold" size="large">
+                      {this.props.movie.name}?
+                    </Text>
+                  </Box>
                   <Box
-                    background="miniLayer"
+                    justify="center"
+                    align="center"
                     direction="row"
                     margin={{ bottom: 'small' }}
                     overflow="auto"
@@ -150,7 +153,11 @@ export default class RateFilm extends Component<RateFilmProps> {
                   </Box>
                   <Box align="center">
                     <Button
-                      label="rate"
+                      label={
+                        this.state.starCount === 0
+                          ? 'rate'
+                          : 'rate ' + this.state.starCount + '/10'
+                      }
                       onClick={this.handleRate}
                       color="#228BE6"
                       primary
