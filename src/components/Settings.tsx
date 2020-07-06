@@ -26,6 +26,7 @@ interface SettingsProps {
   lot: movie[];
   wishlistFilms: movie[];
   name: string;
+  fetchedWishlist: boolean;
 }
 
 export default class Settings extends Component<SettingsProps> {
@@ -199,6 +200,8 @@ export default class Settings extends Component<SettingsProps> {
                     lot={this.props.lot}
                     wishlist={this.props.wishlistFilms}
                     name={this.props.name}
+                    fetchedWishlist={this.props.fetchedWishlist}
+                    uid={this.props.uid}
                   />
                 </Box>
                 <Box gap="xsmall" align="center" margin={{ bottom: 'medium' }}>

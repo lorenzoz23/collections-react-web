@@ -289,6 +289,7 @@ export default class MovieSearchResult extends Component<
                         <Box
                           key={item.movie.id}
                           height={{ min: 'small', max: 'small' }}
+                          width={{ min: 'large' }}
                           pad="small"
                           direction="row"
                           align="center"

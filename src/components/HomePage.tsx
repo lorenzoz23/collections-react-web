@@ -274,6 +274,7 @@ export default class HomePage extends Component {
             runtime: movie.runtime,
             genre: movie.genre,
             id: movie.id,
+            starCount: movie.starCount || undefined,
             key: childKey
           };
           wishlistMovies.push(entry);
@@ -816,6 +817,7 @@ export default class HomePage extends Component {
                     lot={this.state.movies}
                     wishlistFilms={this.state.wishlist}
                     name={this.state.name}
+                    fetchedWishlist={this.state.fetchedWishlist}
                   />
                 ) : null}
                 {this.state.greeting ? (

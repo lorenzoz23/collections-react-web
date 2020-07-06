@@ -74,7 +74,7 @@ export default class AddTitle extends Component<AddTitleProps> {
         `https://api.themoviedb.org/3/movie/${movies[n].id}?api_key=${process.env.REACT_APP_TMDB_API_KEY}&language=en-US&append_to_response=release_dates`
       );
       const data = await response.json();
-      let rating: string = '?';
+      let rating: string = 'NR';
       let found: boolean = false;
       for (let i = 0; i < data.release_dates.results.length; i++) {
         if (!found) {

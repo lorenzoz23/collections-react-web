@@ -27,29 +27,20 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
             pad="small"
             background="movieSearchResult"
             round={size === 'small' ? false : true}
-            justify={size === 'small' ? 'center' : undefined}
+            justify="center"
             flex
           >
             <Box
               direction={size === 'small' ? 'column' : 'row'}
-              justify="start"
               gap={size === 'small' ? 'none' : 'medium'}
               margin={{ bottom: 'small' }}
+              // height={{
+              //   max: size !== 'small' ? 'medium' : undefined,
+              //   min: size !== 'small' ? 'medium' : undefined
+              // }}
+              height={size !== 'small' ? 'medium' : undefined}
             >
-              {size !== 'small' ? (
-                <Box
-                  round="xsmall"
-                  height={{ min: '225px', max: '225px' }}
-                  width={{ min: '150px', max: '150px' }}
-                  background={{
-                    image: `url(${this.props.movie.poster})`,
-                    color: 'movieBorder',
-                    size: 'contain'
-                  }}
-                  border={{ size: 'small', color: 'movieBorder', side: 'all' }}
-                  alignSelf="end"
-                />
-              ) : (
+              {size === 'small' && (
                 <Box
                   style={{
                     position: 'fixed',
@@ -66,19 +57,31 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                     src={this.props.movie.poster}
                     opacity="0.2"
                   />
+                  {/* <Box
+                    round="xsmall"
+                    height={{ min: '225px', max: '225px' }}
+                    width={{ min: '150px', max: '150px' }}
+                    background={{
+                      image: `url(${this.props.movie.poster})`,
+                      color: 'movieBorder',
+                      size: 'contain'
+                    }}
+                    border={{
+                      size: 'small',
+                      color: 'movieBorder',
+                      side: 'all'
+                    }}
+                    alignSelf="end"
+                  /> */}
                 </Box>
               )}
-              <Box
-                justify="evenly"
-                align={size === 'small' ? 'center' : undefined}
-                alignSelf={size === 'small' ? 'center' : 'end'}
-              >
+              <Box align="center" alignSelf="center">
                 <Heading
                   color={
                     size === 'small' && mode === 'solid' ? 'black' : undefined
                   }
                   level="3"
-                  textAlign={size === 'small' ? 'center' : undefined}
+                  textAlign="center"
                 >
                   {this.props.movie.name}
                 </Heading>
@@ -87,7 +90,7 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                     <Text
                       weight="bold"
                       size={size === 'small' ? 'small' : 'medium'}
-                      textAlign={size === 'small' ? 'center' : undefined}
+                      textAlign="center"
                       color={
                         size === 'small' && mode === 'solid'
                           ? 'black'
@@ -101,7 +104,7 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                         horizontal: size === 'small' ? 'small' : 'none'
                       }}
                       size="small"
-                      textAlign={size === 'small' ? 'center' : undefined}
+                      textAlign="center"
                       color={
                         size === 'small' && mode === 'solid'
                           ? 'black'
@@ -115,7 +118,7 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                   <Box gap="small">
                     <Box
                       gap={size !== 'small' ? 'medium' : 'none'}
-                      justify={size === 'small' ? 'center' : undefined}
+                      justify="center"
                       border={size !== 'small' ? 'between' : undefined}
                       direction={size !== 'small' ? 'row' : 'column'}
                     >
@@ -149,9 +152,16 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                         >
                           {this.props.movie.date.substring(0, 4)}
                         </Text>
-                        {this.props.movie.rating !== '?' ? (
+                        <Box
+                          pad={{ horizontal: 'xsmall' }}
+                          border={{
+                            size: 'xsmall',
+                            side: 'all'
+                          }}
+                        >
                           <Text
                             weight="bold"
+                            title="rating"
                             size={size === 'small' ? 'small' : 'medium'}
                             color={
                               size === 'small' && mode === 'solid'
@@ -161,7 +171,7 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                           >
                             {this.props.movie.rating}
                           </Text>
-                        ) : null}
+                        </Box>
                         <Text
                           weight="bold"
                           size={size === 'small' ? 'small' : 'medium'}
@@ -177,7 +187,7 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                     </Box>
                     <Text
                       size="small"
-                      textAlign={size === 'small' ? 'center' : undefined}
+                      textAlign="center"
                       color={
                         size === 'small' && mode === 'solid'
                           ? 'black'
@@ -216,8 +226,8 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
             )}
             {this.props.add ? (
               <Box
-                align={size === 'small' ? 'center' : 'start'}
-                alignSelf="start"
+                align="center"
+                alignSelf="center"
                 style={
                   size === 'small'
                     ? { position: 'fixed', bottom: 0, left: 0, width: '100%' }
