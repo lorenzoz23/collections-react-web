@@ -525,8 +525,9 @@ export default class HomePage extends Component {
                                 this.setState({
                                   sortBy: 'nameAsc',
                                   notification: true,
-                                  notificationText:
-                                    'film lot successfully sorted by title'
+                                  notificationText: `film ${
+                                    this.state.showWishlist ? 'wishlist' : 'lot'
+                                  } successfully sorted by title (asc)`
                                 });
                               },
                               hoverIndicator: 'accent-1'
@@ -537,8 +538,9 @@ export default class HomePage extends Component {
                                 this.setState({
                                   sortBy: 'nameDesc',
                                   notification: true,
-                                  notificationText:
-                                    'film lot successfully sorted by title'
+                                  notificationText: `film ${
+                                    this.state.showWishlist ? 'wishlist' : 'lot'
+                                  } successfully sorted by title (desc)`
                                 });
                               },
                               hoverIndicator: 'accent-1'
@@ -549,8 +551,9 @@ export default class HomePage extends Component {
                                 this.setState({
                                   sortBy: 'runtimeAsc',
                                   notification: true,
-                                  notificationText:
-                                    'film lot successfully sorted by runtime'
+                                  notificationText: `film ${
+                                    this.state.showWishlist ? 'wishlist' : 'lot'
+                                  } successfully sorted by runtime (asc)`
                                 });
                               },
                               hoverIndicator: 'accent-1'
@@ -561,8 +564,9 @@ export default class HomePage extends Component {
                                 this.setState({
                                   sortBy: 'runtimeDesc',
                                   notification: true,
-                                  notificationText:
-                                    'film lot successfully sorted by runtime'
+                                  notificationText: `film ${
+                                    this.state.showWishlist ? 'wishlist' : 'lot'
+                                  } successfully sorted by runtime (desc)`
                                 });
                               },
                               hoverIndicator: 'accent-1'
@@ -573,8 +577,9 @@ export default class HomePage extends Component {
                                 this.setState({
                                   sortBy: 'mpaaAsc',
                                   notification: true,
-                                  notificationText:
-                                    'film lot successfully sorted by mpaa rating'
+                                  notificationText: `film ${
+                                    this.state.showWishlist ? 'wishlist' : 'lot'
+                                  } successfully sorted by mpaa rating (asc)`
                                 });
                               },
                               hoverIndicator: 'accent-1'
@@ -585,8 +590,9 @@ export default class HomePage extends Component {
                                 this.setState({
                                   sortBy: 'mpaaDesc',
                                   notification: true,
-                                  notificationText:
-                                    'film lot successfully sorted by mpaa rating'
+                                  notificationText: `film ${
+                                    this.state.showWishlist ? 'wishlist' : 'lot'
+                                  } successfully sorted by mpaa rating (desc)`
                                 });
                               },
                               hoverIndicator: 'accent-1'
@@ -597,8 +603,9 @@ export default class HomePage extends Component {
                                 this.setState({
                                   sortBy: '',
                                   notification: true,
-                                  notificationText:
-                                    'film lot successfully reset to original order'
+                                  notificationText: `film ${
+                                    this.state.showWishlist ? 'wishlist' : 'lot'
+                                  } successfully reset to original order`
                                 });
                               },
                               hoverIndicator: 'brand'
@@ -668,8 +675,9 @@ export default class HomePage extends Component {
                                 this.setState({
                                   sortBy: 'nameAsc',
                                   notification: true,
-                                  notificationText:
-                                    'film lot successfully sorted by title'
+                                  notificationText: `film ${
+                                    this.state.showWishlist ? 'wishlist' : 'lot'
+                                  } successfully sorted by title (asc)`
                                 });
                               },
                               hoverIndicator: 'accent-1'
@@ -680,8 +688,9 @@ export default class HomePage extends Component {
                                 this.setState({
                                   sortBy: 'nameDesc',
                                   notification: true,
-                                  notificationText:
-                                    'film lot successfully sorted by title'
+                                  notificationText: `film ${
+                                    this.state.showWishlist ? 'wishlist' : 'lot'
+                                  } successfully sorted by title (desc)`
                                 });
                               },
                               hoverIndicator: 'accent-1'
@@ -692,8 +701,9 @@ export default class HomePage extends Component {
                                 this.setState({
                                   sortBy: 'runtimeAsc',
                                   notification: true,
-                                  notificationText:
-                                    'film lot successfully sorted by runtime'
+                                  notificationText: `film ${
+                                    this.state.showWishlist ? 'wishlist' : 'lot'
+                                  } successfully sorted by runtime (asc)`
                                 });
                               },
                               hoverIndicator: 'accent-1'
@@ -704,8 +714,9 @@ export default class HomePage extends Component {
                                 this.setState({
                                   sortBy: 'runtimeDesc',
                                   notification: true,
-                                  notificationText:
-                                    'film lot successfully sorted by runtime'
+                                  notificationText: `film ${
+                                    this.state.showWishlist ? 'wishlist' : 'lot'
+                                  } successfully sorted by runtime (desc)`
                                 });
                               },
                               hoverIndicator: 'accent-1'
@@ -716,8 +727,9 @@ export default class HomePage extends Component {
                                 this.setState({
                                   sortBy: 'mpaaAsc',
                                   notification: true,
-                                  notificationText:
-                                    'film lot successfully sorted by mpaa rating'
+                                  notificationText: `film ${
+                                    this.state.showWishlist ? 'wishlist' : 'lot'
+                                  } successfully sorted by mpaa rating (asc)`
                                 });
                               },
                               hoverIndicator: 'accent-1'
@@ -728,8 +740,9 @@ export default class HomePage extends Component {
                                 this.setState({
                                   sortBy: 'mpaaDesc',
                                   notification: true,
-                                  notificationText:
-                                    'film lot successfully sorted by mpaa rating'
+                                  notificationText: `film ${
+                                    this.state.showWishlist ? 'wishlist' : 'lot'
+                                  } successfully sorted by mpaa rating (desc)`
                                 });
                               },
                               hoverIndicator: 'accent-1'
@@ -740,8 +753,9 @@ export default class HomePage extends Component {
                                 this.setState({
                                   sortBy: '',
                                   notification: true,
-                                  notificationText:
-                                    'film lot successfully reset to original order'
+                                  notificationText: `film ${
+                                    this.state.showWishlist ? 'wishlist' : 'lot'
+                                  } successfully reset to original order`
                                 });
                               },
                               hoverIndicator: 'brand'

@@ -69,11 +69,15 @@ export default class MovieSearchResult extends Component<
         const results = data.results;
         let movieItems: searchResultMovie[] = [];
         movieItems = results.map((item: any) => {
+          const image: string = item.backdrop_path
+            ? 'https://image.tmdb.org/t/p/original' + item.backdrop_path
+            : '';
           const newMovie: movie = {
             name: item.title,
             plot: item.overview,
             date: item.release_date,
             poster: 'https://image.tmdb.org/t/p/w500' + item.poster_path,
+            backDrop: [image],
             rating: '',
             runtime: 0,
             genre: [],

@@ -34,6 +34,7 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
               direction={size === 'small' ? 'column' : 'row'}
               justify="start"
               gap={size === 'small' ? 'none' : 'medium'}
+              margin={{ bottom: 'small' }}
             >
               {size !== 'small' ? (
                 <Box
@@ -205,22 +206,24 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
               >
                 <Image
                   fit="cover"
-                  src={this.props.movie.backDrop![rand]}
+                  src={this.props.movie.backDrop![this.props.add ? 0 : rand]}
                   opacity="0.2"
-                  style={{ borderRadius: 25 }}
+                  style={
+                    this.props.add ? { borderRadius: 0 } : { borderRadius: 25 }
+                  }
                 />
               </Box>
             )}
             {this.props.add ? (
               <Box
-                align="center"
+                align={size === 'small' ? 'center' : 'start'}
                 alignSelf="start"
                 style={
                   size === 'small'
                     ? { position: 'fixed', bottom: 0, left: 0, width: '100%' }
-                    : undefined
+                    : { position: 'fixed', bottom: 0, right: 0, width: '100%' }
                 }
-                pad={size === 'small' ? 'medium' : 'none'}
+                pad={size === 'small' ? 'medium' : 'small'}
               >
                 <Button
                   title="back"
