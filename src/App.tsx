@@ -27,7 +27,9 @@ const themeGradient = {
       lotBorder: '#ADB9C6',
       movieBorder: '#396897',
       rateFilm:
-        'linear-gradient(135deg, rgba(121,215,255,1) 0%, rgba(225,237,255,1) 75%)'
+        'linear-gradient(135deg, rgba(121,215,255,1) 0%, rgba(225,237,255,1) 75%)',
+      filters:
+        'linear-gradient(0deg, rgba(0,201,255,1) 25%, rgba(146,254,157,1) 100%)'
     },
     font: {
       family: 'Roboto',
@@ -52,7 +54,9 @@ const themeSolid = {
       movieBorder: '#34495E',
       deleteMovie: '#FF3F3F',
       resultBorder: 'brand',
-      rateFilm: 'linear-gradient(90deg, #e3ffe7 0%, #d9e7ff 100%)'
+      rateFilm: 'linear-gradient(90deg, #e3ffe7 0%, #d9e7ff 100%)',
+      filters:
+        'linear-gradient(180deg, rgba(121,255,247,1) 0%, rgba(225,237,255,1) 100%)'
     },
     font: {
       family: 'Roboto',

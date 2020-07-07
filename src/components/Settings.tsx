@@ -190,10 +190,6 @@ export default class Settings extends Component<SettingsProps> {
                         generated from services like iMDB, Letterboxd, iTunes,
                         etc...
                       </Text>
-                      <Text size="small" textAlign="center">
-                        click export to generate a zip file of both your film
-                        lot and wishlist
-                      </Text>
                     </Box>
                   ) : null}
                   <CSV
