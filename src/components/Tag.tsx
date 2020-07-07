@@ -7,36 +7,61 @@ interface TagProps {
 }
 
 export default class Tag extends Component<TagProps> {
-  state: { tags: string[] } = {
-    tags: []
-  };
-
-  componentDidMount = () => {
-    const tags: string[] = ['blu-ray', 'dvd', '4k-uhd'];
-    this.setState({
-      tags: tags
-    });
-  };
-
   render() {
+    const mode = localStorage.getItem('visualModeValue') || 'gradient';
     return (
-      <Box
-        direction="row"
-        pad={{ horizontal: 'xsmall' }}
-        border={{
-          size: 'xsmall',
-          side: 'all',
-          color: 'neutral-3'
-        }}
-        background={{ color: 'neutral-3', opacity: 'weak' }}
-        gap="xsmall"
-      >
-        <Box>
-          {this.state.tags.map((tag) => (
-            <Text size="small">{tag}</Text>
-          ))}
+      <Box direction="row" gap="xsmall">
+        <Box
+          direction="row"
+          border={{
+            size: 'xsmall',
+            side: 'all',
+            color: 'neutral-3'
+          }}
+          pad={{ horizontal: 'small' }}
+          margin={{ vertical: 'small' }}
+          background={{
+            color: 'neutral-3',
+            opacity: mode === 'solid' ? 'medium' : 'weak'
+          }}
+          align="center"
+          justify="center"
+          round
+        >
+          <Text
+            size="small"
+            textAlign="center"
+            weight={mode === 'solid' ? 'bold' : 'normal'}
+          >
+            blu-ray
+          </Text>
         </Box>
-        <Button icon={<FormAdd size="small" />} size="small" />
+        <Box
+          direction="row"
+          border={{
+            size: 'xsmall',
+            side: 'all',
+            color: 'status-error'
+          }}
+          pad={{ horizontal: 'small' }}
+          margin={{ vertical: 'small' }}
+          background={{
+            color: 'status-error',
+            opacity: mode === 'solid' ? 'medium' : 'weak'
+          }}
+          align="center"
+          justify="center"
+          round
+        >
+          <Text
+            size="small"
+            textAlign="center"
+            weight={mode === 'solid' ? 'bold' : 'normal'}
+          >
+            dvd
+          </Text>
+        </Box>
+        <Button icon={<FormAdd />} title="add a tag!" focusIndicator={false} />
       </Box>
     );
   }

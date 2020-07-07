@@ -588,6 +588,7 @@ export default class HomePage extends Component {
                   >
                     <Box
                       flex
+                      width="small"
                       pad="small"
                       align="center"
                       background="filters"

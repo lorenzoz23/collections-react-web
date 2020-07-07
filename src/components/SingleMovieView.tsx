@@ -3,6 +3,7 @@ import { Box, Heading, Button, Text, ResponsiveContext, Image } from 'grommet';
 import { Previous, Trash } from 'grommet-icons';
 import { movie } from './HomePage';
 import RateFilm from './RateFilm';
+import Tag from './Tag';
 
 interface SingleMovieViewProps {
   closeDetailView?(): void;
@@ -54,7 +55,7 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                   <Image
                     fit="cover"
                     fill
-                    src={this.props.movie.poster}
+                    src={this.props.movie.backDrop![rand]}
                     opacity="0.2"
                   />
                   {/* <Box
@@ -152,26 +153,18 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                         >
                           {this.props.movie.date.substring(0, 4)}
                         </Text>
-                        <Box
-                          pad={{ horizontal: 'xsmall' }}
-                          border={{
-                            size: 'xsmall',
-                            side: 'all'
-                          }}
+                        <Text
+                          weight="bold"
+                          title="rating"
+                          size={size === 'small' ? 'small' : 'medium'}
+                          color={
+                            size === 'small' && mode === 'solid'
+                              ? 'black'
+                              : undefined
+                          }
                         >
-                          <Text
-                            weight="bold"
-                            title="rating"
-                            size={size === 'small' ? 'small' : 'medium'}
-                            color={
-                              size === 'small' && mode === 'solid'
-                                ? 'black'
-                                : undefined
-                            }
-                          >
-                            {this.props.movie.rating}
-                          </Text>
-                        </Box>
+                          {this.props.movie.rating}
+                        </Text>
                         <Text
                           weight="bold"
                           size={size === 'small' ? 'small' : 'medium'}
@@ -249,8 +242,9 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                 style={
                   size === 'small'
                     ? { position: 'fixed', bottom: 0, left: 0, width: '100%' }
-                    : undefined
+                    : { position: 'fixed', bottom: 0, left: 0, width: '100%' }
                 }
+                pad={size !== 'small' ? 'small' : 'none'}
               >
                 {size === 'small' ? (
                   <Button
@@ -258,7 +252,11 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                     icon={<Previous />}
                     onClick={() => this.props.closeDetailView!()}
                   />
-                ) : null}
+                ) : (
+                  <Box>
+                    <Tag title="dvd" />
+                  </Box>
+                )}
                 <Box
                   direction="row"
                   gap="xsmall"
@@ -275,20 +273,24 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                       : undefined
                   }
                 >
-                  <RateFilm
-                    movie={this.props.movie}
-                    handleRate={(updatedMovie: movie) =>
-                      this.props.handleRate!(updatedMovie)
-                    }
-                  />
-                  <Button
-                    icon={<Trash color="deleteMovie" />}
-                    alignSelf="end"
-                    title="remove film"
-                    onClick={() =>
-                      this.props.handleDelete!(this.props.movie.id)
-                    }
-                  />
+                  <Box alignSelf="center">
+                    <RateFilm
+                      movie={this.props.movie}
+                      handleRate={(updatedMovie: movie) =>
+                        this.props.handleRate!(updatedMovie)
+                      }
+                    />
+                  </Box>
+                  <Box>
+                    <Button
+                      icon={<Trash color="deleteMovie" />}
+                      alignSelf="end"
+                      title="remove film"
+                      onClick={() =>
+                        this.props.handleDelete!(this.props.movie.id)
+                      }
+                    />
+                  </Box>
                 </Box>
               </Box>
             )}
