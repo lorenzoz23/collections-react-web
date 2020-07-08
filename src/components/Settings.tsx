@@ -11,7 +11,7 @@ import {
   Select,
   TextInput
 } from 'grommet';
-import { CircleQuestion, Magic } from 'grommet-icons';
+import { Magic } from 'grommet-icons';
 import CSV from './CSV';
 import { movie } from './HomePage';
 
@@ -32,8 +32,6 @@ interface SettingsProps {
 export default class Settings extends Component<SettingsProps> {
   state = {
     loggedIn: this.props.loggedIn,
-    showFileInfo: false,
-    showViewInfo: false,
     wishlistChecked: this.props.wishlist,
     theme: '',
     showDeleteAccountLayer: false,
@@ -139,27 +137,7 @@ export default class Settings extends Component<SettingsProps> {
                   />
                 </Box>
                 <Box gap="xsmall" align="center">
-                  <Box direction="row" align="center">
-                    <Text weight="bold">wishlist view</Text>
-                    <Button
-                      onClick={() => {
-                        this.setState({
-                          showViewInfo: !this.state.showViewInfo
-                        });
-                      }}
-                      title="click for a deeper understanding"
-                      icon={<CircleQuestion />}
-                      focusIndicator={false}
-                    />
-                  </Box>
-                  {this.state.showViewInfo ? (
-                    <Box pad={{ bottom: 'small' }} gap="xsmall">
-                      <Text size="small" textAlign="center">
-                        toggle on to view your wishlist and toggle off to return
-                        to your film lot
-                      </Text>
-                    </Box>
-                  ) : null}
+                  <Text weight="bold">wishlist view</Text>
                   <CheckBox
                     checked={this.state.wishlistChecked}
                     toggle
@@ -167,31 +145,8 @@ export default class Settings extends Component<SettingsProps> {
                     onChange={(event) => this.handleWishlist(event)}
                   />
                 </Box>
-                <Box align="center">
-                  <Box direction="row" align="center">
-                    <Text weight="bold">import/export data</Text>
-                    <Button
-                      onClick={() => {
-                        this.setState({
-                          showFileInfo: !this.state.showFileInfo
-                        });
-                      }}
-                      title="click for a deeper understanding"
-                      icon={<CircleQuestion />}
-                      focusIndicator={false}
-                    />
-                  </Box>
-                  {this.state.showFileInfo ? (
-                    <Box pad={{ bottom: 'small' }} gap="xsmall">
-                      <Text size="small" textAlign="center">
-                        click import to add films to your lot without going
-                        through the hassle of manually added every film by hand
-                        with the help of UTF-8 encoded CSV files that can be
-                        generated from services like iMDB, Letterboxd, iTunes,
-                        etc...
-                      </Text>
-                    </Box>
-                  ) : null}
+                <Box align="center" gap="xsmall">
+                  <Text weight="bold">import/export data</Text>
                   <CSV
                     lot={this.props.lot}
                     wishlist={this.props.wishlistFilms}
@@ -200,7 +155,7 @@ export default class Settings extends Component<SettingsProps> {
                     uid={this.props.uid}
                   />
                 </Box>
-                <Box gap="xsmall" align="center" margin={{ bottom: 'medium' }}>
+                <Box gap="xsmall" align="center" margin={{ bottom: 'small' }}>
                   <Text weight="bold">theme</Text>
                   <Select
                     disabled={this.state.theme === 'gradient' ? [0] : [1]}
@@ -211,7 +166,8 @@ export default class Settings extends Component<SettingsProps> {
                     onChange={({ option }) => this.handleThemeChange(option)}
                   />
                 </Box>
-                <Box align="center">
+                <Box align="center" gap="xsmall">
+                  <Text weight="bold">danger zone!</Text>
                   <Button
                     primary={size !== 'small' ? false : true}
                     label="delete account"

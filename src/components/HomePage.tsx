@@ -5,24 +5,20 @@ import {
   Anchor,
   TextInput,
   ResponsiveContext,
-  Menu,
   Avatar,
   Layer,
   CheckBox,
   Paragraph,
   Button,
-  Text,
-  List
+  Text
 } from 'grommet';
 import {
   Search,
   Filter,
   User,
-  Sort,
   Next,
   StatusGood,
-  FormClose,
-  FormAdd
+  FormClose
 } from 'grommet-icons';
 import firebase from 'firebase/app';
 import 'firebase/auth';
@@ -39,6 +35,7 @@ import Settings from './Settings';
 import AddTitle from './AddTitle';
 import Collection from './Collection';
 import FooterComponent from './FooterComponent';
+import Filters from './Filters';
 
 export const AppBar = (props: any) => (
   <Box
@@ -85,7 +82,6 @@ export default class HomePage extends Component {
     width: number;
     fetchedWishlist: boolean;
     sortBy: string;
-    showFilters: boolean;
   } = {
     uid: '',
     name: '',
@@ -104,8 +100,7 @@ export default class HomePage extends Component {
     notificationText: '',
     width: 0,
     fetchedWishlist: false,
-    sortBy: '',
-    showFilters: false
+    sortBy: ''
   };
 
   constructor(props: any) {
@@ -128,8 +123,7 @@ export default class HomePage extends Component {
       notificationText: '',
       width: 0,
       fetchedWishlist: false,
-      sortBy: '',
-      showFilters: false
+      sortBy: ''
     };
     console.log('uid: ' + this.state.uid);
     console.log('name: ' + this.state.name);
@@ -257,6 +251,46 @@ export default class HomePage extends Component {
   toggleSettings = () => {
     this.setState({
       showSettings: !this.state.showSettings
+    });
+  };
+
+  handleSort = (sortBy: string) => {
+    let method: string = '';
+    switch (sortBy) {
+      case 'nameAsc':
+        method = 'title (asc)';
+        break;
+      case 'runtimeAsc':
+        method = 'runtime (asc)';
+        break;
+      case 'mpaaAsc':
+        method = 'rating (asc)';
+        break;
+      case 'starCountAsc':
+        method = 'star count (asc)';
+        break;
+      case 'nameDesc':
+        method = 'title (desc)';
+        break;
+      case 'runtimeDesc':
+        method = 'runtime (desc)';
+        break;
+      case 'mpaaDesc':
+        method = 'rating (desc)';
+        break;
+      case 'starCountDesc':
+        method = 'star count (desc)';
+        break;
+      default:
+        method = 'title (asc)';
+        break;
+    }
+    this.setState({
+      sortBy: sortBy,
+      notification: true,
+      notificationText: `film ${
+        this.state.showWishlist ? 'wishlist' : 'lot'
+      } successfully sorted by ${method}`
     });
   };
 
@@ -493,13 +527,12 @@ export default class HomePage extends Component {
                             ) => this.moviesAdded(lotMovies, wishlistMovies)}
                           />
                         </Box>
-                        <Box align="center">
-                          <Button
-                            icon={<Filter />}
-                            hoverIndicator="accent-1"
-                            focusIndicator={false}
-                            title="filters"
-                            onClick={() => this.setState({ showFilters: true })}
+                        <Box>
+                          <Filters
+                            tags={['blu-ray', 'dvd', '4k-uhd']}
+                            handleSort={(sortBy: string) =>
+                              this.handleSort(sortBy)
+                            }
                           />
                         </Box>
                       </Box>
@@ -578,197 +611,6 @@ export default class HomePage extends Component {
                   />
                 </Box>
                 <FooterComponent />
-                {this.state.showFilters && (
-                  <Layer
-                    position="right"
-                    responsive={false}
-                    style={{ height: '100%', borderRadius: 15 }}
-                    margin="small"
-                    onClickOutside={() => this.setState({ showFilters: false })}
-                  >
-                    <Box
-                      flex
-                      width="small"
-                      pad="small"
-                      align="center"
-                      background="filters"
-                      round="small"
-                    >
-                      <Heading textAlign="center">filters</Heading>
-                      <Box gap="large">
-                        <Box
-                          pad="small"
-                          round
-                          fill="horizontal"
-                          border={{
-                            side: 'all',
-                            color: 'accent-3',
-                            size: 'medium',
-                            style: 'outset'
-                          }}
-                        >
-                          <Box border="between" gap="small" align="center">
-                            <Text textAlign="center" weight="bold">
-                              sort by
-                            </Text>
-                            <Menu
-                              style={{ borderRadius: 10 }}
-                              alignSelf="center"
-                              hoverIndicator="accent-1"
-                              title="sort films by..."
-                              focusIndicator={false}
-                              dropAlign={{ top: 'bottom', right: 'left' }}
-                              icon={<Sort />}
-                              items={[
-                                {
-                                  label: 'title (asc)',
-                                  onClick: () => {
-                                    this.setState({
-                                      sortBy: 'nameAsc',
-                                      notification: true,
-                                      notificationText: `film ${
-                                        this.state.showWishlist
-                                          ? 'wishlist'
-                                          : 'lot'
-                                      } successfully sorted by title (asc)`
-                                    });
-                                  },
-                                  hoverIndicator: 'accent-1'
-                                },
-                                {
-                                  label: 'title (desc)',
-                                  onClick: () => {
-                                    this.setState({
-                                      sortBy: 'nameDesc',
-                                      notification: true,
-                                      notificationText: `film ${
-                                        this.state.showWishlist
-                                          ? 'wishlist'
-                                          : 'lot'
-                                      } successfully sorted by title (desc)`
-                                    });
-                                  },
-                                  hoverIndicator: 'accent-1'
-                                },
-                                {
-                                  label: 'runtime (asc)',
-                                  onClick: () => {
-                                    this.setState({
-                                      sortBy: 'runtimeAsc',
-                                      notification: true,
-                                      notificationText: `film ${
-                                        this.state.showWishlist
-                                          ? 'wishlist'
-                                          : 'lot'
-                                      } successfully sorted by runtime (asc)`
-                                    });
-                                  },
-                                  hoverIndicator: 'accent-1'
-                                },
-                                {
-                                  label: 'runtime (desc)',
-                                  onClick: () => {
-                                    this.setState({
-                                      sortBy: 'runtimeDesc',
-                                      notification: true,
-                                      notificationText: `film ${
-                                        this.state.showWishlist
-                                          ? 'wishlist'
-                                          : 'lot'
-                                      } successfully sorted by runtime (desc)`
-                                    });
-                                  },
-                                  hoverIndicator: 'accent-1'
-                                },
-                                {
-                                  label: 'mpaa rating (g - nc17)',
-                                  onClick: () => {
-                                    this.setState({
-                                      sortBy: 'mpaaAsc',
-                                      notification: true,
-                                      notificationText: `film ${
-                                        this.state.showWishlist
-                                          ? 'wishlist'
-                                          : 'lot'
-                                      } successfully sorted by mpaa rating (asc)`
-                                    });
-                                  },
-                                  hoverIndicator: 'accent-1'
-                                },
-                                {
-                                  label: 'mpaa rating (nc17 - g)',
-                                  onClick: () => {
-                                    this.setState({
-                                      sortBy: 'mpaaDesc',
-                                      notification: true,
-                                      notificationText: `film ${
-                                        this.state.showWishlist
-                                          ? 'wishlist'
-                                          : 'lot'
-                                      } successfully sorted by mpaa rating (desc)`
-                                    });
-                                  },
-                                  hoverIndicator: 'accent-1'
-                                },
-                                {
-                                  label: 'reset',
-                                  onClick: () => {
-                                    this.setState({
-                                      sortBy: '',
-                                      notification: true,
-                                      notificationText: `film ${
-                                        this.state.showWishlist
-                                          ? 'wishlist'
-                                          : 'lot'
-                                      } successfully reset to original order`
-                                    });
-                                  },
-                                  hoverIndicator: 'brand'
-                                }
-                              ]}
-                            />
-                          </Box>
-                        </Box>
-                        <Box
-                          pad="small"
-                          gap="small"
-                          justify="between"
-                          align="center"
-                          round
-                          fill="horizontal"
-                          border={{
-                            side: 'all',
-                            color: 'accent-3',
-                            size: 'medium',
-                            style: 'inset'
-                          }}
-                        >
-                          <Text textAlign="center" weight="bold">
-                            tags
-                          </Text>
-                          <List data={['blu-ray', 'dvd', '4k-uhd']} />
-                          <Box
-                            round="full"
-                            border={{
-                              side: 'all',
-                              color: 'brand',
-                              size: 'small'
-                            }}
-                          >
-                            <Button
-                              icon={<FormAdd />}
-                              title="add new tag"
-                              style={{ borderRadius: 30 }}
-                              primary
-                              color="accent-1"
-                              hoverIndicator="transparent"
-                            />
-                          </Box>
-                        </Box>
-                      </Box>
-                    </Box>
-                  </Layer>
-                )}
                 {this.state.showSettings ? (
                   <Settings
                     loggedIn={this.state.loggedIn}

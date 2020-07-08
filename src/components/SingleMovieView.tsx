@@ -3,7 +3,7 @@ import { Box, Heading, Button, Text, ResponsiveContext, Image } from 'grommet';
 import { Previous, Trash } from 'grommet-icons';
 import { movie } from './HomePage';
 import RateFilm from './RateFilm';
-import Tag from './Tag';
+import MovieViewTags from './MovieViewTags';
 
 interface SingleMovieViewProps {
   closeDetailView?(): void;
@@ -254,7 +254,7 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                   />
                 ) : (
                   <Box>
-                    <Tag title="dvd" />
+                    <MovieViewTags tags={['blu-ray', 'dvd', '4k-uhd']} />
                   </Box>
                 )}
                 <Box
