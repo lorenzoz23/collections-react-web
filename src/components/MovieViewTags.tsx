@@ -5,16 +5,19 @@ import { FormClose } from 'grommet-icons';
 interface MovieViewTagsProps {
   tags: string[];
   backgroundColor?: string;
+  createTagSearch?: boolean;
   handleSelected?(selected: number[]): void;
 }
 
 export default class MovieViewTags extends Component<MovieViewTagsProps> {
-  state: { selected: number[] } = {
-    selected: []
+  state: { selected: number[]; options: string[]; searchText: string } = {
+    selected: [],
+    options: this.props.tags,
+    searchText: ''
   };
 
   handleRemoveTag = (tag: string) => {
-    const tagIndex = this.props.tags.indexOf(tag);
+    const tagIndex = this.state.options.indexOf(tag);
     const updatedSelected: number[] = this.state.selected.filter(
       (selectedTag) => selectedTag !== tagIndex
     );
@@ -66,7 +69,11 @@ export default class MovieViewTags extends Component<MovieViewTagsProps> {
         justify="center"
         border={
           this.props.backgroundColor
-            ? { color: this.props.backgroundColor, side: 'all', size: 'medium' }
+            ? {
+                color: this.props.backgroundColor,
+                side: 'all',
+                size: 'medium'
+              }
             : undefined
         }
         background={
@@ -77,8 +84,45 @@ export default class MovieViewTags extends Component<MovieViewTagsProps> {
         round
       >
         <Select
+          focusIndicator={this.props.backgroundColor ? false : true}
           plain={true}
           closeOnChange={false}
+          onSearch={
+            this.props.backgroundColor
+              ? (text) => {
+                  // The line below escapes regular expression special characters:
+                  // [ \ ^ $ . | ? * + ( )
+                  const escapedText = text.replace(
+                    /[-\\^$*+?.()|[\]{}]/g,
+                    '\\$&'
+                  );
+
+                  // Create the regular expression with modified value which
+                  // handles escaping special characters. Without escaping special
+                  // characters, errors will appear in the console
+                  const exp = new RegExp(escapedText, 'i');
+                  this.setState({
+                    options: this.props.tags.filter((o) => exp.test(o)),
+                    searchText: text
+                  });
+                }
+              : undefined
+          }
+          onClose={() => this.setState({ options: this.props.tags })}
+          searchPlaceholder={
+            this.props.backgroundColor && this.props.createTagSearch
+              ? 'search to filter/create tags...'
+              : this.props.backgroundColor && !this.props.createTagSearch
+              ? 'search tags to delete/update...'
+              : undefined
+          }
+          emptySearchMessage={
+            this.props.backgroundColor && !this.props.createTagSearch
+              ? 'no tags with that title'
+              : this.props.backgroundColor && this.props.createTagSearch
+              ? 'create tag: ' + this.state.searchText + '?'
+              : undefined
+          }
           multiple
           value={
             <Box
@@ -100,7 +144,7 @@ export default class MovieViewTags extends Component<MovieViewTagsProps> {
               )}
             </Box>
           }
-          options={this.props.tags}
+          options={this.state.options}
           selected={this.state.selected}
           onChange={({ selected: nextSelected }) => {
             const updatedSelected: number[] = [...nextSelected].sort();

@@ -135,6 +135,7 @@ export default class Filters extends Component<FiltersProps> {
                     handleSelected={(selected) =>
                       this.setState({ selected: selected })
                     }
+                    createTagSearch={!this.state.editMode ? true : false}
                   />
                   <Box round="full">
                     {!this.state.editMode ? (
