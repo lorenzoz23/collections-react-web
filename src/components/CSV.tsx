@@ -120,7 +120,7 @@ export default class CSV extends Component<CSVProps> {
   render() {
     const name: string = this.props.name.replace(' ', '-');
     return (
-      <Box gap="small" direction="row">
+      <Box gap="small" direction="row" align="center" justify="center">
         {this.state.visible && (
           <Layer
             position="bottom"
@@ -129,7 +129,13 @@ export default class CSV extends Component<CSVProps> {
             margin={{ bottom: 'medium' }}
             responsive={false}
           >
-            <Box gap="small" pad="medium" round align="center">
+            <Box
+              gap="small"
+              pad="medium"
+              round
+              align="center"
+              background="smallLayer"
+            >
               <Text weight="bold" textAlign="center">
                 pressing continue will export a single csv file encompassing all
                 the films in both your lot and wishlist

@@ -26,7 +26,7 @@ const themeGradient = {
       resultBorder: 'accent-1',
       lotBorder: '#ADB9C6',
       movieBorder: '#396897',
-      rateFilm:
+      smallLayer:
         'linear-gradient(135deg, rgba(121,215,255,1) 0%, rgba(225,237,255,1) 75%)',
       filters:
         'linear-gradient(0deg, rgba(0,201,255,1) 25%, rgba(146,254,157,1) 100%)'
@@ -54,9 +54,32 @@ const themeSolid = {
       movieBorder: '#34495E',
       deleteMovie: '#FF3F3F',
       resultBorder: 'brand',
-      rateFilm: 'linear-gradient(90deg, #e3ffe7 0%, #d9e7ff 100%)',
+      smallLayer: 'linear-gradient(90deg, #e3ffe7 0%, #d9e7ff 100%)',
       filters:
         'linear-gradient(180deg, rgba(121,255,247,1) 0%, rgba(225,237,255,1) 100%)'
+    },
+    font: {
+      family: 'Roboto',
+      size: '14px',
+      height: '20px'
+    }
+  }
+};
+
+const themeWeird = {
+  global: {
+    colors: {
+      header: '#213444',
+      home: '#213444',
+      footer: '#C39BD3',
+      layer: 'neutral-3',
+      movieSearchResult: '#213444',
+      movieSearchResultHeader: '#C39BD3',
+      deleteMovie: '#FF8686',
+      lotBorder: '#C39BD3',
+      resultBorder: 'accent-1',
+      smallLayer: '#E7E7E7',
+      filters: '#386387'
     },
     font: {
       family: 'Roboto',
@@ -88,7 +111,9 @@ export default class App extends Component {
           theme={
             this.state.visualModeValue === 'gradient'
               ? themeGradient
-              : themeSolid
+              : this.state.visualModeValue === 'solid'
+              ? themeSolid
+              : themeWeird
           }
           full
         >

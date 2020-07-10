@@ -123,7 +123,14 @@ export default class RateFilm extends Component<RateFilmProps> {
               >
                 <Box
                   round={size !== 'small' ? true : false}
-                  background="rateFilm"
+                  background="smallLayer"
+                  // style={{
+                  //   background:
+                  //     mode === 'solid'
+                  //       ? 'linear-gradient(90deg, #e3ffe7 0%, #d9e7ff 100%)'
+                  //       : 'linear-gradient(135deg, rgba(121,215,255,1) 0%, rgba(225,237,255,1) 75%)',
+                  //   borderRadius: size !== 'small' ? 30 : 0
+                  // }}
                   pad="small"
                   fill
                   flex
@@ -166,6 +173,7 @@ export default class RateFilm extends Component<RateFilmProps> {
                     <Button
                       icon={<FormClose />}
                       title="cancel"
+                      focusIndicator={false}
                       onClick={this.handleCancel}
                     />
                   </Box>

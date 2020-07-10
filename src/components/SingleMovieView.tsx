@@ -3,7 +3,7 @@ import { Box, Heading, Button, Text, ResponsiveContext, Image } from 'grommet';
 import { Previous, Trash } from 'grommet-icons';
 import { movie } from './HomePage';
 import RateFilm from './RateFilm';
-import MovieViewTags from './MovieViewTags';
+import SelectMultiple from './SelectMultiple';
 
 interface SingleMovieViewProps {
   closeDetailView?(): void;
@@ -49,14 +49,14 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                     bottom: 0,
                     right: 0,
                     left: 0,
-                    zIndex: 0
+                    zIndex: -2
                   }}
                 >
                   <Image
                     fit="cover"
                     fill
                     src={this.props.movie.backDrop![rand]}
-                    opacity="0.2"
+                    opacity={mode === 'solid' ? '0.2' : '0.3'}
                   />
                   {/* <Box
                     round="xsmall"
@@ -210,7 +210,7 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                 <Image
                   fit="cover"
                   src={this.props.movie.backDrop![this.props.add ? 0 : rand]}
-                  opacity="0.2"
+                  opacity={mode === 'solid' ? '0.2' : '0.3'}
                   style={
                     this.props.add ? { borderRadius: 0 } : { borderRadius: 25 }
                   }
@@ -254,7 +254,10 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                   />
                 ) : (
                   <Box>
-                    <MovieViewTags tags={['blu-ray', 'dvd', '4k-uhd']} />
+                    <SelectMultiple
+                      tags={['blu-ray', 'dvd', '4k-uhd']}
+                      plain={false}
+                    />
                   </Box>
                 )}
                 <Box

@@ -57,7 +57,7 @@ export default class AddTitle extends Component<AddTitleProps> {
     const images: string[] = [];
     let image: string = '';
     for (let i = 0; i < 3; i++) {
-      if (data.backdrops[i].file_path) {
+      if (data.backdrops[i]) {
         image =
           'https://image.tmdb.org/t/p/original' + data.backdrops[i].file_path;
         images.push(image);
@@ -139,7 +139,10 @@ export default class AddTitle extends Component<AddTitleProps> {
             />
             {this.state.visible ? (
               <Layer
-                style={{ borderRadius: size === 'small' ? 0 : 30 }}
+                style={{
+                  borderRadius:
+                    size !== 'small' && !this.state.searched ? 30 : 0
+                }}
                 position="center"
                 responsive={size === 'small' ? true : false}
                 onClickOutside={() => {
@@ -163,10 +166,10 @@ export default class AddTitle extends Component<AddTitleProps> {
                     fill={size === 'small' ? true : false}
                     pad="medium"
                     width="medium"
-                    background="layer"
                     align="center"
                     justify="center"
                     overflow="auto"
+                    background="layer"
                     round={size === 'small' ? false : true}
                   >
                     <Heading textAlign="center" level="3">

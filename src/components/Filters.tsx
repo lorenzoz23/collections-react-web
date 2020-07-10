@@ -6,9 +6,10 @@ import {
   FormTrash,
   FormRefresh,
   Edit,
-  Rewind
+  Rewind,
+  FormCheckmark
 } from 'grommet-icons';
-import MovieViewTags from './MovieViewTags';
+import FilterViewTags from './FilterViewTags';
 
 interface FiltersProps {
   tags: string[];
@@ -16,10 +17,16 @@ interface FiltersProps {
 }
 
 export default class Filters extends Component<FiltersProps> {
-  state: { showFilters: boolean; editMode: boolean; selected: number[] } = {
+  state: {
+    showFilters: boolean;
+    editMode: boolean;
+    selectedFilter: string;
+    selectedTagsToUpdate: number[];
+  } = {
     showFilters: false,
     editMode: false,
-    selected: []
+    selectedFilter: '',
+    selectedTagsToUpdate: []
   };
   render() {
     return (
@@ -129,33 +136,50 @@ export default class Filters extends Component<FiltersProps> {
                   <Text textAlign="center" weight="bold">
                     tags
                   </Text>
-                  <MovieViewTags
+                  <FilterViewTags
                     tags={['blu-ray', 'dvd', '4k-uhd']}
-                    backgroundColor="header"
-                    handleSelected={(selected) =>
-                      this.setState({ selected: selected })
+                    handleSelectedFilter={(selected) =>
+                      this.setState({ selectedFilter: selected })
+                    }
+                    handleSelectedTagsToUpdate={(tags) =>
+                      this.setState({ selectedTagsToUpdate: tags })
                     }
                     createTagSearch={!this.state.editMode ? true : false}
                   />
-                  <Box round="full">
+                  <Box>
                     {!this.state.editMode ? (
-                      <Button
-                        icon={<Edit />}
-                        title="edit tags"
-                        style={{ borderRadius: 30 }}
-                        primary
-                        hoverIndicator="accent-1"
-                        onClick={() =>
-                          this.setState({
-                            editMode: true
-                          })
-                        }
-                      />
+                      <Box gap="medium" align="center">
+                        <Button
+                          icon={<Edit />}
+                          title="edit tags"
+                          style={{ borderRadius: 30 }}
+                          primary
+                          hoverIndicator="accent-1"
+                          onClick={() =>
+                            this.setState({
+                              editMode: true
+                            })
+                          }
+                        />
+                        <Button
+                          disabled={
+                            this.state.selectedFilter.length > 0 ? false : true
+                          }
+                          label="done"
+                          hoverIndicator="accent-1"
+                          icon={<FormCheckmark />}
+                          reverse
+                        />
+                      </Box>
                     ) : (
                       <Box gap="small" align="center">
                         <Box direction="row" gap="small">
                           <Button
-                            disabled={this.state.selected.length ? false : true}
+                            disabled={
+                              this.state.selectedTagsToUpdate.length > 0
+                                ? false
+                                : true
+                            }
                             style={{ borderRadius: 30 }}
                             primary
                             title="delete selected tag(s)"
@@ -164,7 +188,9 @@ export default class Filters extends Component<FiltersProps> {
                           />
                           <Button
                             disabled={
-                              this.state.selected.length === 1 ? false : true
+                              this.state.selectedTagsToUpdate.length === 1
+                                ? false
+                                : true
                             }
                             style={{ borderRadius: 30 }}
                             title="update selected tag"
@@ -179,11 +205,12 @@ export default class Filters extends Component<FiltersProps> {
                           style={{ borderRadius: 30 }}
                           primary
                           hoverIndicator="accent-1"
-                          onClick={() =>
+                          onClick={() => {
                             this.setState({
-                              editMode: false
-                            })
-                          }
+                              editMode: false,
+                              selectedFilter: ''
+                            });
+                          }}
                         />
                       </Box>
                     )}

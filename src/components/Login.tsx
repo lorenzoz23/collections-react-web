@@ -90,7 +90,11 @@ export default class Login extends Component {
             ) : (
               <Box
                 flex
-                background="radial-gradient(circle, rgba(27,50,163,1) 0%, rgba(143,38,59,1) 100%)"
+                background="home"
+                style={{
+                  background:
+                    'radial-gradient(circle, rgba(27,50,163,1) 0%, rgba(143,38,59,1) 100%)'
+                }}
                 align="center"
                 margin={
                   size !== 'small'

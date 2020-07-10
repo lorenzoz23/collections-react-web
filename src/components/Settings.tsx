@@ -59,9 +59,10 @@ export default class Settings extends Component<SettingsProps> {
   };
 
   handleThemeChange = (mode: string) => {
-    localStorage.setItem('visualModeValue', mode);
+    const newMode = mode === 'wedding on a tuesday' ? 'wedding' : mode;
+    localStorage.setItem('visualModeValue', newMode);
     this.setState({
-      theme: mode
+      theme: newMode
     });
     window.location.reload();
   };
@@ -90,7 +91,7 @@ export default class Settings extends Component<SettingsProps> {
                 style={{ borderRadius: 30 }}
                 margin={{ bottom: 'medium' }}
               >
-                <Box gap="small" pad="medium" round>
+                <Box gap="small" pad="medium" round background="smallLayer">
                   <Text textAlign="center" weight="bold">
                     please type in your auto-generated user-id to confirm
                     account deletion
@@ -158,11 +159,17 @@ export default class Settings extends Component<SettingsProps> {
                 <Box gap="xsmall" align="center" margin={{ bottom: 'small' }}>
                   <Text weight="bold">theme</Text>
                   <Select
-                    disabled={this.state.theme === 'gradient' ? [0] : [1]}
+                    disabled={
+                      this.state.theme === 'gradient'
+                        ? [0]
+                        : this.state.theme === 'solid'
+                        ? [1]
+                        : [2]
+                    }
                     icon={<Magic />}
                     value={this.state.theme}
                     placeholder="choose your visual style"
-                    options={['gradient', 'solid']}
+                    options={['gradient', 'solid', 'wedding on a tuesday']}
                     onChange={({ option }) => this.handleThemeChange(option)}
                   />
                 </Box>

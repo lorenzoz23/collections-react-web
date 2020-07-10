@@ -28,7 +28,7 @@ export default class FooterComponent extends Component {
               right: 'small'
             }}
             gap="medium"
-            background="footer"
+            background={{ color: 'footer' }}
             justify="between"
           >
             <Box direction="row" align="center" gap="small">
