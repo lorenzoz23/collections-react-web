@@ -20,6 +20,20 @@ export default class LoginFacebook extends Component<LoginFacebookProps> {
     result = await firebase.auth().signInWithPopup(providerFb);
     // This gives you a Google Access Token. You can use it to access the Google API.
     const token = result.credential.accessToken;
+    const isNew: boolean = result.additionalUserInfo!.isNewUser;
+    if (isNew) {
+      const userRef = firebase.database().ref('users/' + result.user.uid);
+      const tagRef = userRef.child('tags');
+
+      const bluRayTagRef = tagRef.push();
+      bluRayTagRef.set({ title: 'blu-ray' });
+
+      const dvdTagRef = tagRef.push();
+      dvdTagRef.set({ title: 'dvd' });
+
+      const uhdTagRef = tagRef.push();
+      uhdTagRef.set({ title: '4k-uhd' });
+    }
     console.log(token);
     // The signed-in user info.
     const user = result.user;

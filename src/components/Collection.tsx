@@ -21,9 +21,12 @@ interface CollectionProps {
   searchVal: string;
   handleDelete(movieId: string): void;
   handleRate(updatedMovie: movie): void;
+  handleSelectedTags(movie: movie, tags: number[]): void;
   loading: boolean;
   width: number;
   sortBy: string;
+  filterBy: string;
+  tags: string[];
 }
 
 export default class Collection extends Component<CollectionProps> {
@@ -41,7 +44,10 @@ export default class Collection extends Component<CollectionProps> {
       rating: '',
       runtime: 0,
       genre: [],
-      id: ''
+      tags: [],
+      key: '',
+      id: '',
+      starCount: -1
     }
     //movies: []
   };
@@ -51,7 +57,7 @@ export default class Collection extends Component<CollectionProps> {
       <Box align="center" justify="center" flex>
         {this.props.searchList.length === 0 &&
         this.props.searchVal.length > 0 ? (
-          <Text>no such title in your film lot</Text>
+          <Text>no such title</Text>
         ) : (
           <Text>
             there is nothing in your {this.props.wishlist ? 'wishlist' : 'lot'}
@@ -110,10 +116,15 @@ export default class Collection extends Component<CollectionProps> {
       this.props.searchVal.length > 0
         ? this.props.searchList
         : this.props.movies;
+    const filteredMovies = this.props.filterBy
+      ? moviesToMap.filter((child) =>
+          child.tags!.includes(this.props.filterBy, 0)
+        )
+      : moviesToMap;
 
     return (
       <Sort by={this.props.sortBy}>
-        {moviesToMap.map((movie) => (
+        {filteredMovies.map((movie) => (
           <Movie
             key={movie.id}
             movie={movie}
@@ -206,6 +217,14 @@ export default class Collection extends Component<CollectionProps> {
                     closeDetailView={() =>
                       this.setState({ movieDetailsVisible: false })
                     }
+                    handleSelectedTags={(tags) =>
+                      this.props.handleSelectedTags(
+                        this.state.movieToShow,
+                        tags
+                      )
+                    }
+                    tags={this.props.tags}
+                    wishlist={this.props.wishlist}
                   />
                 </Layer>
               ) : null}

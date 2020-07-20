@@ -46,13 +46,27 @@ export default class SignUp extends Component<SignUpProps> {
         firebase
           .auth()
           .createUserWithEmailAndPassword(email, password)
-          .then(() => {
+          .then((result) => {
             const user = firebase.auth().currentUser;
             if (user) {
               const userRef = firebase.database().ref('users/' + user.uid);
               userRef.set({
                 name: this.state.name
               });
+              const isNew: boolean = result.additionalUserInfo!.isNewUser;
+              if (isNew) {
+                const userRef = firebase.database().ref('users/' + user.uid);
+                const tagRef = userRef.child('tags');
+
+                const bluRayTagRef = tagRef.push();
+                bluRayTagRef.set({ title: 'blu-ray' });
+
+                const dvdTagRef = tagRef.push();
+                dvdTagRef.set({ title: 'dvd' });
+
+                const uhdTagRef = tagRef.push();
+                uhdTagRef.set({ title: '4k-uhd' });
+              }
             }
             this.props.handleUserSignUp(email, password);
           })

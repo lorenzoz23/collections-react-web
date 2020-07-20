@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Layer, Box, Heading, Menu, Button, Text } from 'grommet';
+import { Layer, Box, Heading, Menu, Button, Text, TextInput } from 'grommet';
 import {
   Sort,
   Filter,
@@ -7,13 +7,21 @@ import {
   FormRefresh,
   Edit,
   Rewind,
-  FormCheckmark
+  PowerReset
 } from 'grommet-icons';
+import firebase from 'firebase';
+import 'firebase/database';
 import FilterViewTags from './FilterViewTags';
 
 interface FiltersProps {
   tags: string[];
+  uid: string;
   handleSort(sortBy: string): void;
+  handleFilterByTag(tag: string): void;
+  handleTagDelete(tags: number[]): void;
+  handleUpdatedTags(tags: string[]): void;
+  handleTagAdded(tag: string): void;
+  handleResetFilters(): void;
 }
 
 export default class Filters extends Component<FiltersProps> {
@@ -22,22 +30,123 @@ export default class Filters extends Component<FiltersProps> {
     editMode: boolean;
     selectedFilter: string;
     selectedTagsToUpdate: number[];
+    updatedText: string;
+    showUpdateBox: boolean;
+    sort: string;
   } = {
     showFilters: false,
     editMode: false,
     selectedFilter: '',
-    selectedTagsToUpdate: []
+    selectedTagsToUpdate: [],
+    updatedText: '',
+    showUpdateBox: false,
+    sort: ''
   };
+
+  handleUpdateTag = () => {
+    this.setState({ showFilters: false });
+    if (this.state.selectedTagsToUpdate.length === 1) {
+      let newTags: string[] = [];
+      for (let i = 0; i < this.props.tags.length; i++) {
+        if (this.props.tags[i] !== this.state.updatedText) {
+          newTags.push(this.props.tags[i]);
+        } else {
+          newTags.push(this.state.updatedText);
+        }
+      }
+      const userRef = firebase.database().ref('users/' + this.props.uid);
+      const tagsRef = userRef.child('tags');
+      tagsRef.once('value', (snapshot) => {
+        snapshot.forEach((childSnapshot) => {
+          const childKey = childSnapshot.key!;
+          const title = childSnapshot.val().title;
+
+          if (title === this.props.tags[this.state.selectedTagsToUpdate[0]]) {
+            tagsRef.child(childKey).update({ title: this.state.updatedText });
+            return true;
+          }
+        });
+      });
+      this.props.handleUpdatedTags(newTags);
+    }
+  };
+
+  handleDeleteTags = () => {
+    this.setState({
+      showFilters: false
+    });
+    this.props.handleTagDelete(this.state.selectedTagsToUpdate);
+  };
+
+  handleSelectedTagToFilter = (tag: string, created: boolean) => {
+    this.setState({
+      selectedFilter: tag
+    });
+    if (created) {
+      const userRef = firebase.database().ref('users/' + this.props.uid);
+      const tagsRef = userRef.child('tags');
+      const newTagRef = tagsRef.push();
+      newTagRef.set({ title: tag });
+      this.props.handleTagAdded(tag);
+    }
+    this.props.handleFilterByTag(tag);
+  };
+
+  handleSort = (sortBy: string) => {
+    this.setState({ sort: sortBy });
+    this.props.handleSort(sortBy);
+  };
+
+  handleResetFilters = () => {
+    this.setState({
+      selectedFilter: '',
+      sort: '',
+      showFilters: false
+    });
+    this.props.handleResetFilters();
+  };
+
   render() {
     return (
       <Box align="center">
-        <Button
-          icon={<Filter />}
-          hoverIndicator="accent-1"
-          focusIndicator={false}
-          title="filters"
-          onClick={() => this.setState({ showFilters: true })}
-        />
+        <Box direction="row" align="center" gap="xsmall" width="medium">
+          <Button
+            icon={
+              <Filter
+                color={
+                  this.state.selectedFilter.length > 0 ||
+                  this.state.sort.length > 0
+                    ? 'status-ok'
+                    : undefined
+                }
+              />
+            }
+            hoverIndicator="accent-1"
+            focusIndicator={false}
+            title="filters"
+            onClick={() => this.setState({ showFilters: true })}
+          />
+          {this.state.selectedFilter.length > 0 && (
+            <Text
+              color="status-ok"
+              weight="bold"
+              textAlign="center"
+              wordBreak="keep-all"
+            >
+              active filter
+            </Text>
+          )}
+          {this.state.sort.length > 0 && (
+            <Text
+              color="status-ok"
+              weight="bold"
+              textAlign="center"
+              wordBreak="keep-all"
+            >
+              active sort
+            </Text>
+          )}
+        </Box>
         {this.state.showFilters && (
           <Layer
             position="right"
@@ -82,37 +191,40 @@ export default class Filters extends Component<FiltersProps> {
                       items={[
                         {
                           label: 'title (asc)',
-                          onClick: () => this.props.handleSort('nameAsc'),
+                          onClick: () => this.handleSort('nameAsc'),
                           hoverIndicator: 'accent-1'
                         },
                         {
                           label: 'title (desc)',
-                          onClick: () => this.props.handleSort('nameDesc'),
+                          onClick: () => this.handleSort('nameDesc'),
                           hoverIndicator: 'accent-1'
                         },
                         {
                           label: 'runtime (asc)',
-                          onClick: () => this.props.handleSort('runtimeAsc'),
+                          onClick: () => this.handleSort('runtimeAsc'),
                           hoverIndicator: 'accent-1'
                         },
                         {
                           label: 'runtime (desc)',
-                          onClick: () => this.props.handleSort('runtimeDesc'),
+                          onClick: () => this.handleSort('runtimeDesc'),
                           hoverIndicator: 'accent-1'
                         },
                         {
                           label: 'mpaa rating (g - nc17)',
-                          onClick: () => this.props.handleSort('mpaaAsc'),
+                          onClick: () => this.handleSort('mpaaAsc'),
                           hoverIndicator: 'accent-1'
                         },
                         {
                           label: 'mpaa rating (nc17 - g)',
-                          onClick: () => this.props.handleSort('mpaaDesc'),
+                          onClick: () => this.handleSort('mpaaDesc'),
                           hoverIndicator: 'accent-1'
                         },
                         {
-                          label: 'reset',
-                          onClick: () => this.props.handleSort(''),
+                          label: 'reset (original order)',
+                          onClick: () => {
+                            this.setState({ showFilters: false });
+                            this.handleSort('');
+                          },
                           hoverIndicator: 'brand'
                         }
                       ]}
@@ -137,42 +249,45 @@ export default class Filters extends Component<FiltersProps> {
                     tags
                   </Text>
                   <FilterViewTags
-                    tags={['blu-ray', 'dvd', '4k-uhd']}
-                    handleSelectedFilter={(selected) =>
-                      this.setState({ selectedFilter: selected })
+                    tags={this.props.tags}
+                    handleSelectedFilter={(selected, created) =>
+                      this.handleSelectedTagToFilter(selected, created)
                     }
                     handleSelectedTagsToUpdate={(tags) =>
                       this.setState({ selectedTagsToUpdate: tags })
                     }
+                    selectedFilter={this.state.selectedFilter}
                     createTagSearch={!this.state.editMode ? true : false}
                   />
                   <Box>
                     {!this.state.editMode ? (
-                      <Box gap="medium" align="center">
-                        <Button
-                          icon={<Edit />}
-                          title="edit tags"
-                          style={{ borderRadius: 30 }}
-                          primary
-                          hoverIndicator="accent-1"
-                          onClick={() =>
-                            this.setState({
-                              editMode: true
-                            })
-                          }
-                        />
-                        <Button
-                          disabled={
-                            this.state.selectedFilter.length > 0 ? false : true
-                          }
-                          label="done"
-                          hoverIndicator="accent-1"
-                          icon={<FormCheckmark />}
-                          reverse
-                        />
-                      </Box>
+                      <Button
+                        icon={<Edit />}
+                        title="edit tags"
+                        style={{ borderRadius: 30 }}
+                        primary
+                        hoverIndicator="accent-1"
+                        onClick={() =>
+                          this.setState({
+                            editMode: true
+                          })
+                        }
+                      />
                     ) : (
                       <Box gap="small" align="center">
+                        {this.state.showUpdateBox && (
+                          <TextInput
+                            placeholder={`update '${
+                              this.props.tags[
+                                this.state.selectedTagsToUpdate[0]
+                              ]
+                            }' here`}
+                            value={this.state.updatedText}
+                            onChange={(event) =>
+                              this.setState({ updatedText: event.target.value })
+                            }
+                          />
+                        )}
                         <Box direction="row" gap="small">
                           <Button
                             disabled={
@@ -184,6 +299,7 @@ export default class Filters extends Component<FiltersProps> {
                             primary
                             title="delete selected tag(s)"
                             color="neutral-4"
+                            onClick={this.handleDeleteTags}
                             icon={<FormTrash />}
                           />
                           <Button
@@ -194,6 +310,11 @@ export default class Filters extends Component<FiltersProps> {
                             }
                             style={{ borderRadius: 30 }}
                             title="update selected tag"
+                            onClick={() =>
+                              this.state.showUpdateBox
+                                ? this.handleUpdateTag()
+                                : this.setState({ showUpdateBox: true })
+                            }
                             icon={<FormRefresh />}
                             primary
                             color="accent-4"
@@ -216,6 +337,14 @@ export default class Filters extends Component<FiltersProps> {
                     )}
                   </Box>
                 </Box>
+                <Button
+                  alignSelf="center"
+                  onClick={this.handleResetFilters}
+                  label="reset filters"
+                  hoverIndicator="accent-1"
+                  icon={<PowerReset />}
+                  reverse
+                />
               </Box>
             </Box>
           </Layer>

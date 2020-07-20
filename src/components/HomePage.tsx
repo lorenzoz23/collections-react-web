@@ -12,14 +12,7 @@ import {
   Button,
   Text
 } from 'grommet';
-import {
-  Search,
-  Filter,
-  User,
-  Next,
-  StatusGood,
-  FormClose
-} from 'grommet-icons';
+import { Search, User, Next, StatusGood, FormClose } from 'grommet-icons';
 import firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/database';
@@ -59,7 +52,8 @@ export type movie = {
   genre: string[];
   id: string;
   key?: string;
-  starCount?: number;
+  starCount: number;
+  tags?: string[];
 };
 
 export default class HomePage extends Component {
@@ -69,6 +63,7 @@ export default class HomePage extends Component {
     invalidRoute: boolean;
     loggedIn: boolean;
     movies: movie[];
+    tags: string[];
     showSettings: boolean;
     wishlist: movie[];
     showWishlist: boolean;
@@ -82,12 +77,14 @@ export default class HomePage extends Component {
     width: number;
     fetchedWishlist: boolean;
     sortBy: string;
+    filterBy: string;
   } = {
     uid: '',
     name: '',
     invalidRoute: false,
     loggedIn: true,
     movies: [],
+    tags: [],
     showSettings: false,
     wishlist: [],
     showWishlist: false,
@@ -100,7 +97,8 @@ export default class HomePage extends Component {
     notificationText: '',
     width: 0,
     fetchedWishlist: false,
-    sortBy: ''
+    sortBy: '',
+    filterBy: ''
   };
 
   constructor(props: any) {
@@ -111,6 +109,7 @@ export default class HomePage extends Component {
       invalidRoute: false,
       loggedIn: true,
       movies: [],
+      tags: [],
       showSettings: false,
       wishlist: [],
       showWishlist: false,
@@ -123,7 +122,8 @@ export default class HomePage extends Component {
       notificationText: '',
       width: 0,
       fetchedWishlist: false,
-      sortBy: ''
+      sortBy: '',
+      filterBy: ''
     };
     console.log('uid: ' + this.state.uid);
     console.log('name: ' + this.state.name);
@@ -138,6 +138,7 @@ export default class HomePage extends Component {
       window.addEventListener('resize', this.updateWindowDimensions);
 
       let lot: movie[] = [];
+      let tags: string[] = [];
       let name: string = '';
       let uid =
         this.state.uid === ''
@@ -156,6 +157,13 @@ export default class HomePage extends Component {
       });
 
       const collectionRef = userRef.child('collection');
+      const tagsRef = userRef.child('tags');
+      tagsRef.once('value', (snapshot) => {
+        snapshot.forEach((childSnapshot) => {
+          const title = childSnapshot.val().title;
+          tags.push(title);
+        });
+      });
       collectionRef.once('value', (snapshot) => {
         snapshot.forEach((childSnapshot) => {
           const childKey = childSnapshot.key!;
@@ -171,12 +179,14 @@ export default class HomePage extends Component {
             genre: movie.genre,
             id: movie.id,
             key: childKey,
-            starCount: movie.starCount || undefined
+            starCount: movie.starCount || -1,
+            tags: movie.tags || []
           };
           lot.push(entry);
         });
         this.setState({
           movies: lot,
+          tags: tags,
           loading: false,
           greeting: showGreeting,
           name: name.toLowerCase(),
@@ -254,6 +264,18 @@ export default class HomePage extends Component {
     });
   };
 
+  handleTagAdded = (tag: string) => {
+    if (tag.length > 0) {
+      let newTags: string[] = this.state.tags;
+      newTags.push(tag);
+      this.setState({
+        tags: newTags,
+        notification: true,
+        notificationText: 'new tag added!'
+      });
+    }
+  };
+
   handleSort = (sortBy: string) => {
     let method: string = '';
     switch (sortBy) {
@@ -282,7 +304,7 @@ export default class HomePage extends Component {
         method = 'star count (desc)';
         break;
       default:
-        method = 'title (asc)';
+        method = 'original order';
         break;
     }
     this.setState({
@@ -421,6 +443,7 @@ export default class HomePage extends Component {
 
         if (movie.id === updatedMovie.id) {
           movieRef.child(childKey).update({ movie: updatedMovie });
+          newMovies.push(updatedMovie);
           return true;
         }
       });
@@ -441,6 +464,83 @@ export default class HomePage extends Component {
     }
   };
 
+  handleSelectedTags = (updatedMovie: movie, tags: number[]) => {
+    let newMovies: movie[] = [];
+    let newTags: string[] = [];
+    for (let i = 0; i < this.state.movies.length; i++) {
+      if (this.state.movies[i].id !== updatedMovie.id) {
+        newMovies.push(this.state.movies[i]);
+      }
+    }
+    tags.forEach((tagIndex) => {
+      newTags.push(this.state.tags[tagIndex]);
+    });
+    updatedMovie.tags = newTags;
+    const userRef = firebase.database().ref('users/' + this.state.uid);
+    const collectionRef = userRef.child('collection');
+
+    collectionRef.once('value', (snapshot) => {
+      snapshot.forEach((childSnapshot) => {
+        const childKey = childSnapshot.key!;
+        const movie = childSnapshot.val().movie;
+
+        if (movie.id === updatedMovie.id) {
+          collectionRef.child(childKey).update({ movie: updatedMovie });
+          newMovies.push(updatedMovie);
+          return true;
+        }
+      });
+    });
+  };
+
+  handleFilterByTag = (tag: string) => {
+    if (tag.length > 0) {
+      this.setState({
+        filterBy: tag,
+        notification: true,
+        notificationText: `movies successfully filtered by tag: ${tag}`
+      });
+    } else {
+      this.setState({
+        filterBy: tag,
+        notification: true,
+        notificationText: 'filter has been reset'
+      });
+    }
+  };
+
+  handleTagDelete = (tags: number[]) => {
+    let newTags: string[] = [];
+    let tagsToDelete: string[] = [];
+    tags.forEach((tagIndex) => {
+      tagsToDelete.push(this.state.tags[tagIndex]);
+    });
+    for (let i = 0; i < this.state.tags.length; i++) {
+      if (i !== tags[i]) {
+        newTags.push(this.state.tags[i]);
+      }
+    }
+
+    const userRef = firebase.database().ref('users/' + this.state.uid);
+    const tagsRef = userRef.child('tags');
+    tagsRef.once('value', (snapshot) => {
+      snapshot.forEach((childSnapshot) => {
+        const childKey = childSnapshot.key!;
+        const title = childSnapshot.val().title;
+
+        if (tagsToDelete.includes(title, 0)) {
+          tagsRef.child(childKey).remove();
+        }
+      });
+    });
+
+    this.setState({
+      tags: newTags,
+      notification: true,
+      notificationText: 'tag successfully deleted'
+    });
+  };
+
   handleAccountDelete = () => {
     const userRef = firebase.database().ref('/users/' + this.state.uid);
     userRef
@@ -453,6 +553,15 @@ export default class HomePage extends Component {
       .catch((error) => {
         console.log('account deletion unsuccessful: ' + error.message);
       });
+  };
+
+  handleResetFilters = () => {
+    this.setState({
+      filterBy: '',
+      sortBy: '',
+      notification: true,
+      notificationText: 'filters have been reset'
+    });
   };
 
   dismissGreeting = () => {
@@ -529,10 +638,26 @@ export default class HomePage extends Component {
                         </Box>
                         <Box>
                           <Filters
-                            tags={['blu-ray', 'dvd', '4k-uhd']}
+                            uid={this.state.uid}
+                            tags={this.state.tags}
                             handleSort={(sortBy: string) =>
                               this.handleSort(sortBy)
                             }
+                            handleFilterByTag={(tag) =>
+                              this.handleFilterByTag(tag)
+                            }
+                            handleTagDelete={(tags) =>
+                              this.handleTagDelete(tags)
+                            }
+                            handleUpdatedTags={(updatedTags) =>
+                              this.setState({
+                                tags: updatedTags,
+                                notification: true,
+                                notificationText: 'tag successfully updated'
+                              })
+                            }
+                            handleTagAdded={(tag) => this.handleTagAdded(tag)}
+                            handleResetFilters={this.handleResetFilters}
                           />
                         </Box>
                       </Box>
@@ -563,12 +688,27 @@ export default class HomePage extends Component {
                           />
                         </Box>
                         <Box>
-                          <Button
-                            icon={<Filter />}
-                            hoverIndicator="accent-1"
-                            focusIndicator={false}
-                            title="filters"
-                            onClick={() => this.setState({ showFilters: true })}
+                          <Filters
+                            uid={this.state.uid}
+                            tags={this.state.tags}
+                            handleSort={(sortBy: string) =>
+                              this.handleSort(sortBy)
+                            }
+                            handleFilterByTag={(tag) =>
+                              this.handleFilterByTag(tag)
+                            }
+                            handleTagDelete={(tags) =>
+                              this.handleTagDelete(tags)
+                            }
+                            handleUpdatedTags={(updatedTags) =>
+                              this.setState({
+                                tags: updatedTags,
+                                notification: true,
+                                notificationText: 'tag successfully updated'
+                              })
+                            }
+                            handleTagAdded={(tag) => this.handleTagAdded(tag)}
+                            handleResetFilters={this.handleResetFilters}
                           />
                         </Box>
                       </Box>
@@ -605,9 +745,14 @@ export default class HomePage extends Component {
                     handleRate={(updatedMovie: movie) =>
                       this.handleRate(updatedMovie)
                     }
+                    handleSelectedTags={(movie, tags) =>
+                      this.handleSelectedTags(movie, tags)
+                    }
                     loading={this.state.loading}
                     width={this.state.width}
                     sortBy={this.state.sortBy}
+                    filterBy={this.state.filterBy}
+                    tags={this.state.tags}
                   />
                 </Box>
                 <FooterComponent />

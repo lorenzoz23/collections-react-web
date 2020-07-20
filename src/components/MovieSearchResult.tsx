@@ -50,10 +50,12 @@ export default class MovieSearchResult extends Component<
       plot: '',
       date: '',
       poster: '',
+      backDrop: [],
       rating: '',
       runtime: 0,
       genre: [],
-      id: ''
+      id: '',
+      starCount: -1
     },
     numToAdd: 0,
     loading: true
@@ -81,7 +83,8 @@ export default class MovieSearchResult extends Component<
             rating: '',
             runtime: 0,
             genre: [],
-            id: item.id
+            id: item.id,
+            starCount: -1
           };
           const newSearchResultMovie: searchResultMovie = {
             movie: newMovie,
@@ -231,6 +234,7 @@ export default class MovieSearchResult extends Component<
               {this.state.visible ? (
                 <SingleMovieView
                   movie={this.state.movieToShow}
+                  wishlist={true}
                   add={true}
                   closeDetailView={this.closeDetailView}
                 />
@@ -318,7 +322,10 @@ export default class MovieSearchResult extends Component<
                           />
                           <Box alignSelf="center">
                             <Heading alignSelf="start" level="3">
-                              {item.movie.name}
+                              {item.movie.name +
+                                ' (' +
+                                item.movie.date.substring(0, 4) +
+                                ')'}
                             </Heading>
                             <Box direction="row" gap="small" alignSelf="start">
                               <CheckBox

@@ -17,10 +17,12 @@ export default class RateFilm extends Component<RateFilmProps> {
   } = {
     showRate: false,
     stars: [],
-    rateLabel: this.props.movie.starCount
-      ? this.props.movie.starCount + '/10'
-      : 'rate',
-    starCount: this.props.movie.starCount || 0
+    rateLabel:
+      this.props.movie.starCount !== -1
+        ? this.props.movie.starCount + '/10'
+        : 'rate',
+    starCount:
+      this.props.movie.starCount === -1 ? 0 : this.props.movie.starCount
   };
 
   componentDidMount = () => {

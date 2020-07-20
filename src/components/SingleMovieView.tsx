@@ -10,8 +10,11 @@ interface SingleMovieViewProps {
   movieAdded?(movie: movie): void;
   handleDelete?(movieId: string): void;
   handleRate?(updatedMovie: movie): void;
+  handleSelectedTags?(tags: number[]): void;
   movie: movie;
+  wishlist: boolean;
   add: boolean;
+  tags?: string[];
 }
 
 export default class SingleMovieView extends Component<SingleMovieViewProps> {
@@ -49,7 +52,7 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                     bottom: 0,
                     right: 0,
                     left: 0,
-                    zIndex: -2
+                    zIndex: 0
                   }}
                 >
                   <Image
@@ -246,19 +249,23 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                 }
                 pad={size !== 'small' ? 'small' : 'none'}
               >
-                {size === 'small' ? (
+                {size === 'small' && (
                   <Button
                     title="back"
                     icon={<Previous />}
                     onClick={() => this.props.closeDetailView!()}
                   />
-                ) : (
-                  <Box>
-                    <SelectMultiple
-                      tags={['blu-ray', 'dvd', '4k-uhd']}
-                      plain={false}
-                    />
-                  </Box>
+                )}
+                {!this.props.wishlist && (
+                  <SelectMultiple
+                    movieTags={this.props.movie.tags!}
+                    tags={this.props.tags!}
+                    plain={false}
+                    save={true}
+                    handleSelectedTags={(tags) =>
+                      this.props.handleSelectedTags!(tags)
+                    }
+                  />
                 )}
                 <Box
                   direction="row"

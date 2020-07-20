@@ -3,9 +3,11 @@ import { Box, Select, Button, Text } from 'grommet';
 import { FormClose } from 'grommet-icons';
 
 interface SelectMultipleProps {
+  movieTags?: string[];
   tags: string[];
   backgroundColor?: string;
   plain: boolean;
+  save: boolean;
   handleSelectedTags?(selected: number[]): void;
 }
 
@@ -16,12 +18,22 @@ export default class SelectMultiple extends Component<SelectMultipleProps> {
     selected: []
   };
 
+  componentDidMount = () => {
+    let selectedTags: number[] = [];
+    this.props.movieTags!.forEach((tag) => {
+      selectedTags.push(this.props.tags.indexOf(tag));
+    });
+    this.setState({
+      selected: selectedTags
+    });
+  };
+
   handleRemoveTag = (tag: string) => {
     const tagIndex = this.props.tags.indexOf(tag);
     const updatedSelected: number[] = this.state.selected.filter(
       (selectedTag) => selectedTag !== tagIndex
     );
-    if (this.props.handleSelectedTags) {
+    if (this.props.handleSelectedTags && !this.props.save) {
       this.props.handleSelectedTags(updatedSelected);
     }
     this.setState({
@@ -65,8 +77,10 @@ export default class SelectMultiple extends Component<SelectMultipleProps> {
   render() {
     return (
       <Box
+        direction="row"
         align="center"
         justify="center"
+        gap={this.props.save ? 'small' : 'none'}
         round
         background={this.props.backgroundColor}
       >
@@ -75,6 +89,7 @@ export default class SelectMultiple extends Component<SelectMultipleProps> {
           focusIndicator={this.props.plain ? false : true}
           plain={this.props.plain}
           closeOnChange={false}
+          emptySearchMessage="no tags found :("
           multiple
           valueLabel={
             <Box
@@ -101,7 +116,7 @@ export default class SelectMultiple extends Component<SelectMultipleProps> {
           selected={this.state.selected}
           onChange={({ selected: nextSelected }) => {
             const updatedSelected: number[] = [...nextSelected].sort();
-            if (this.props.handleSelectedTags) {
+            if (this.props.handleSelectedTags && !this.props.save) {
               this.props.handleSelectedTags(updatedSelected);
             }
             this.setState({
@@ -109,6 +124,13 @@ export default class SelectMultiple extends Component<SelectMultipleProps> {
             });
           }}
         />
+        {this.props.save && (
+          <Button
+            alignSelf="center"
+            label="save"
+            onClick={() => this.props.handleSelectedTags!(this.state.selected)}
+          />
+        )}
       </Box>
     );
   }

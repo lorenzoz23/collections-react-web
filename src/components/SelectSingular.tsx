@@ -5,7 +5,8 @@ import { FormClose } from 'grommet-icons';
 interface SelectSingularProps {
   tags: string[];
   plain: boolean;
-  handleSelected(selected: string): void;
+  handleSelected(selected: string, created: boolean): void;
+  selectedFilter: string;
 }
 
 const prefix: string = 'create';
@@ -33,7 +34,7 @@ export default class SelectSingular extends Component<SelectSingularProps> {
     this.setState({
       value: ''
     });
-    this.props.handleSelected('');
+    this.props.handleSelected('', false);
   };
 
   renderTag = (tag: string) => (
@@ -82,7 +83,7 @@ export default class SelectSingular extends Component<SelectSingularProps> {
 
   updateCreateOption = (text: string) => {
     const len = this.state.defaultOptions.length;
-    if (this.state.defaultOptions[len - 1].includes(prefix)) {
+    if (len > 0 && this.state.defaultOptions[len - 1].includes(prefix)) {
       // remove Create option before adding an updated one
       this.state.defaultOptions.pop();
     }
@@ -105,6 +106,7 @@ export default class SelectSingular extends Component<SelectSingularProps> {
           }}
           onClose={() => this.setState({ options: this.state.defaultOptions })}
           searchPlaceholder="filter films/create tags..."
+          emptySearchMessage="no tags found :("
           valueLabel={
             <Box wrap direction="row" width="small">
               {this.state.value && this.state.value.length > 0 ? (
@@ -127,11 +129,11 @@ export default class SelectSingular extends Component<SelectSingularProps> {
             if (option.includes(prefix)) {
               this.state.defaultOptions.pop();
               this.state.defaultOptions.push(this.state.searchText);
-              this.props.handleSelected(this.state.searchText);
-              this.setState({ value: this.state.searchText });
+              this.props.handleSelected(this.state.searchText, true);
+              //this.setState({ value: this.state.searchText });
             } else {
-              this.props.handleSelected(option);
               this.setState({ value: option });
+              this.props.handleSelected(option, false);
             }
           }}
         />

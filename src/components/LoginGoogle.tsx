@@ -30,6 +30,20 @@ export default class LoginGoogle extends Component<LoginGoogleProps> {
         console.log(token);
         // The signed-in user info.
         const user = result.user;
+        const isNew: boolean = result.additionalUserInfo!.isNewUser;
+        if (isNew) {
+          const userRef = firebase.database().ref('users/' + result.user.uid);
+          const tagRef = userRef.child('tags');
+
+          const bluRayTagRef = tagRef.push();
+          bluRayTagRef.set({ title: 'blu-ray' });
+
+          const dvdTagRef = tagRef.push();
+          dvdTagRef.set({ title: 'dvd' });
+
+          const uhdTagRef = tagRef.push();
+          uhdTagRef.set({ title: '4k-uhd' });
+        }
         console.log(user);
         if (this.props.rememberMe)
           localStorage.setItem('rememberMe', 'remember');
@@ -55,6 +69,20 @@ export default class LoginGoogle extends Component<LoginGoogleProps> {
         console.log(token);
         // The signed-in user info.
         const user = result.user;
+        const isNew: boolean = result.additionalUserInfo!.isNewUser;
+        if (isNew) {
+          const userRef = firebase.database().ref('users/' + result.user.uid);
+          const tagRef = userRef.child('tags');
+
+          const bluRayTagRef = tagRef.push();
+          bluRayTagRef.set({ title: 'blu-ray' });
+
+          const dvdTagRef = tagRef.push();
+          dvdTagRef.set({ title: 'dvd' });
+
+          const uhdTagRef = tagRef.push();
+          uhdTagRef.set({ title: '4k-uhd' });
+        }
         console.log(user);
         if (this.props.rememberMe)
           localStorage.setItem('rememberMe', 'remember');
