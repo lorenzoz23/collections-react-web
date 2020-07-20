@@ -113,7 +113,7 @@ export default class FooterComponent extends Component {
                 target="_blank"
                 size="small"
               >
-                {size !== 'small' ? 'The Movie Database (tMDB)' : 'tMDB'}
+                {size !== 'small' ? 'The Movie Database (TMDB)' : 'TMDB'}
               </Anchor>
             </Box>
           </Footer>

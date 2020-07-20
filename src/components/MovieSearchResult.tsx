@@ -69,21 +69,26 @@ export default class MovieSearchResult extends Component<
       .then((data) => {
         console.log(data.results);
         const results = data.results;
+        const filteredResults = results.filter(
+          (item: any) => item.title || item.original_title
+        );
         let movieItems: searchResultMovie[] = [];
-        movieItems = results.map((item: any) => {
+        movieItems = filteredResults.map((item: any) => {
           const image: string = item.backdrop_path
             ? 'https://image.tmdb.org/t/p/original' + item.backdrop_path
             : '';
           const newMovie: movie = {
-            name: item.title,
-            plot: item.overview,
-            date: item.release_date,
-            poster: 'https://image.tmdb.org/t/p/w500' + item.poster_path,
+            name: item.title || item.original_title,
+            plot: item.overview || '',
+            date: item.release_date || '',
+            poster: item.poster_path
+              ? 'https://image.tmdb.org/t/p/w500' + item.poster_path
+              : '',
             backDrop: [image],
             rating: '',
             runtime: 0,
             genre: [],
-            id: item.id,
+            id: item.id || '',
             starCount: -1
           };
           const newSearchResultMovie: searchResultMovie = {
@@ -322,10 +327,12 @@ export default class MovieSearchResult extends Component<
                           />
                           <Box alignSelf="center">
                             <Heading alignSelf="start" level="3">
-                              {item.movie.name +
-                                ' (' +
-                                item.movie.date.substring(0, 4) +
-                                ')'}
+                              {item.movie.date
+                                ? item.movie.name +
+                                  ' (' +
+                                  item.movie.date.substring(0, 4) +
+                                  ')'
+                                : item.movie.name}
                             </Heading>
                             <Box direction="row" gap="small" alignSelf="start">
                               <CheckBox
