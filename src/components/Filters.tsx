@@ -26,13 +26,22 @@ interface FiltersProps {
   tags: string[];
   uid: string;
   sort: string;
-  handleSort(sortBy: string): void;
+  handleSort(sortBy: string, checked: boolean): void;
   handleFilterByTag(tag: string): void;
   handleTagDelete(tags: number[]): void;
   handleUpdatedTags(tags: string[]): void;
   handleTagAdded(tag: string): void;
   handleResetFilters(): void;
 }
+
+const labels: Record<string, string> = {
+  nameAsc: 'title (asc)',
+  nameDesc: 'title (desc)',
+  runtimeAsc: 'runtime (asc)',
+  runtimeDesc: 'runtime (desc)',
+  mpaaAsc: 'mpaa rating (g - nc17)',
+  mpaaDesc: 'mpaa rating (nc17 - g)'
+};
 
 export default class Filters extends Component<FiltersProps> {
   state: {
@@ -43,6 +52,7 @@ export default class Filters extends Component<FiltersProps> {
     updatedText: string;
     showUpdateBox: boolean;
     sort: string;
+    sortLabel: string;
     checked: boolean;
   } = {
     showFilters: false,
@@ -52,12 +62,17 @@ export default class Filters extends Component<FiltersProps> {
     updatedText: '',
     showUpdateBox: false,
     sort: '',
+    sortLabel: 'time added',
     checked: false
   };
 
   componentDidMount = () => {
     const sortBy = localStorage.getItem('sortBy') || '';
-    this.setState({ sort: sortBy });
+    if (sortBy) {
+      this.setState({ sort: sortBy, checked: true, sortLabel: labels[sortBy] });
+    } else {
+      this.setState({ sort: sortBy });
+    }
   };
 
   handleUpdateTag = () => {
@@ -111,26 +126,19 @@ export default class Filters extends Component<FiltersProps> {
 
   handleSort = (sortBy: string) => {
     if (this.state.checked) {
-      const userRef = firebase.database().ref('users/' + this.props.uid);
-      const sortRef = userRef.child('sortMoviesBy');
       localStorage.setItem('sortBy', sortBy);
-      sortRef.once('value', (snapshot) => {
-        snapshot.forEach((childSnapshot) => {
-          const childKey = childSnapshot.key!;
-
-          sortRef.child(childKey).update({ sortBy: sortBy });
-        });
-      });
     }
-    this.setState({ sort: sortBy });
-    this.props.handleSort(sortBy);
+    this.setState({ sort: sortBy, sortLabel: labels[sortBy] });
+    this.props.handleSort(sortBy, this.state.checked);
   };
 
   handleResetFilters = () => {
+    localStorage.removeItem('sortBy');
     this.setState({
       selectedFilter: '',
       sort: '',
-      showFilters: false
+      showFilters: false,
+      checked: false
     });
     this.props.handleResetFilters();
   };
@@ -138,19 +146,16 @@ export default class Filters extends Component<FiltersProps> {
   handleOrderChange = (checked: boolean) => {
     if (!checked) {
       localStorage.removeItem('sortBy');
-      const userRef = firebase.database().ref('users/' + this.props.uid);
-      const sortRef = userRef.child('sortMoviesBy');
-      sortRef.once('value', (snapshot) => {
-        snapshot.forEach((childSnapshot) => {
-          const childKey = childSnapshot.key!;
-
-          sortRef.child(childKey).update({ sortBy: '' });
-        });
+      this.setState({
+        checked: checked,
+        sort: '',
+        sortLabel: 'time added'
+      });
+    } else {
+      this.setState({
+        checked: checked
       });
     }
-    this.setState({
-      checked: checked
-    });
   };
 
   render() {
@@ -277,6 +282,12 @@ export default class Filters extends Component<FiltersProps> {
                         this.handleOrderChange(event.target.checked)
                       }
                     />
+                    <Box direction="row" gap="xsmall">
+                      <Text size="small" weight="bold">
+                        default:
+                      </Text>
+                      <Text size="small">{this.state.sortLabel}</Text>
+                    </Box>
                   </Box>
                 </Box>
                 <Box

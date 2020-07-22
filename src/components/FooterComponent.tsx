@@ -19,6 +19,7 @@ export default class FooterComponent extends Component {
   };
 
   render() {
+    const mode = localStorage.getItem('visualModeValue') || 'wedding';
     return (
       <ResponsiveContext.Consumer>
         {(size) => (
@@ -28,6 +29,12 @@ export default class FooterComponent extends Component {
               right: 'small'
             }}
             gap="medium"
+            round={mode === 'wedding' ? true : false}
+            margin={
+              mode === 'wedding'
+                ? { horizontal: 'small', bottom: 'xsmall' }
+                : 'none'
+            }
             background={{ color: 'footer' }}
             justify="between"
           >

@@ -34,7 +34,8 @@ export default class Login extends Component {
     width: 0,
     height: 0,
     uid: '',
-    loading: false
+    loading: false,
+    fullName: ''
   };
 
   updateWindowDimensions = () => {
@@ -57,13 +58,23 @@ export default class Login extends Component {
 
   handleLogin = () => {
     let id: string = '';
+    let name: string = '';
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
         // User is signed in.
         id = user.uid;
-        this.setState({
-          valid: true,
-          uid: id
+        const userRef = firebase.database().ref('users/' + id);
+        const nameRef = userRef.child('name');
+        nameRef.once('value').then((snapshot) => {
+          const displayName =
+            firebase.auth().currentUser!.displayName || 'stranger';
+          name = snapshot.val() || displayName;
+
+          this.setState({
+            valid: true,
+            uid: id,
+            fullName: name
+          });
         });
       } else {
         // No user is signed in.
@@ -84,7 +95,7 @@ export default class Login extends Component {
               <Redirect
                 to={{
                   pathname: '/',
-                  state: { id: this.state.uid }
+                  state: { id: this.state.uid, name: this.state.fullName }
                 }}
               />
             ) : (

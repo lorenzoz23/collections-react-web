@@ -55,8 +55,6 @@ export default class SignUp extends Component<SignUpProps> {
                 userRef.set({
                   name: this.state.name
                 });
-                const sortByRef = userRef.child('sortMoviesBy').push();
-                sortByRef.set({ sortBy: '' });
 
                 const tagRef = userRef.child('tags');
 

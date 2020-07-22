@@ -115,7 +115,7 @@ export default class HomePage extends Component {
     super(props);
     this.state = {
       uid: props.location.state === undefined ? '' : props.location.state.id,
-      name: '',
+      name: props.location.state === undefined ? '' : props.location.state.name,
       invalidRoute: false,
       loggedIn: true,
       movies: [],
@@ -154,7 +154,6 @@ export default class HomePage extends Component {
 
       let lot: movie[] = [];
       let tags: string[] = [];
-      let name: string = '';
       let sort: string = '';
       let uid =
         this.state.uid === ''
@@ -165,12 +164,6 @@ export default class HomePage extends Component {
       const showGreeting = greeting === 'show' ? true : false;
 
       const userRef = firebase.database().ref('users/' + uid);
-      const nameRef = userRef.child('name');
-      nameRef.once('value').then((snapshot) => {
-        const displayName =
-          firebase.auth().currentUser!.displayName || 'stranger';
-        name = (snapshot.val() && snapshot.val()) || displayName;
-      });
       const sortRef = userRef.child('sortMoviesBy');
       sortRef.once('value').then((snapshot) => {
         sort = snapshot.val() && snapshot.val();
@@ -210,7 +203,6 @@ export default class HomePage extends Component {
           tags: tags,
           loading: false,
           greeting: showGreeting,
-          name: name.toLowerCase(),
           uid: uid
         });
       });
@@ -314,7 +306,7 @@ export default class HomePage extends Component {
     }
   };
 
-  handleSort = (sortBy: string) => {
+  handleSort = (sortBy: string, checked: boolean) => {
     let method: string = '';
     switch (sortBy) {
       case 'nameAsc':
@@ -345,13 +337,17 @@ export default class HomePage extends Component {
         method = 'original order';
         break;
     }
+
+    const text: string = checked
+      ? `your films will now be default sorted by ${method}`
+      : `film ${
+          this.state.showWishlist ? 'wishlist' : 'lot'
+        } successfully sorted by ${method}`;
     this.setState({
       sortBy: sortBy,
       notification: true,
       goodNotification: true,
-      notificationText: `film ${
-        this.state.showWishlist ? 'wishlist' : 'lot'
-      } successfully sorted by ${method}`
+      notificationText: text
     });
   };
 
@@ -730,8 +726,8 @@ export default class HomePage extends Component {
                             sort={this.state.sortBy}
                             uid={this.state.uid}
                             tags={this.state.tags}
-                            handleSort={(sortBy: string) =>
-                              this.handleSort(sortBy)
+                            handleSort={(sortBy, checked) =>
+                              this.handleSort(sortBy, checked)
                             }
                             handleFilterByTag={(tag) =>
                               this.handleFilterByTag(tag)
@@ -783,8 +779,8 @@ export default class HomePage extends Component {
                             sort={this.state.sortBy}
                             uid={this.state.uid}
                             tags={this.state.tags}
-                            handleSort={(sortBy: string) =>
-                              this.handleSort(sortBy)
+                            handleSort={(sortBy, checked) =>
+                              this.handleSort(sortBy, checked)
                             }
                             handleFilterByTag={(tag) =>
                               this.handleFilterByTag(tag)
