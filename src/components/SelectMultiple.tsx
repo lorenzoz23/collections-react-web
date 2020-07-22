@@ -20,12 +20,14 @@ export default class SelectMultiple extends Component<SelectMultipleProps> {
 
   componentDidMount = () => {
     let selectedTags: number[] = [];
-    this.props.movieTags!.forEach((tag) => {
-      selectedTags.push(this.props.tags.indexOf(tag));
-    });
-    this.setState({
-      selected: selectedTags
-    });
+    if (this.props.movieTags!) {
+      this.props.movieTags!.forEach((tag) => {
+        selectedTags.push(this.props.tags.indexOf(tag));
+      });
+      this.setState({
+        selected: selectedTags
+      });
+    }
   };
 
   handleRemoveTag = (tag: string) => {

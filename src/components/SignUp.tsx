@@ -49,13 +49,15 @@ export default class SignUp extends Component<SignUpProps> {
           .then((result) => {
             const user = firebase.auth().currentUser;
             if (user) {
-              const userRef = firebase.database().ref('users/' + user.uid);
-              userRef.set({
-                name: this.state.name
-              });
               const isNew: boolean = result.additionalUserInfo!.isNewUser;
               if (isNew) {
                 const userRef = firebase.database().ref('users/' + user.uid);
+                userRef.set({
+                  name: this.state.name
+                });
+                const sortByRef = userRef.child('sortMoviesBy').push();
+                sortByRef.set({ sortBy: '' });
+
                 const tagRef = userRef.child('tags');
 
                 const bluRayTagRef = tagRef.push();

@@ -21,7 +21,9 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
   render() {
     const numGenre = this.props.movie.genre.length;
     const mode = localStorage.getItem('visualModeValue') || 'gradient';
-    const rand = Math.floor(Math.random() * Math.floor(3));
+    const rand = Math.floor(
+      Math.random() * Math.floor(this.props.movie.backDrop?.length || 0)
+    );
 
     return (
       <ResponsiveContext.Consumer>
@@ -260,7 +262,7 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                   <SelectMultiple
                     movieTags={this.props.movie.tags!}
                     tags={this.props.tags!}
-                    plain={false}
+                    plain={true}
                     save={true}
                     handleSelectedTags={(tags) =>
                       this.props.handleSelectedTags!(tags)

@@ -14,12 +14,14 @@ import {
 import { Magic } from 'grommet-icons';
 import CSV from './CSV';
 import { movie } from './HomePage';
+import { searchResults } from './MovieSearchResult';
 
 interface SettingsProps {
   logOut(): void;
   toggleSettings(): void;
   loggedIn: boolean;
   handleWishlist(checked: boolean): void;
+  handleParsed(movieList: searchResults): void;
   wishlist: boolean;
   uid: string;
   handleAccountDelete(): void;
@@ -39,7 +41,7 @@ export default class Settings extends Component<SettingsProps> {
   };
 
   componentDidMount = () => {
-    const mode = localStorage.getItem('visualModeValue') || 'gradient';
+    const mode = localStorage.getItem('visualModeValue') || 'wedding';
     this.setState({ theme: mode });
   };
 
@@ -154,6 +156,11 @@ export default class Settings extends Component<SettingsProps> {
                     name={this.props.name}
                     fetchedWishlist={this.props.fetchedWishlist}
                     uid={this.props.uid}
+                    handleParsed={(movieList) => {
+                      console.log(movieList);
+                      this.props.toggleSettings();
+                      this.props.handleParsed(movieList);
+                    }}
                   />
                 </Box>
                 <Box gap="xsmall" align="center" margin={{ bottom: 'small' }}>
@@ -167,7 +174,11 @@ export default class Settings extends Component<SettingsProps> {
                         : [2]
                     }
                     icon={<Magic />}
-                    value={this.state.theme}
+                    value={
+                      this.state.theme === 'wedding'
+                        ? 'wedding on a tuesday'
+                        : this.state.theme
+                    }
                     placeholder="choose your visual style"
                     options={['gradient', 'solid', 'wedding on a tuesday']}
                     onChange={({ option }) => this.handleThemeChange(option)}

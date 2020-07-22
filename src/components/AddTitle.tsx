@@ -10,12 +10,15 @@ import {
 } from 'grommet';
 import { Add, FormNextLink, FormClose, CircleQuestion } from 'grommet-icons';
 
-import MovieSearchResult from './MovieSearchResult';
+import MovieSearchResult, { searchResults } from './MovieSearchResult';
 import { movie } from './HomePage';
 import { TooltipButton } from './TooltipButton';
 
 interface AddTitleProps {
   moviesAdded(lotMovies: movie[], wishlistMovies: movie[]): void;
+  parsed?: boolean;
+  movieList?: searchResults;
+  handleFinishedImport?(): void;
 }
 
 export default class AddTitle extends Component<AddTitleProps> {
@@ -111,7 +114,8 @@ export default class AddTitle extends Component<AddTitleProps> {
   };
 
   moviesAdded = async (lotMovies: movie[], wishlistMovies: movie[]) => {
-    this.closeAddTitle();
+    if (!this.props.parsed) this.closeAddTitle();
+    else this.props.handleFinishedImport!();
     let updatedLotMovies: movie[] = [];
     let updatedWishlistMovies: movie[] = [];
     if (lotMovies) {
@@ -137,7 +141,24 @@ export default class AddTitle extends Component<AddTitleProps> {
               }}
               icon={<Add />}
             />
-            {this.state.visible ? (
+            {this.props.parsed ? (
+              <Layer
+                position="center"
+                responsive={size === 'small' ? true : false}
+                onClickOutside={() => {
+                  this.setState({ visible: false });
+                }}
+              >
+                <MovieSearchResult
+                  imports={this.props.movieList}
+                  closeAdd={this.props.handleFinishedImport!}
+                  parsed={true}
+                  moviesAdded={(lotMovies: movie[], wishlistMovies: movie[]) =>
+                    this.moviesAdded(lotMovies, wishlistMovies)
+                  }
+                />
+              </Layer>
+            ) : this.state.visible ? (
               <Layer
                 style={{
                   borderRadius:
@@ -151,6 +172,7 @@ export default class AddTitle extends Component<AddTitleProps> {
               >
                 {this.state.searched ? (
                   <MovieSearchResult
+                    parsed={false}
                     title={this.state.searchTitle}
                     year={this.state.searchYear}
                     closeAdd={this.closeAddTitle}

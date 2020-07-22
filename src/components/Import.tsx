@@ -1,14 +1,114 @@
 import React, { Component } from 'react';
-import { Box, Button, Layer, Text, Anchor } from 'grommet';
-//import { movie } from './HomePage';
+import {
+  Box,
+  Button,
+  Layer,
+  Text,
+  Anchor,
+  Table,
+  TableHeader,
+  TableRow,
+  TableCell,
+  TableBody
+} from 'grommet';
+import BeatLoader from 'react-spinners/BeatLoader';
 
-import CSV from '../component-assets/WATCHLIST.csv';
+import { movie } from './HomePage';
+import CSV from '../component-assets/example-csv-file-cinelot.csv';
+import { searchResults, searchResultMovie } from './MovieSearchResult';
 
-export default class Import extends Component {
-  state = {
+interface ImportProps {
+  handleParsed(movieList: searchResults): void;
+}
+
+export default class Import extends Component<ImportProps> {
+  state: {
+    visible: boolean;
+    continueImportVisible: boolean;
+    file: any;
+    loading: boolean;
+    parsed: boolean;
+  } = {
     visible: false,
     continueImportVisible: false,
-    fileName: ''
+    file: {},
+    loading: false,
+    parsed: false
+  };
+
+  parseFile = () => {
+    this.setState({
+      loading: true
+    });
+    const r = new FileReader();
+    r.readAsText(this.state.file);
+    r.onload = async () => {
+      const ct: any = r.result!;
+      const entries: string[] = ct.split('\n');
+      const header: string[] = entries[0].split(',');
+      if (!header.includes('imdbID')) {
+        if (!header.includes('title')) {
+          console.log('error: incorrectly formatted csv file');
+          return;
+        }
+      }
+      let newMovies: movie[] = [];
+      const imdbIndex: number = header.indexOf('imdbID');
+      for (let i = 1; i < entries.length; i++) {
+        const entry: string[] = entries[i].split(',');
+        if (imdbIndex > -1) {
+          const id = entry[imdbIndex];
+          if (id.substring(0, 2) === 'tt' && id.length > 2) {
+            const response = await fetch(
+              `https://api.themoviedb.org/3/find/${entry[imdbIndex]}?api_key=${process.env.REACT_APP_TMDB_API_KEY}&language=en-US&external_source=imdb_id`
+            );
+            const data = await response.json();
+            const results = data.movie_results;
+            const image: string = results[0].backdrop_path
+              ? 'https://image.tmdb.org/t/p/original' + results[0].backdrop_path
+              : '';
+            const movieResult: movie = {
+              name: results[0].title || results[0].original_title,
+              plot: results[0].overview || '',
+              date: results[0].release_date || '',
+              poster: results[0].poster_path
+                ? 'https://image.tmdb.org/t/p/w500' + results[0].poster_path
+                : '',
+              backDrop: [image],
+              rating: '',
+              runtime: 0,
+              genre: [],
+              id: results[0].id || '',
+              starCount: -1
+            };
+            newMovies.push(movieResult);
+          }
+        }
+      }
+
+      const results = this.convertMoviesToSearchResults(newMovies);
+      this.setState({
+        loading: false,
+        continueImportVisible: false,
+        parsed: true
+      });
+      this.props.handleParsed(results);
+    };
+  };
+
+  convertMoviesToSearchResults = (movies: movie[]) => {
+    const movieResults: searchResultMovie[] = movies.map((item) => {
+      const newSearchResultMovie: searchResultMovie = {
+        movie: item,
+        checkedLot: true,
+        checkedWishlist: false
+      };
+      return newSearchResultMovie;
+    });
+    const newMovieList: searchResults = {
+      movies: movieResults
+    };
+    return newMovieList;
   };
 
   openFileSystem = () => {
@@ -24,8 +124,14 @@ export default class Import extends Component {
 
   handleImportChange = (event: any) => {
     const fileUploaded = event.target.files[0];
-    console.log(fileUploaded.name);
-    this.setState({ fileName: fileUploaded.name, continueImportVisible: true });
+    const periodIndex: number = (fileUploaded.name as string).lastIndexOf('.');
+    const ext: string = (fileUploaded.name as string).substring(
+      periodIndex + 1
+    );
+    console.log(ext);
+    if (ext === 'csv') {
+      this.setState({ file: fileUploaded, continueImportVisible: true });
+    }
   };
 
   downloadCSV = () => {
@@ -34,7 +140,7 @@ export default class Import extends Component {
 
   render() {
     return (
-      <Box gap="xxsmall" direction="row" align="center" justify="center">
+      <Box align="center" justify="center">
         <Button
           label="import"
           onClick={this.handleImport}
@@ -65,25 +171,41 @@ export default class Import extends Component {
             >
               <Box align="center">
                 <Text>you selected the following file: </Text>
-                <Text weight="bold">{this.state.fileName}</Text>
+                <Text weight="bold">{this.state.file.name}</Text>
               </Box>
-              <Box gap="xsmall">
-                <Button label="continue with import" primary />
-                <Button
-                  onClick={() =>
-                    this.setState({ continueImportVisible: false })
-                  }
-                  label="cancel"
-                  hoverIndicator="status-error"
-                  color="status-error"
-                />
-              </Box>
+              {!this.state.loading ? (
+                <Box gap="xsmall">
+                  <Button
+                    label="continue with import"
+                    primary
+                    onClick={this.parseFile}
+                  />
+                  <Button
+                    onClick={() =>
+                      this.setState({ continueImportVisible: false })
+                    }
+                    alignSelf="center"
+                    label="cancel"
+                    hoverIndicator="status-error"
+                    color="status-error"
+                  />
+                </Box>
+              ) : (
+                <Box align="center" justify="center">
+                  <BeatLoader
+                    size={45}
+                    margin={5}
+                    color={'#6FFFB0'}
+                    loading={this.state.loading}
+                  />
+                </Box>
+              )}
             </Box>
           </Layer>
         )}
         {this.state.visible && (
           <Layer
-            position="bottom"
+            position="center"
             onClickOutside={() => this.setState({ visible: false })}
             style={{ borderRadius: 30 }}
             margin={{ bottom: 'medium' }}
@@ -96,32 +218,110 @@ export default class Import extends Component {
               align="center"
               background="smallLayer"
             >
-              <Text weight="bold" textAlign="center">
-                if it's good enough for{' '}
-                <Anchor
-                  label="Letterboxd"
-                  href="https://letterboxd.com/about/importing-data/"
-                  target="_blank"
-                />{' '}
-                or{' '}
-                <Anchor
-                  label="TMDB"
-                  href="https://www.themoviedb.org/settings/import-list"
-                  target="_blank"
-                />
-                , then it's good enough for cinelot!
-              </Text>
-              <Text textAlign="center">
-                also, be sure to check out the following example csv file to get
-                a better understanding of the minimum requirements for cinelot
-                when importing your csv files
+              <Text weight="bold" textAlign="center" size="large">
+                importing your film data
               </Text>
               <Anchor label="example csv file" onClick={this.downloadCSV} />
+              <Text textAlign="center">
+                {/* the above file is a good example of the cinelot import format: a
+                csv file that supports the following column titles, in any order
+                (other column titles will be ignored), where, even though all
+                column titles are optional, at least one of the first two column
+                titles must be included on the first line of your file */}
+                the above file is a good example of the cinelot import format: a
+                csv file that includes a column title for imdbIDs (support for
+                more column titles is coming)
+              </Text>
+              <Table alignSelf="center">
+                <TableHeader>
+                  <TableRow>
+                    <TableCell scope="col" border="bottom">
+                      column title
+                    </TableCell>
+                    <TableCell scope="col" border="bottom">
+                      column value
+                    </TableCell>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  <TableRow>
+                    <TableCell scope="row">
+                      <Text weight="bold">imdbID</Text>
+                    </TableCell>
+                    <TableCell>
+                      example: tt0449089 (taken from{' '}
+                      <Anchor
+                        label="https://www.imdb.com/title/tt0449089"
+                        href="https://www.imdb.com/title/tt0449089"
+                        target="_blank"
+                      />
+                      )
+                    </TableCell>
+                  </TableRow>
+                  {/* <TableRow>
+                    <TableCell scope="row">
+                      <Text weight="bold">title</Text>
+                    </TableCell>
+                    <TableCell>
+                      example: rv (used for matching when no ID is provided)
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell scope="row">
+                      <Text weight="bold">year</Text>
+                    </TableCell>
+                    <TableCell>
+                      example: 2006 (used for matching when no ID is provided)
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell scope="row">
+                      <Text weight="bold">directors</Text>
+                    </TableCell>
+                    <TableCell>
+                      example: barry sonnenfeld (used for matching when no ID is
+                      provided)
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell scope="row">
+                      <Text weight="bold">rating</Text>
+                    </TableCell>
+                    <TableCell>
+                      example: 4.5 (rating out of 5 including 0.5 increments)
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell scope="row">
+                      <Text weight="bold">rating10</Text>
+                    </TableCell>
+                    <TableCell>example: 9 (rating out of 10)</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell scope="row">
+                      <Text weight="bold">tags</Text>
+                    </TableCell>
+                    <TableCell>
+                      example: "blu-ray, dvd, digital" (the various mediums in
+                      which you own a title)
+                    </TableCell>
+                  </TableRow> */}
+                </TableBody>
+              </Table>
+              {/* <Box align="center">
+                <Text weight="bold" size="small" textAlign="center">
+                  note:
+                </Text>
+                <Text size="small" textAlign="center">
+                  entries containing commas (such as director/tag lists) must be
+                  placed inside quotes, eg: "Josh Safdie, Benny Safdie" (for
+                  directors) or "blu-ray, dvd, 4k-uhd" (for tags)
+                </Text>
+              </Box> */}
               <Button
-                label="continue with export"
+                label="select csv file"
                 onClick={this.openFileSystem}
-                primary
-                hoverIndicator="accent-1"
+                hoverIndicator="brand"
               />
             </Box>
           </Layer>

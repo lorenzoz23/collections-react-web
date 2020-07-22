@@ -207,25 +207,34 @@ export default class Collection extends Component<CollectionProps> {
                     borderRadius: size !== 'small' ? 30 : 0
                   }}
                 >
-                  <SingleMovieView
-                    movie={this.state.movieToShow}
-                    add={false}
-                    handleDelete={(id: string) => this.handleDelete(id)}
-                    handleRate={(updatedMovie: movie) =>
-                      this.props.handleRate(updatedMovie)
-                    }
-                    closeDetailView={() =>
-                      this.setState({ movieDetailsVisible: false })
-                    }
-                    handleSelectedTags={(tags) =>
-                      this.props.handleSelectedTags(
-                        this.state.movieToShow,
-                        tags
-                      )
-                    }
-                    tags={this.props.tags}
-                    wishlist={this.props.wishlist}
-                  />
+                  <Box
+                  // round
+                  // border={{
+                  //   side: 'all',
+                  //   size: 'small',
+                  //   color: 'lotBorder'
+                  // }}
+                  >
+                    <SingleMovieView
+                      movie={this.state.movieToShow}
+                      add={false}
+                      handleDelete={(id: string) => this.handleDelete(id)}
+                      handleRate={(updatedMovie: movie) =>
+                        this.props.handleRate(updatedMovie)
+                      }
+                      closeDetailView={() =>
+                        this.setState({ movieDetailsVisible: false })
+                      }
+                      handleSelectedTags={(tags) =>
+                        this.props.handleSelectedTags(
+                          this.state.movieToShow,
+                          tags
+                        )
+                      }
+                      tags={this.props.tags}
+                      wishlist={this.props.wishlist}
+                    />
+                  </Box>
                 </Layer>
               ) : null}
             </Box>

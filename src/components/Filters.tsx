@@ -1,5 +1,14 @@
 import React, { Component } from 'react';
-import { Layer, Box, Heading, Menu, Button, Text, TextInput } from 'grommet';
+import {
+  Layer,
+  Box,
+  Heading,
+  Menu,
+  Button,
+  Text,
+  TextInput,
+  CheckBox
+} from 'grommet';
 import {
   Sort,
   Filter,
@@ -16,6 +25,7 @@ import FilterViewTags from './FilterViewTags';
 interface FiltersProps {
   tags: string[];
   uid: string;
+  sort: string;
   handleSort(sortBy: string): void;
   handleFilterByTag(tag: string): void;
   handleTagDelete(tags: number[]): void;
@@ -33,6 +43,7 @@ export default class Filters extends Component<FiltersProps> {
     updatedText: string;
     showUpdateBox: boolean;
     sort: string;
+    checked: boolean;
   } = {
     showFilters: false,
     editMode: false,
@@ -40,7 +51,13 @@ export default class Filters extends Component<FiltersProps> {
     selectedTagsToUpdate: [],
     updatedText: '',
     showUpdateBox: false,
-    sort: ''
+    sort: '',
+    checked: false
+  };
+
+  componentDidMount = () => {
+    const sortBy = localStorage.getItem('sortBy') || '';
+    this.setState({ sort: sortBy });
   };
 
   handleUpdateTag = () => {
@@ -93,6 +110,18 @@ export default class Filters extends Component<FiltersProps> {
   };
 
   handleSort = (sortBy: string) => {
+    if (this.state.checked) {
+      const userRef = firebase.database().ref('users/' + this.props.uid);
+      const sortRef = userRef.child('sortMoviesBy');
+      localStorage.setItem('sortBy', sortBy);
+      sortRef.once('value', (snapshot) => {
+        snapshot.forEach((childSnapshot) => {
+          const childKey = childSnapshot.key!;
+
+          sortRef.child(childKey).update({ sortBy: sortBy });
+        });
+      });
+    }
     this.setState({ sort: sortBy });
     this.props.handleSort(sortBy);
   };
@@ -104,6 +133,24 @@ export default class Filters extends Component<FiltersProps> {
       showFilters: false
     });
     this.props.handleResetFilters();
+  };
+
+  handleOrderChange = (checked: boolean) => {
+    if (!checked) {
+      localStorage.removeItem('sortBy');
+      const userRef = firebase.database().ref('users/' + this.props.uid);
+      const sortRef = userRef.child('sortMoviesBy');
+      sortRef.once('value', (snapshot) => {
+        snapshot.forEach((childSnapshot) => {
+          const childKey = childSnapshot.key!;
+
+          sortRef.child(childKey).update({ sortBy: '' });
+        });
+      });
+    }
+    this.setState({
+      checked: checked
+    });
   };
 
   render() {
@@ -136,7 +183,7 @@ export default class Filters extends Component<FiltersProps> {
               active filter
             </Text>
           )}
-          {this.state.sort.length > 0 && (
+          {this.state.sort.length > 0 && !this.state.checked && (
             <Text
               color="status-ok"
               weight="bold"
@@ -218,16 +265,17 @@ export default class Filters extends Component<FiltersProps> {
                           label: 'mpaa rating (nc17 - g)',
                           onClick: () => this.handleSort('mpaaDesc'),
                           hoverIndicator: 'accent-1'
-                        },
-                        {
-                          label: 'reset (original order)',
-                          onClick: () => {
-                            this.setState({ showFilters: false });
-                            this.handleSort('');
-                          },
-                          hoverIndicator: 'brand'
                         }
                       ]}
+                    />
+                    <CheckBox
+                      toggle
+                      checked={this.state.checked}
+                      label="save sorted order"
+                      reverse
+                      onChange={(event) =>
+                        this.handleOrderChange(event.target.checked)
+                      }
                     />
                   </Box>
                 </Box>

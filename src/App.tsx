@@ -74,7 +74,7 @@ const themeWeird = {
       footer: '#C39BD3',
       layer: 'neutral-3',
       movieSearchResult: '#213444',
-      movieSearchResultHeader: '#C39BD3',
+      movieSearchResultHeader: 'neutral-3',
       deleteMovie: '#FF8686',
       lotBorder: '#C39BD3',
       resultBorder: 'accent-1',
@@ -100,7 +100,7 @@ export default class App extends Component {
   };
 
   getInitialState = () => {
-    const mode = localStorage.getItem('visualModeValue') || 'gradient';
+    const mode = localStorage.getItem('visualModeValue') || 'wedding';
     return mode;
   };
 

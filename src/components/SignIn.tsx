@@ -6,16 +6,28 @@ import {
   Box,
   Button,
   ResponsiveContext,
-  CheckBox
+  CheckBox,
+  Anchor
 } from 'grommet';
 import { Next, Previous } from 'grommet-icons';
 import firebase from 'firebase/app';
 import 'firebase/auth';
 import { motion } from 'framer-motion';
+import Notification from './Notification';
 
 const variants = {
   visible: { opacity: 1 },
   hidden: { opacity: 0 }
+};
+
+const container = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.5
+    }
+  }
 };
 
 interface SignInProps {
@@ -34,7 +46,8 @@ export default class SignIn extends Component<SignInProps> {
     password: this.props.password,
     errorMessage: [''],
     created: this.props.created,
-    rememberMe: this.props.rememberMe
+    rememberMe: this.props.rememberMe,
+    notificationVisible: false
   };
 
   handleLogin = (email: string, password: string) => {
@@ -91,6 +104,38 @@ export default class SignIn extends Component<SignInProps> {
       rememberMe: event.target.checked
     });
     this.props.handleRememberMe(event.target.checked);
+  };
+
+  handleResetPassword = () => {
+    firebase
+      .auth()
+      .sendPasswordResetEmail(this.state.email)
+      .then(() => {
+        this.setState({
+          errorMessage: [''],
+          notificationVisible: true
+        });
+      })
+      .catch((error) => {
+        let message: string[] = ['', ''];
+        switch (error.code) {
+          case 'auth/invalid-email':
+            message = ['email', 'invalid email'];
+            break;
+          case 'auth/user-not-found':
+            message = ['email', 'user not found'];
+            break;
+          case 'auth/user-disabled':
+            message = ['password', 'user account is disabled'];
+            break;
+          default:
+            message = ['email', 'unknown error'];
+            break;
+        }
+        this.setState({
+          errorMessage: message
+        });
+      });
   };
 
   render() {
@@ -173,7 +218,7 @@ export default class SignIn extends Component<SignInProps> {
                     size={size === 'small' ? 'small' : 'medium'}
                   />
                 </Box>
-                <Box align="center">
+                <Box align="center" gap="small">
                   <motion.div whileTap={{ scale: 0.9 }}>
                     <CheckBox
                       label="remember me?"
@@ -181,8 +226,31 @@ export default class SignIn extends Component<SignInProps> {
                       onChange={(event) => this.handleRemember(event)}
                     />
                   </motion.div>
+                  <motion.div
+                    //animate={{ opacity: 0.5 }}
+                    //transition={{ flip: Infinity, duration: 0.5 }}
+                    variants={container}
+                    initial="hidden"
+                    animate="show"
+                  >
+                    <Anchor
+                      disabled={this.state.email.length === 0}
+                      label="forgot password"
+                      alignSelf="center"
+                      onClick={this.handleResetPassword}
+                    />
+                  </motion.div>
                 </Box>
               </Form>
+              {this.state.notificationVisible && (
+                <Notification
+                  good={true}
+                  notificationText={'password reset email sent!'}
+                  onNotificationClose={() =>
+                    this.setState({ notificationVisible: false })
+                  }
+                />
+              )}
             </Box>
           </motion.div>
         )}
