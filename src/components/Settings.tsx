@@ -11,7 +11,7 @@ import {
   Select,
   TextInput
 } from 'grommet';
-import { Magic } from 'grommet-icons';
+import { Magic, Baby } from 'grommet-icons';
 import CSV from './CSV';
 import { movie } from './HomePage';
 import { searchResults } from './MovieSearchResult';
@@ -71,6 +71,11 @@ export default class Settings extends Component<SettingsProps> {
 
   handleDeleteAccount = () => {
     this.setState({ showDeleteAccountLayer: true });
+  };
+
+  handleResetCache = () => {
+    localStorage.clear();
+    window.location.reload();
   };
 
   render() {
@@ -163,7 +168,7 @@ export default class Settings extends Component<SettingsProps> {
                     }}
                   />
                 </Box>
-                <Box gap="xsmall" align="center" margin={{ bottom: 'small' }}>
+                <Box gap="xsmall" align="center">
                   <Text weight="bold">theme</Text>
                   <Select
                     disabled={
@@ -182,6 +187,15 @@ export default class Settings extends Component<SettingsProps> {
                     placeholder="choose your visual style"
                     options={['gradient', 'solid', 'wedding on a tuesday']}
                     onChange={({ option }) => this.handleThemeChange(option)}
+                  />
+                </Box>
+                <Box align="center" gap="xsmall" margin={{ bottom: 'small' }}>
+                  <Text weight="bold">clear cache</Text>
+                  <Button
+                    icon={<Baby />}
+                    label="reset"
+                    reverse
+                    onClick={this.handleResetCache}
                   />
                 </Box>
                 <Box align="center" gap="xsmall">

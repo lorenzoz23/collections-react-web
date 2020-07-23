@@ -20,7 +20,7 @@ interface SingleMovieViewProps {
 export default class SingleMovieView extends Component<SingleMovieViewProps> {
   render() {
     const numGenre = this.props.movie.genre.length;
-    const mode = localStorage.getItem('visualModeValue') || 'gradient';
+    const mode = localStorage.getItem('visualModeValue') || 'wedding';
     const rand = Math.floor(
       Math.random() * Math.floor(this.props.movie.backDrop?.length || 0)
     );
@@ -59,7 +59,6 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                 >
                   <Image
                     fit="cover"
-                    fill
                     src={this.props.movie.backDrop![rand]}
                     opacity={mode === 'solid' ? '0.2' : '0.3'}
                   />
@@ -79,6 +78,26 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                     }}
                     alignSelf="end"
                   /> */}
+                </Box>
+              )}
+              {!this.props.wishlist && size === 'small' && (
+                <Box
+                  style={{
+                    position: 'fixed',
+                    top: 10,
+                    left: 0,
+                    width: '100%'
+                  }}
+                >
+                  <SelectMultiple
+                    movieTags={this.props.movie.tags!}
+                    tags={this.props.tags!}
+                    plain={false}
+                    save={true}
+                    handleSelectedTags={(tags) =>
+                      this.props.handleSelectedTags!(tags)
+                    }
+                  />
                 </Box>
               )}
               <Box align="center" alignSelf="center">
@@ -258,11 +277,11 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                     onClick={() => this.props.closeDetailView!()}
                   />
                 )}
-                {!this.props.wishlist && (
+                {!this.props.wishlist && size !== 'small' && (
                   <SelectMultiple
                     movieTags={this.props.movie.tags!}
                     tags={this.props.tags!}
-                    plain={true}
+                    plain={false}
                     save={true}
                     handleSelectedTags={(tags) =>
                       this.props.handleSelectedTags!(tags)

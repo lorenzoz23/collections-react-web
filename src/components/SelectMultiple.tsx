@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Box, Select, Button, Text } from 'grommet';
+import { Box, Select, Button, Text, ResponsiveContext } from 'grommet';
 import { FormClose } from 'grommet-icons';
 
 interface SelectMultipleProps {
@@ -14,8 +14,10 @@ interface SelectMultipleProps {
 export default class SelectMultiple extends Component<SelectMultipleProps> {
   state: {
     selected: number[];
+    tagsChanged: boolean;
   } = {
-    selected: []
+    selected: [],
+    tagsChanged: false
   };
 
   componentDidMount = () => {
@@ -39,7 +41,8 @@ export default class SelectMultiple extends Component<SelectMultipleProps> {
       this.props.handleSelectedTags(updatedSelected);
     }
     this.setState({
-      selected: updatedSelected
+      selected: updatedSelected,
+      tagsChanged: true
     });
   };
 
@@ -65,7 +68,12 @@ export default class SelectMultiple extends Component<SelectMultipleProps> {
         <Text size="small" color="white">
           {tag}
         </Text>
-        <Box background="white" round="full" margin={{ left: 'xsmall' }}>
+        <Box
+          background="white"
+          round="full"
+          margin={{ left: 'xsmall' }}
+          title="clear tag"
+        >
           <FormClose
             color="accent-1"
             size="small"
@@ -78,62 +86,72 @@ export default class SelectMultiple extends Component<SelectMultipleProps> {
 
   render() {
     return (
-      <Box
-        direction="row"
-        align="center"
-        justify="center"
-        gap={this.props.save ? 'small' : 'none'}
-        round
-        background={this.props.backgroundColor}
-      >
-        <Select
-          dropAlign={{ top: 'top', right: 'left' }}
-          focusIndicator={this.props.plain ? false : true}
-          plain={this.props.plain}
-          closeOnChange={false}
-          emptySearchMessage="no tags found :("
-          multiple
-          valueLabel={
-            <Box
-              wrap
-              direction="row"
-              width={this.state.selected.length > 4 ? 'medium' : 'small'}
-            >
-              {this.state.selected && this.state.selected.length ? (
-                this.state.selected.map((index) =>
-                  this.renderTag(this.props.tags[index])
-                )
-              ) : (
+      <ResponsiveContext.Consumer>
+        {(size) => (
+          <Box
+            direction="row"
+            align="center"
+            justify="center"
+            gap={this.props.save ? 'small' : 'none'}
+            round
+            background={this.props.backgroundColor}
+          >
+            <Select
+              dropAlign={
+                size !== 'small' ? { top: 'top', right: 'left' } : undefined
+              }
+              focusIndicator={this.props.plain ? false : true}
+              plain={this.props.plain}
+              closeOnChange={false}
+              emptySearchMessage="no tags found :("
+              multiple
+              valueLabel={
                 <Box
-                  pad={{ vertical: 'xsmall', horizontal: 'small' }}
-                  margin="xsmall"
+                  wrap
+                  direction="row"
+                  width={this.state.selected.length > 4 ? 'medium' : 'small'}
                 >
-                  <Text>select tags</Text>
+                  {this.state.selected && this.state.selected.length ? (
+                    this.state.selected.map((index) =>
+                      this.renderTag(this.props.tags[index])
+                    )
+                  ) : (
+                    <Box
+                      pad={{ vertical: 'xsmall', horizontal: 'small' }}
+                      margin="xsmall"
+                    >
+                      <Text>select tags</Text>
+                    </Box>
+                  )}
                 </Box>
-              )}
-            </Box>
-          }
-          value={this.state.selected}
-          options={this.props.tags}
-          selected={this.state.selected}
-          onChange={({ selected: nextSelected }) => {
-            const updatedSelected: number[] = [...nextSelected].sort();
-            if (this.props.handleSelectedTags && !this.props.save) {
-              this.props.handleSelectedTags(updatedSelected);
-            }
-            this.setState({
-              selected: updatedSelected
-            });
-          }}
-        />
-        {this.props.save && (
-          <Button
-            alignSelf="center"
-            label="save"
-            onClick={() => this.props.handleSelectedTags!(this.state.selected)}
-          />
+              }
+              value={this.state.selected}
+              options={this.props.tags}
+              selected={this.state.selected}
+              onChange={({ selected: nextSelected }) => {
+                const updatedSelected: number[] = [...nextSelected].sort();
+                if (this.props.handleSelectedTags && !this.props.save) {
+                  this.props.handleSelectedTags(updatedSelected);
+                }
+                this.setState({
+                  selected: updatedSelected,
+                  tagsChanged: true
+                });
+              }}
+            />
+            {this.props.save && (
+              <Button
+                disabled={this.state.tagsChanged ? false : true}
+                alignSelf="center"
+                label="save tags"
+                onClick={() =>
+                  this.props.handleSelectedTags!(this.state.selected)
+                }
+              />
+            )}
+          </Box>
         )}
-      </Box>
+      </ResponsiveContext.Consumer>
     );
   }
 }

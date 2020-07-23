@@ -125,7 +125,7 @@ export default class RateFilm extends Component<RateFilmProps> {
               >
                 <Box
                   round={size !== 'small' ? true : false}
-                  background="smallLayer"
+                  background={{ color: 'neutral-3', opacity: 0.7 }}
                   // style={{
                   //   background:
                   //     mode === 'solid'

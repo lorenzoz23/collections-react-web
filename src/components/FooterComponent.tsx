@@ -25,14 +25,19 @@ export default class FooterComponent extends Component {
         {(size) => (
           <Footer
             pad={{
-              left: 'small',
-              right: 'small'
+              horizontal: size !== 'small' ? 'small' : 'medium',
+              vertical: 'xxsmall'
             }}
             gap="medium"
-            round={mode === 'wedding' ? true : false}
+            round={
+              mode === 'wedding' ? (size === 'small' ? 'large' : true) : false
+            }
             margin={
               mode === 'wedding'
-                ? { horizontal: 'small', bottom: 'xsmall' }
+                ? {
+                    horizontal: 'small',
+                    bottom: size !== 'small' ? 'xsmall' : 'small'
+                  }
                 : 'none'
             }
             background={{ color: 'footer' }}
@@ -52,6 +57,8 @@ export default class FooterComponent extends Component {
                 </Box>
               ) : null}
               <Button
+                style={{ borderRadius: 30 }}
+                hoverIndicator="accent-3"
                 title="about"
                 icon={<CircleInformation />}
                 focusIndicator={false}

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Layer, Box, Button, Text } from 'grommet';
+import { Layer, Box, Button, Text, ResponsiveContext } from 'grommet';
 import { StatusGood, FormClose, StatusCritical } from 'grommet-icons';
 
 interface NotificationProps {
@@ -12,39 +12,48 @@ interface NotificationProps {
 export default class Notification extends Component<NotificationProps> {
   render() {
     return (
-      <Layer
-        position={this.props.top ? 'top' : 'bottom'}
-        modal={false}
-        margin={!this.props.top ? { bottom: 'small' } : { top: 'small' }}
-        responsive={false}
-        style={{ borderRadius: 30 }}
-      >
-        <Box
-          align="center"
-          direction="row"
-          gap="small"
-          justify="between"
-          flex
-          round
-          elevation="medium"
-          pad={{ vertical: 'xsmall', horizontal: 'small' }}
-          background={this.props.good ? 'accent-1' : 'status-error'}
-        >
-          <Box align="center" direction="row" gap="xsmall">
-            {this.props.good ? (
-              <StatusGood size="medium" />
-            ) : (
-              <StatusCritical size="medium" />
-            )}
-            <Text size="medium">{this.props.notificationText}</Text>
-          </Box>
-          <Button
-            focusIndicator={false}
-            icon={<FormClose size="medium" />}
-            onClick={this.props.onNotificationClose}
-          />
-        </Box>
-      </Layer>
+      <ResponsiveContext.Consumer>
+        {(size) => (
+          <Layer
+            position={this.props.top ? 'top' : 'bottom'}
+            modal={false}
+            margin={
+              !this.props.top
+                ? { bottom: size !== 'small' ? 'medium' : 'xsmall' }
+                : { top: 'small' }
+            }
+            responsive={false}
+            style={{ borderRadius: 30 }}
+          >
+            <Box
+              align="center"
+              direction="row"
+              gap="small"
+              justify="between"
+              flex
+              width={size === 'small' ? 'medium' : undefined}
+              round={size === 'small' ? 'large' : true}
+              elevation="medium"
+              pad={{ vertical: 'xsmall', horizontal: 'small' }}
+              background={this.props.good ? 'accent-1' : 'status-error'}
+            >
+              <Box align="center" direction="row" gap="xsmall">
+                {this.props.good ? (
+                  <StatusGood size="medium" />
+                ) : (
+                  <StatusCritical size="medium" />
+                )}
+                <Text size="medium">{this.props.notificationText}</Text>
+              </Box>
+              <Button
+                focusIndicator={false}
+                icon={<FormClose size="medium" />}
+                onClick={this.props.onNotificationClose}
+              />
+            </Box>
+          </Layer>
+        )}
+      </ResponsiveContext.Consumer>
     );
   }
 }

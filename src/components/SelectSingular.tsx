@@ -59,7 +59,12 @@ export default class SelectSingular extends Component<SelectSingularProps> {
         <Text size="small" color="white">
           {tag}
         </Text>
-        <Box background="white" round="full" margin={{ left: 'xsmall' }}>
+        <Box
+          background="white"
+          round="full"
+          margin={{ left: 'xsmall' }}
+          title="clear tag"
+        >
           <FormClose
             color="accent-1"
             size="small"

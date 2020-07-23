@@ -154,7 +154,6 @@ export default class HomePage extends Component {
 
       let lot: movie[] = [];
       let tags: string[] = [];
-      let sort: string = '';
       let uid =
         this.state.uid === ''
           ? firebase.auth().currentUser!.uid
@@ -164,10 +163,7 @@ export default class HomePage extends Component {
       const showGreeting = greeting === 'show' ? true : false;
 
       const userRef = firebase.database().ref('users/' + uid);
-      const sortRef = userRef.child('sortMoviesBy');
-      sortRef.once('value').then((snapshot) => {
-        sort = snapshot.val() && snapshot.val();
-      });
+      const sort = localStorage.getItem('sortBy') || '';
 
       const collectionRef = userRef.child('collection');
       const tagsRef = userRef.child('tags');
@@ -261,13 +257,18 @@ export default class HomePage extends Component {
       ` ${lotLen === 1 ? 'movie' : 'movies'} added to your lot and ` +
       wishlistLen +
       ` ${wishlistLen === 1 ? 'movie' : 'movies'} added to your wishlist`;
-    this.setState({
-      movies: newLot,
-      wishlist: newWishlist,
-      notification: true,
-      notificationText: notificationText,
-      goodNotification: true
-    });
+    this.setState(
+      {
+        movies: newLot,
+        wishlist: newWishlist,
+        notification: true,
+        notificationText: notificationText,
+        goodNotification: true
+      },
+      () => {
+        setTimeout(this.onNotificationClose, 4000);
+      }
+    );
   };
 
   logOut = () => {
@@ -297,12 +298,17 @@ export default class HomePage extends Component {
     if (tag.length > 0) {
       let newTags: string[] = this.state.tags;
       newTags.push(tag);
-      this.setState({
-        tags: newTags,
-        notification: true,
-        notificationText: 'new tag added',
-        goodNotification: true
-      });
+      this.setState(
+        {
+          tags: newTags,
+          notification: true,
+          notificationText: 'new tag added',
+          goodNotification: true
+        },
+        () => {
+          setTimeout(this.onNotificationClose, 4000);
+        }
+      );
     }
   };
 
@@ -343,12 +349,17 @@ export default class HomePage extends Component {
       : `film ${
           this.state.showWishlist ? 'wishlist' : 'lot'
         } successfully sorted by ${method}`;
-    this.setState({
-      sortBy: sortBy,
-      notification: true,
-      goodNotification: true,
-      notificationText: text
-    });
+    this.setState(
+      {
+        sortBy: sortBy,
+        notification: true,
+        goodNotification: true,
+        notificationText: text
+      },
+      () => {
+        setTimeout(this.onNotificationClose, 4000);
+      }
+    );
   };
 
   handleWishlist = (checked: boolean) => {
@@ -375,24 +386,34 @@ export default class HomePage extends Component {
           };
           wishlistMovies.push(entry);
         });
-        this.setState({
-          showWishlist: checked,
-          wishlist: wishlistMovies,
-          fetchedWishlist: true,
-          notification: true,
-          notificationText: 'switched to wishlist view',
-          goodNotification: true
-        });
+        this.setState(
+          {
+            showWishlist: checked,
+            wishlist: wishlistMovies,
+            fetchedWishlist: true,
+            notification: true,
+            notificationText: 'switched to wishlist view',
+            goodNotification: true
+          },
+          () => {
+            setTimeout(this.onNotificationClose, 4000);
+          }
+        );
       });
     } else {
-      this.setState({
-        showWishlist: checked,
-        notification: true,
-        goodNotification: true,
-        notificationText: checked
-          ? 'switched to wishlist view'
-          : 'switched to lot view'
-      });
+      this.setState(
+        {
+          showWishlist: checked,
+          notification: true,
+          goodNotification: true,
+          notificationText: checked
+            ? 'switched to wishlist view'
+            : 'switched to lot view'
+        },
+        () => {
+          setTimeout(this.onNotificationClose, 4000);
+        }
+      );
     }
   };
 
@@ -444,19 +465,29 @@ export default class HomePage extends Component {
     });
 
     if (this.state.showWishlist) {
-      this.setState({
-        wishlist: newMovies,
-        notification: true,
-        notificationText: 'film successfully deleted from wishlist',
-        goodNotification: true
-      });
+      this.setState(
+        {
+          wishlist: newMovies,
+          notification: true,
+          notificationText: 'film successfully deleted from wishlist',
+          goodNotification: true
+        },
+        () => {
+          setTimeout(this.onNotificationClose, 4000);
+        }
+      );
     } else {
-      this.setState({
-        movies: newMovies,
-        notification: true,
-        notificationText: 'film successfully deleted from lot',
-        goodNotification: true
-      });
+      this.setState(
+        {
+          movies: newMovies,
+          notification: true,
+          notificationText: 'film successfully deleted from lot',
+          goodNotification: true
+        },
+        () => {
+          setTimeout(this.onNotificationClose, 4000);
+        }
+      );
     }
   };
 
@@ -489,19 +520,29 @@ export default class HomePage extends Component {
     });
 
     if (this.state.showWishlist) {
-      this.setState({
-        wishlist: newMovies,
-        notification: true,
-        notificationText: 'wishlist film successfully updated',
-        goodNotification: true
-      });
+      this.setState(
+        {
+          wishlist: newMovies,
+          notification: true,
+          notificationText: 'wishlist film successfully updated',
+          goodNotification: true
+        },
+        () => {
+          setTimeout(this.onNotificationClose, 4000);
+        }
+      );
     } else {
-      this.setState({
-        movies: newMovies,
-        notification: true,
-        notificationText: 'lot film successfully updated',
-        goodNotification: true
-      });
+      this.setState(
+        {
+          movies: newMovies,
+          notification: true,
+          notificationText: 'lot film successfully updated',
+          goodNotification: true
+        },
+        () => {
+          setTimeout(this.onNotificationClose, 4000);
+        }
+      );
     }
   };
 
@@ -536,19 +577,29 @@ export default class HomePage extends Component {
 
   handleFilterByTag = (tag: string) => {
     if (tag.length > 0) {
-      this.setState({
-        filterBy: tag,
-        notification: true,
-        notificationText: `movies successfully filtered by tag: ${tag}`,
-        goodNotification: true
-      });
+      this.setState(
+        {
+          filterBy: tag,
+          notification: true,
+          notificationText: `movies successfully filtered by tag: ${tag}`,
+          goodNotification: true
+        },
+        () => {
+          setTimeout(this.onNotificationClose, 4000);
+        }
+      );
     } else {
-      this.setState({
-        filterBy: tag,
-        notification: true,
-        notificationText: 'filter has been reset',
-        goodNotification: true
-      });
+      this.setState(
+        {
+          filterBy: tag,
+          notification: true,
+          notificationText: 'filter has been reset',
+          goodNotification: true
+        },
+        () => {
+          setTimeout(this.onNotificationClose, 4000);
+        }
+      );
     }
   };
 
@@ -577,12 +628,17 @@ export default class HomePage extends Component {
       });
     });
 
-    this.setState({
-      tags: newTags,
-      notification: true,
-      notificationText: 'tag successfully deleted',
-      goodNotification: true
-    });
+    this.setState(
+      {
+        tags: newTags,
+        notification: true,
+        notificationText: 'tag successfully deleted',
+        goodNotification: true
+      },
+      () => {
+        setTimeout(this.onNotificationClose, 4000);
+      }
+    );
   };
 
   handleAccountDelete = () => {
@@ -603,23 +659,33 @@ export default class HomePage extends Component {
           });
       })
       .catch((error) => {
-        this.setState({
-          notification: true,
-          notificationText: error.message,
-          goodNotification: false
-        });
+        this.setState(
+          {
+            notification: true,
+            notificationText: error.message,
+            goodNotification: false
+          },
+          () => {
+            setTimeout(this.onNotificationClose, 8000);
+          }
+        );
         console.log(error);
       });
   };
 
   handleResetFilters = () => {
-    this.setState({
-      filterBy: '',
-      sortBy: '',
-      notification: true,
-      notificationText: 'filters have been reset',
-      goodNotification: true
-    });
+    this.setState(
+      {
+        filterBy: '',
+        sortBy: '',
+        notification: true,
+        notificationText: 'filters have been reset',
+        goodNotification: true
+      },
+      () => {
+        setTimeout(this.onNotificationClose, 4000);
+      }
+    );
   };
 
   dismissGreeting = () => {
@@ -667,12 +733,15 @@ export default class HomePage extends Component {
         ) : (
           <ResponsiveContext.Consumer>
             {(size) => (
-              <Box fill>
+              <Box
+                fill
+                pad={{ horizontal: size === 'small' ? 'medium' : undefined }}
+              >
                 <AppBar
                   pad={
                     size !== 'small'
                       ? { right: 'small', left: 'small' }
-                      : { vertical: 'xsmall', left: 'small', right: 'small' }
+                      : { vertical: 'xsmall' }
                   }
                 >
                   {size !== 'small' ? (
@@ -736,12 +805,17 @@ export default class HomePage extends Component {
                               this.handleTagDelete(tags)
                             }
                             handleUpdatedTags={(updatedTags) =>
-                              this.setState({
-                                tags: updatedTags,
-                                notification: true,
-                                notificationText: 'tag successfully updated',
-                                goodNotification: true
-                              })
+                              this.setState(
+                                {
+                                  tags: updatedTags,
+                                  notification: true,
+                                  notificationText: 'tag successfully updated',
+                                  goodNotification: true
+                                },
+                                () => {
+                                  setTimeout(this.onNotificationClose, 4000);
+                                }
+                              )
                             }
                             handleTagAdded={(tag) => this.handleTagAdded(tag)}
                             handleResetFilters={this.handleResetFilters}
@@ -750,8 +824,13 @@ export default class HomePage extends Component {
                       </Box>
                     </Box>
                   ) : (
-                    <Box direction="row" align="center" justify="evenly">
-                      <Box>
+                    <Box
+                      direction="row"
+                      align="center"
+                      justify="evenly"
+                      gap="small"
+                    >
+                      <Box width="medium">
                         <TextInput
                           value={this.state.searchVal}
                           focusIndicator={false}
@@ -765,7 +844,7 @@ export default class HomePage extends Component {
                           onChange={(event) => this.handleSearch(event)}
                         />
                       </Box>
-                      <Box align="center" direction="row" justify="evenly">
+                      <Box align="center" direction="row" gap="xsmall">
                         <Box>
                           <AddTitle
                             moviesAdded={(
@@ -789,12 +868,17 @@ export default class HomePage extends Component {
                               this.handleTagDelete(tags)
                             }
                             handleUpdatedTags={(updatedTags) =>
-                              this.setState({
-                                tags: updatedTags,
-                                notification: true,
-                                notificationText: 'tag successfully updated',
-                                goodNotification: true
-                              })
+                              this.setState(
+                                {
+                                  tags: updatedTags,
+                                  notification: true,
+                                  notificationText: 'tag successfully updated',
+                                  goodNotification: true
+                                },
+                                () => {
+                                  setTimeout(this.onNotificationClose, 4000);
+                                }
+                              )
                             }
                             handleTagAdded={(tag) => this.handleTagAdded(tag)}
                             handleResetFilters={this.handleResetFilters}
@@ -803,17 +887,16 @@ export default class HomePage extends Component {
                       </Box>
                     </Box>
                   )}
-                  <Box>
-                    <Avatar
-                      focusIndicator={false}
-                      hoverIndicator="brand"
-                      onClick={this.toggleSettings}
-                      title="settings"
-                      align="center"
-                    >
-                      <User color="accent-1" />
-                    </Avatar>
-                  </Box>
+
+                  <Avatar
+                    focusIndicator={false}
+                    hoverIndicator={size !== 'small' ? 'brand' : undefined}
+                    onClick={this.toggleSettings}
+                    title="settings"
+                    align="center"
+                  >
+                    <User color="accent-1" />
+                  </Avatar>
                 </AppBar>
                 <Box
                   overflow={{ horizontal: 'hidden' }}

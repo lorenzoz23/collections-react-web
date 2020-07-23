@@ -218,7 +218,7 @@ export default class MovieSearchResult extends Component<
 
   render() {
     const label = !this.props.parsed
-      ? 'add ' + this.state.numToAdd
+      ? 'click to add ' + this.state.numToAdd
       : this.state.numToAdd;
     if (this.state.loading) {
       return (
@@ -246,6 +246,7 @@ export default class MovieSearchResult extends Component<
             >
               {this.state.visible ? (
                 <Box
+                  flex
                   border={{
                     side: 'all',
                     size: 'medium',

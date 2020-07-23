@@ -111,10 +111,18 @@ export default class SignIn extends Component<SignInProps> {
       .auth()
       .sendPasswordResetEmail(this.state.email)
       .then(() => {
-        this.setState({
-          errorMessage: [''],
-          notificationVisible: true
-        });
+        this.setState(
+          {
+            errorMessage: [''],
+            notificationVisible: true
+          },
+          () => {
+            setTimeout(
+              () => this.setState({ notificationVisible: false }),
+              4000
+            );
+          }
+        );
       })
       .catch((error) => {
         let message: string[] = ['', ''];

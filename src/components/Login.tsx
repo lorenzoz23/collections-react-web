@@ -41,12 +41,14 @@ export default class Login extends Component {
   updateWindowDimensions = () => {
     this.setState({
       width: window.innerWidth,
-      height: window.innerHeight,
-      loading: true
+      height: window.innerHeight
     });
   };
 
   componentDidMount = () => {
+    this.setState({
+      loading: true
+    });
     this.updateWindowDimensions();
     window.addEventListener('resize', this.updateWindowDimensions);
     this.handleLogin();
@@ -67,7 +69,8 @@ export default class Login extends Component {
         const nameRef = userRef.child('name');
         nameRef.once('value').then((snapshot) => {
           const displayName =
-            firebase.auth().currentUser!.displayName || 'stranger';
+            firebase.auth().currentUser!.displayName!.toLowerCase() ||
+            'stranger';
           name = snapshot.val() || displayName;
 
           this.setState({
