@@ -48,7 +48,8 @@ export default class Collection extends Component<CollectionProps> {
       tags: [],
       key: '',
       id: '',
-      starCount: -1
+      starCount: -1,
+      backDrop: []
     }
     //movies: []
   };
@@ -119,7 +120,7 @@ export default class Collection extends Component<CollectionProps> {
         : this.props.movies;
     const filteredMovies = this.props.filterBy
       ? moviesToMap.filter((child) =>
-          child.tags!.includes(this.props.filterBy, 0)
+          child.tags.includes(this.props.filterBy, 0)
         )
       : moviesToMap;
 

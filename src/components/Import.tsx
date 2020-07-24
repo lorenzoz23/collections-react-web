@@ -79,7 +79,8 @@ export default class Import extends Component<ImportProps> {
               runtime: 0,
               genre: [],
               id: results[0].id || '',
-              starCount: -1
+              starCount: -1,
+              tags: []
             };
             newMovies.push(movieResult);
           }

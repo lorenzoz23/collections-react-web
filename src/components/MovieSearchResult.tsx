@@ -51,7 +51,8 @@ export default class MovieSearchResult extends Component<
       runtime: 0,
       genre: [],
       id: '',
-      starCount: -1
+      starCount: -1,
+      tags: []
     },
     numToAdd: 0,
     loading: true
@@ -86,7 +87,8 @@ export default class MovieSearchResult extends Component<
               runtime: 0,
               genre: [],
               id: item.id || '',
-              starCount: -1
+              starCount: -1,
+              tags: []
             };
             const newSearchResultMovie: searchResultMovie = {
               movie: newMovie,

@@ -16,6 +16,7 @@ import ReportBug from './ReportBug';
 
 interface FooterComponentProps {
   uid: string;
+  width: number;
 }
 
 export default class FooterComponent extends Component<FooterComponentProps> {
@@ -70,10 +71,14 @@ export default class FooterComponent extends Component<FooterComponentProps> {
                 hoverIndicator={{ color: 'accent-3', opacity: 'strong' }}
                 title="about"
                 size={size === 'small' ? 'small' : undefined}
-                icon={<CircleInformation />}
+                icon={
+                  <CircleInformation
+                    size={this.props.width < 400 ? 'small' : undefined}
+                  />
+                }
                 onClick={() => this.setState({ showAbout: true })}
               />
-              <ReportBug uid={this.props.uid} />
+              <ReportBug {...this.props} />
             </Box>
             {this.state.showAbout ? (
               <Layer
@@ -130,12 +135,14 @@ export default class FooterComponent extends Component<FooterComponentProps> {
               align="center"
               gap={size !== 'small' ? 'small' : 'xsmall'}
             >
-              <Multimedia size={size === 'small' ? 'small' : undefined} />
+              <Multimedia size={this.props.width < 400 ? 'small' : undefined} />
               <Text
                 size={size === 'small' ? 'size' : undefined}
                 textAlign="center"
               >
-                movie data provided by:
+                {this.props.width < 400
+                  ? 'movie data:'
+                  : 'movie data provided by:'}
               </Text>
               <Anchor
                 alignSelf="center"

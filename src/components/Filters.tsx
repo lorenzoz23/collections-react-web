@@ -171,7 +171,12 @@ export default class Filters extends Component<FiltersProps> {
       <ResponsiveContext.Consumer>
         {(size) => (
           <Box align="center">
-            <Box direction="row" align="center" gap="xsmall" width="medium">
+            <Box
+              direction="row"
+              align="center"
+              gap="xsmall"
+              width={size !== 'small' ? 'medium' : 'small'}
+            >
               <Button
                 icon={
                   <Filter
@@ -188,7 +193,7 @@ export default class Filters extends Component<FiltersProps> {
                 title="filters"
                 onClick={() => this.setState({ showFilters: true })}
               />
-              {this.state.selectedFilter.length > 0 && (
+              {this.state.selectedFilter.length > 0 && size !== 'small' && (
                 <Text
                   color="status-ok"
                   weight="bold"
@@ -198,16 +203,18 @@ export default class Filters extends Component<FiltersProps> {
                   active filter
                 </Text>
               )}
-              {this.state.sort.length > 0 && !this.state.checked && (
-                <Text
-                  color="status-ok"
-                  weight="bold"
-                  textAlign="center"
-                  wordBreak="keep-all"
-                >
-                  active sort
-                </Text>
-              )}
+              {this.state.sort.length > 0 &&
+                !this.state.checked &&
+                size !== 'small' && (
+                  <Text
+                    color="status-ok"
+                    weight="bold"
+                    textAlign="center"
+                    wordBreak="keep-all"
+                  >
+                    active sort
+                  </Text>
+                )}
             </Box>
             {this.state.showFilters && (
               <Layer
@@ -231,7 +238,7 @@ export default class Filters extends Component<FiltersProps> {
                     <Heading textAlign="center">filters</Heading>
                     <Box gap="medium">
                       <Box
-                        pad="small"
+                        pad={size === 'small' ? 'medium' : 'small'}
                         round
                         fill="horizontal"
                         border={{
@@ -246,6 +253,7 @@ export default class Filters extends Component<FiltersProps> {
                             sort by
                           </Text>
                           <Menu
+                            margin="xsmall"
                             style={{ borderRadius: 10 }}
                             alignSelf="center"
                             hoverIndicator="accent-1"
@@ -286,29 +294,31 @@ export default class Filters extends Component<FiltersProps> {
                               }
                             ]}
                           />
-                          <CheckBox
-                            toggle
-                            checked={this.state.checked}
-                            label="save sorted order"
-                            reverse
-                            onChange={(event) =>
-                              this.handleOrderChange(event.target.checked)
-                            }
-                          />
-                          <Box direction="row" gap="xsmall">
-                            <Text size="small" weight="bold">
-                              default:
-                            </Text>
-                            <Text size="small">
-                              {this.state.checked
-                                ? this.state.sortLabel
-                                : 'time added'}
-                            </Text>
+                          <Box align="center" gap="small" pad="small">
+                            <CheckBox
+                              toggle
+                              checked={this.state.checked}
+                              label="save sorted order"
+                              reverse
+                              onChange={(event) =>
+                                this.handleOrderChange(event.target.checked)
+                              }
+                            />
+                            <Box direction="row" gap="xsmall" align="center">
+                              <Text size="small" weight="bold">
+                                default:
+                              </Text>
+                              <Text size="small">
+                                {this.state.checked
+                                  ? this.state.sortLabel
+                                  : 'time added'}
+                              </Text>
+                            </Box>
                           </Box>
                         </Box>
                       </Box>
                       <Box
-                        pad="small"
+                        pad={size !== 'small' ? 'small' : 'medium'}
                         gap="small"
                         justify="between"
                         align="center"

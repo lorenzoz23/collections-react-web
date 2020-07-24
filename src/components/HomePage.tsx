@@ -48,14 +48,14 @@ export type movie = {
   plot: string;
   date: string;
   poster: string;
-  backDrop?: string[];
+  backDrop: string[];
   rating: string;
   runtime: number;
   genre: string[];
   id: string;
   key?: string;
   starCount: number;
-  tags?: string[];
+  tags: string[];
 };
 
 export default class HomePage extends Component {
@@ -411,7 +411,8 @@ export default class HomePage extends Component {
             genre: movie.genre,
             id: movie.id,
             starCount: movie.starCount || undefined,
-            key: childKey
+            key: childKey,
+            tags: movie.tags || []
           };
           wishlistMovies.push(entry);
         });
@@ -934,16 +935,17 @@ export default class HomePage extends Component {
                       </Box>
                     </Box>
                   )}
-
-                  <Avatar
-                    focusIndicator={false}
-                    hoverIndicator={size !== 'small' ? 'brand' : undefined}
-                    onClick={this.toggleSettings}
-                    title="settings"
-                    align="center"
-                  >
-                    <User color="accent-1" />
-                  </Avatar>
+                  <Box>
+                    <Avatar
+                      focusIndicator={false}
+                      hoverIndicator={size !== 'small' ? 'brand' : undefined}
+                      onClick={this.toggleSettings}
+                      title="settings"
+                      align="center"
+                    >
+                      <User color="accent-1" />
+                    </Avatar>
+                  </Box>
                 </AppBar>
                 <Box
                   overflow={{ horizontal: 'hidden' }}
@@ -975,7 +977,10 @@ export default class HomePage extends Component {
                     tags={this.state.tags}
                   />
                 </Box>
-                <FooterComponent uid={this.state.uid} />
+                <FooterComponent
+                  uid={this.state.uid}
+                  width={this.state.width}
+                />
                 {this.state.showSettings ? (
                   <Settings
                     loggedIn={this.state.loggedIn}

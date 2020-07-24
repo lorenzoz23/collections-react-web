@@ -28,6 +28,7 @@ const defaultFormValues: formValues = {
 
 interface ReportBugProps {
   uid: string;
+  width: number;
 }
 
 export default class ReportBug extends Component<ReportBugProps> {
@@ -83,7 +84,7 @@ export default class ReportBug extends Component<ReportBugProps> {
               hoverIndicator={{ color: 'accent-1', opacity: 'strong' }}
               style={{ borderRadius: 30 }}
               title="report a bug"
-              icon={<Bug />}
+              icon={<Bug size={this.props.width < 400 ? 'small' : undefined} />}
               onClick={() => this.setState({ showLayer: true })}
             />
             {this.state.showLayer && (
@@ -94,14 +95,12 @@ export default class ReportBug extends Component<ReportBugProps> {
                     showLayer: false
                   })
                 }
-                responsive={false}
+                responsive
               >
                 <Box
                   margin="xsmall"
                   pad="large"
                   flex
-                  height={size === 'small' ? 'medium' : undefined}
-                  width={size === 'small' ? 'medium' : undefined}
                   background="home"
                   align="center"
                   justify="center"
