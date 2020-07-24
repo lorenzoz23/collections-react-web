@@ -145,16 +145,16 @@ export default class RateFilm extends Component<RateFilmProps> {
                     </Text>
                   </Box>
                   <Box
-                    justify="center"
+                    justify="start"
                     align="center"
                     direction="row"
                     margin={{ bottom: 'small' }}
                     overflow="auto"
                     border={{
                       side: 'all',
-                      color: 'movieBorder',
+                      color: 'accent-1',
                       size: 'medium',
-                      style: 'outset'
+                      style: 'ridge'
                     }}
                     round
                   >

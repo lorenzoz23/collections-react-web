@@ -4,6 +4,7 @@ import { FormClose } from 'grommet-icons';
 
 interface SelectMultipleProps {
   movieTags?: string[];
+  title: string;
   tags: string[];
   backgroundColor?: string;
   plain: boolean;
@@ -46,7 +47,7 @@ export default class SelectMultiple extends Component<SelectMultipleProps> {
     });
   };
 
-  renderTag = (tag: string) => (
+  renderTag = (tag: string, size: string) => (
     <Button
       key={tag}
       onClick={(event) => {
@@ -60,7 +61,10 @@ export default class SelectMultiple extends Component<SelectMultipleProps> {
         align="center"
         direction="row"
         gap="xsmall"
-        pad={{ vertical: 'xsmall', horizontal: 'small' }}
+        pad={{
+          vertical: 'xsmall',
+          horizontal: size === 'small' ? 'medium' : 'small'
+        }}
         margin="xsmall"
         background="accent-1"
         round="large"
@@ -89,6 +93,7 @@ export default class SelectMultiple extends Component<SelectMultipleProps> {
       <ResponsiveContext.Consumer>
         {(size) => (
           <Box
+            title={this.props.title}
             direction="row"
             align="center"
             justify="center"
@@ -113,7 +118,7 @@ export default class SelectMultiple extends Component<SelectMultipleProps> {
                 >
                   {this.state.selected && this.state.selected.length ? (
                     this.state.selected.map((index) =>
-                      this.renderTag(this.props.tags[index])
+                      this.renderTag(this.props.tags[index], size)
                     )
                   ) : (
                     <Box

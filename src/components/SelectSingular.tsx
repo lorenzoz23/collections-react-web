@@ -4,6 +4,7 @@ import { FormClose } from 'grommet-icons';
 
 interface SelectSingularProps {
   tags: string[];
+  title: string;
   plain: boolean;
   handleSelected(selected: string, created: boolean): void;
   selectedFilter: string;
@@ -97,8 +98,9 @@ export default class SelectSingular extends Component<SelectSingularProps> {
 
   render() {
     return (
-      <Box align="center" justify="center" round>
+      <Box align="center" justify="center" round title={this.props.title}>
         <Select
+          closeOnChange={true}
           focusIndicator={this.props.plain ? false : true}
           plain={this.props.plain}
           onSearch={(text) => {

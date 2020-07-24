@@ -32,19 +32,18 @@ export const TooltipButton = (props: any) => {
               <Box
                 animation="slideRight"
                 margin="xsmall"
-                pad="small"
+                pad="medium"
                 width="medium"
                 background={{ color: 'accent-1' }}
-                round={{ size: 'medium', corner: 'right' }}
+                round="medium"
               >
                 <Text size="small">
-                  as of now, we only support searching a film through its title
-                  and year. however, if you wanted to search/add films based on
-                  a particular cast or crew member(lead actor, director, writer,
-                  etc), we recommend creating a csv file containing all the
-                  films you wish to add along with the relevant information
-                  required to add films from a csv file. for more information on
-                  adding films from a csv file, go to settings!
+                  we only support searching a film through its title and year.
+                  however, if you wanted to search/add films based on a wider
+                  range of criteria, we recommend creating a csv file containing
+                  all the films you wish to add along with the relevant
+                  information required to add films from a csv file. for more
+                  information on adding films from a csv file, go to settings!
                 </Text>
               </Box>
             </Drop>
@@ -63,13 +62,12 @@ export const TooltipButton = (props: any) => {
                 overflow={{ vertical: 'auto', horizontal: 'hidden' }}
               >
                 <Text textAlign="center" size="small">
-                  as of now, we only support searching a film through its title
-                  and year. however, if you wanted to search/add films based on
-                  a particular cast or crew member(lead actor, director, writer,
-                  etc), we recommend creating a csv file containing all the
-                  films you wish to add along with the relevant information
-                  required to add films from a csv file. for more information on
-                  adding films from a csv file, go to settings!
+                  we only support searching a film through its title and year.
+                  however, if you wanted to search/add films based on a wider
+                  range of criteria, we recommend creating a csv file containing
+                  all the films you wish to add along with the relevant
+                  information required to add films from a csv file. for more
+                  information on adding films from a csv file, go to settings!
                 </Text>
                 <Button
                   icon={<FormClose color="brand" />}

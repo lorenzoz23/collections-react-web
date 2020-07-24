@@ -79,7 +79,8 @@ const themeWeird = {
       lotBorder: '#C39BD3',
       resultBorder: 'accent-1',
       smallLayer: '#E7E7E7',
-      filters: '#386387'
+      filters: '#386387',
+      movieBorder: '#34495E'
     },
     font: {
       family: 'Roboto',

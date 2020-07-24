@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Box, Heading, Button, Text, ResponsiveContext, Image } from 'grommet';
-import { Previous, Trash } from 'grommet-icons';
+import { Previous, Trash, Eject } from 'grommet-icons';
 import { movie } from './HomePage';
 import RateFilm from './RateFilm';
 import SelectMultiple from './SelectMultiple';
@@ -11,6 +11,7 @@ interface SingleMovieViewProps {
   handleDelete?(movieId: string): void;
   handleRate?(updatedMovie: movie): void;
   handleSelectedTags?(tags: number[]): void;
+  handleTransfer?(): void;
   movie: movie;
   wishlist: boolean;
   add: boolean;
@@ -80,7 +81,7 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                   /> */}
                 </Box>
               )}
-              {!this.props.wishlist && size === 'small' && (
+              {size === 'small' && !this.props.add && (
                 <Box
                   style={{
                     position: 'fixed',
@@ -90,6 +91,11 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                   }}
                 >
                   <SelectMultiple
+                    title={
+                      this.props.wishlist
+                        ? 'how would you like to own this title?'
+                        : 'how do you own this title?'
+                    }
                     movieTags={this.props.movie.tags!}
                     tags={this.props.tags!}
                     plain={false}
@@ -218,6 +224,25 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                     </Text>
                   </Box>
                 )}
+                {this.props.wishlist && !this.props.add && (
+                  <Box
+                    align="center"
+                    style={{
+                      position: 'fixed',
+                      right: 0,
+                      left: 0,
+                      top: '70%',
+                      bottom: 0
+                    }}
+                  >
+                    <RateFilm
+                      movie={this.props.movie}
+                      handleRate={(updatedMovie: movie) =>
+                        this.props.handleRate!(updatedMovie)
+                      }
+                    />
+                  </Box>
+                )}
               </Box>
             </Box>
             {size !== 'small' && (
@@ -277,8 +302,13 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                     onClick={() => this.props.closeDetailView!()}
                   />
                 )}
-                {!this.props.wishlist && size !== 'small' && (
+                {size !== 'small' && (
                   <SelectMultiple
+                    title={
+                      this.props.wishlist
+                        ? 'how would you like to own this title?'
+                        : 'how do you own this title?'
+                    }
                     movieTags={this.props.movie.tags!}
                     tags={this.props.tags!}
                     plain={false}
@@ -304,15 +334,24 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                       : undefined
                   }
                 >
-                  <Box alignSelf="center">
-                    <RateFilm
-                      movie={this.props.movie}
-                      handleRate={(updatedMovie: movie) =>
-                        this.props.handleRate!(updatedMovie)
-                      }
-                    />
-                  </Box>
-                  <Box>
+                  <Box direction="row" align="center" gap="xsmall">
+                    {this.props.wishlist ? (
+                      <Button
+                        alignSelf="center"
+                        label={size === 'small' ? 'transfer to lot' : undefined}
+                        icon={<Eject />}
+                        onClick={() => {
+                          this.props.handleTransfer!();
+                        }}
+                      />
+                    ) : (
+                      <RateFilm
+                        movie={this.props.movie}
+                        handleRate={(updatedMovie: movie) =>
+                          this.props.handleRate!(updatedMovie)
+                        }
+                      />
+                    )}
                     <Button
                       icon={<Trash color="deleteMovie" />}
                       alignSelf="end"

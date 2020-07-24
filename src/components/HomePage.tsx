@@ -145,6 +145,7 @@ export default class HomePage extends Component {
   }
 
   componentDidMount = () => {
+    console.log('component mounted');
     const remember = localStorage.getItem('rememberMe');
     if (this.state.uid === '' && !remember) {
       this.setState({ invalidRoute: true });
@@ -221,13 +222,16 @@ export default class HomePage extends Component {
   };
 
   moviesAdded = (lotMovies: movie[], wishlistMovies: movie[]) => {
+    console.log(lotMovies.length, wishlistMovies.length);
     let newLot: movie[] = this.state.movies;
     let newWishlist: movie[] = this.state.wishlist;
+    console.log(newLot);
+    console.log(newWishlist);
     let notificationText: string = '';
     let lotRepeats = 0;
     let wishlistRepeats = 0;
     const userRef = firebase.database().ref('users/' + this.state.uid);
-    if (lotMovies) {
+    if (lotMovies.length > 0) {
       const ids = this.getIDs(newLot);
       const collectionRef = userRef.child('collection');
       for (let i = 0; i < lotMovies.length; i++) {
@@ -237,8 +241,7 @@ export default class HomePage extends Component {
           newLot.push(lotMovies[i]);
         } else lotRepeats++;
       }
-    }
-    if (wishlistMovies) {
+    } else if (wishlistMovies.length > 0) {
       const ids = this.getIDs(newWishlist);
       const wishlistRef = userRef.child('wishlist');
       for (let i = 0; i < wishlistMovies.length; i++) {
@@ -257,18 +260,44 @@ export default class HomePage extends Component {
       ` ${lotLen === 1 ? 'movie' : 'movies'} added to your lot and ` +
       wishlistLen +
       ` ${wishlistLen === 1 ? 'movie' : 'movies'} added to your wishlist`;
-    this.setState(
-      {
-        movies: newLot,
-        wishlist: newWishlist,
-        notification: true,
-        notificationText: notificationText,
-        goodNotification: true
-      },
-      () => {
-        setTimeout(this.onNotificationClose, 4000);
-      }
-    );
+    if (wishlistMovies.length === 0) {
+      this.setState(
+        {
+          movies: newLot,
+          notification: true,
+          notificationText: notificationText,
+          goodNotification: true
+        },
+        () => {
+          setTimeout(this.onNotificationClose, 4000);
+        }
+      );
+    } else if (lotMovies.length === 0) {
+      this.setState(
+        {
+          wishlist: newWishlist,
+          notification: true,
+          notificationText: notificationText,
+          goodNotification: true
+        },
+        () => {
+          setTimeout(this.onNotificationClose, 4000);
+        }
+      );
+    } else {
+      this.setState(
+        {
+          movies: newLot,
+          wishlist: newWishlist,
+          notification: true,
+          notificationText: notificationText,
+          goodNotification: true
+        },
+        () => {
+          setTimeout(this.onNotificationClose, 4000);
+        }
+      );
+    }
   };
 
   logOut = () => {
@@ -401,6 +430,7 @@ export default class HomePage extends Component {
         );
       });
     } else {
+      console.log(this.state.wishlist);
       this.setState(
         {
           showWishlist: checked,
@@ -601,6 +631,23 @@ export default class HomePage extends Component {
         }
       );
     }
+  };
+
+  handleTransfer = (movie: movie) => {
+    this.handleDeleteMovie(movie.id);
+    this.moviesAdded([movie], []);
+    console.log(this.state.wishlist);
+    this.setState(
+      {
+        notification: true,
+        notificationText: `${movie.name} has been transferred to your lot`,
+        goodNotification: true,
+        showWishlist: false
+      },
+      () => {
+        setTimeout(this.onNotificationClose, 4000);
+      }
+    );
   };
 
   handleTagDelete = (tags: number[]) => {
@@ -905,6 +952,7 @@ export default class HomePage extends Component {
                   flex
                 >
                   <Collection
+                    handleTransfer={(movie) => this.handleTransfer(movie)}
                     wishlist={this.state.showWishlist}
                     movies={
                       this.state.showWishlist
@@ -927,7 +975,7 @@ export default class HomePage extends Component {
                     tags={this.state.tags}
                   />
                 </Box>
-                <FooterComponent />
+                <FooterComponent uid={this.state.uid} />
                 {this.state.showSettings ? (
                   <Settings
                     loggedIn={this.state.loggedIn}

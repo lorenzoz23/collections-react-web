@@ -171,13 +171,14 @@ export default class Settings extends Component<SettingsProps> {
                 <Box gap="xsmall" align="center">
                   <Text weight="bold">theme</Text>
                   <Select
-                    disabled={
-                      this.state.theme === 'gradient'
-                        ? [0]
-                        : this.state.theme === 'solid'
-                        ? [1]
-                        : [2]
-                    }
+                    // disabled={
+                    //   this.state.theme === 'gradient'
+                    //     ? [0]
+                    //     : this.state.theme === 'solid'
+                    //     ? [1]
+                    //     : [2]
+                    // }
+                    disabled={[0, 1, 2]}
                     icon={<Magic />}
                     value={
                       this.state.theme === 'wedding'
@@ -192,6 +193,7 @@ export default class Settings extends Component<SettingsProps> {
                 <Box align="center" gap="xsmall" margin={{ bottom: 'small' }}>
                   <Text weight="bold">clear cache</Text>
                   <Button
+                    hoverIndicator="accent-1"
                     icon={<Baby />}
                     label="reset"
                     reverse

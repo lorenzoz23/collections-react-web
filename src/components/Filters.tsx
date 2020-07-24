@@ -78,7 +78,7 @@ export default class Filters extends Component<FiltersProps> {
   };
 
   handleUpdateTag = () => {
-    this.setState({ showFilters: false });
+    this.setState({ showFilters: false, showUpdateBox: false });
     if (this.state.selectedTagsToUpdate.length === 1) {
       let newTags: string[] = [];
       for (let i = 0; i < this.props.tags.length; i++) {
@@ -107,7 +107,8 @@ export default class Filters extends Component<FiltersProps> {
 
   handleDeleteTags = () => {
     this.setState({
-      showFilters: false
+      showFilters: false,
+      showUpdateBox: false
     });
     this.props.handleTagDelete(this.state.selectedTagsToUpdate);
   };
@@ -140,7 +141,8 @@ export default class Filters extends Component<FiltersProps> {
       selectedFilter: '',
       sort: '',
       showFilters: false,
-      checked: false
+      checked: false,
+      showUpdateBox: false
     });
     this.props.handleResetFilters();
   };
@@ -155,6 +157,9 @@ export default class Filters extends Component<FiltersProps> {
       });
       this.props.handleSort('', this.state.checked);
     } else {
+      if (this.state.sort !== '') {
+        localStorage.setItem('sortBy', this.state.sort);
+      }
       this.setState({
         checked: checked
       });
@@ -294,7 +299,11 @@ export default class Filters extends Component<FiltersProps> {
                             <Text size="small" weight="bold">
                               default:
                             </Text>
-                            <Text size="small">{this.state.sortLabel}</Text>
+                            <Text size="small">
+                              {this.state.checked
+                                ? this.state.sortLabel
+                                : 'time added'}
+                            </Text>
                           </Box>
                         </Box>
                       </Box>

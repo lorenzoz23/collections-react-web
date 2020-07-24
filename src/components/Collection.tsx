@@ -22,6 +22,7 @@ interface CollectionProps {
   handleDelete(movieId: string): void;
   handleRate(updatedMovie: movie): void;
   handleSelectedTags(movie: movie, tags: number[]): void;
+  handleTransfer(movie: movie): void;
   loading: boolean;
   width: number;
   sortBy: string;
@@ -208,6 +209,10 @@ export default class Collection extends Component<CollectionProps> {
                   }}
                 >
                   <SingleMovieView
+                    handleTransfer={() => {
+                      this.setState({ movieDetailsVisible: false });
+                      this.props.handleTransfer(this.state.movieToShow);
+                    }}
                     movie={this.state.movieToShow}
                     add={false}
                     handleDelete={(id: string) => this.handleDelete(id)}

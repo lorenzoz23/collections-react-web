@@ -39,7 +39,7 @@ export default class MovieListResults extends Component<MovieListResultsProps> {
                 <Box
                   key={item.movie.id}
                   height={{ min: 'small', max: 'small' }}
-                  width={{ min: 'large' }}
+                  width={{ min: size !== 'small' ? 'large' : undefined }}
                   pad="small"
                   direction="row"
                   align="center"

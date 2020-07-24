@@ -27,6 +27,7 @@ export default class FilterViewTags extends Component<FilterViewTagsProps> {
       >
         {this.props.createTagSearch ? (
           <SelectSingular
+            title="filter your films with a tag or start typing to create one!"
             selectedFilter={this.props.selectedFilter!}
             plain={true}
             tags={this.props.tags}
@@ -36,6 +37,7 @@ export default class FilterViewTags extends Component<FilterViewTagsProps> {
           />
         ) : (
           <SelectMultiple
+            title="select a tag to delete or update!"
             save={false}
             plain={true}
             tags={this.props.tags}

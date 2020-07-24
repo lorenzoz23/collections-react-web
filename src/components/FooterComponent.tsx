@@ -12,8 +12,13 @@ import {
   Paragraph
 } from 'grommet';
 import { Multimedia, FormClose, CircleInformation } from 'grommet-icons';
+import ReportBug from './ReportBug';
 
-export default class FooterComponent extends Component {
+interface FooterComponentProps {
+  uid: string;
+}
+
+export default class FooterComponent extends Component<FooterComponentProps> {
   state = {
     showAbout: false
   };
@@ -43,8 +48,12 @@ export default class FooterComponent extends Component {
             background={{ color: 'footer' }}
             justify="between"
           >
-            <Box direction="row" align="center" gap="small">
-              {size !== 'small' ? (
+            <Box
+              direction="row"
+              align="center"
+              gap={size !== 'small' ? 'small' : 'xsmall'}
+            >
+              {size !== 'small' && (
                 <Box
                   onClick={() => {
                     window.open(
@@ -53,17 +62,18 @@ export default class FooterComponent extends Component {
                     );
                   }}
                 >
-                  <Clock type="digital" alignSelf="center" size="small" />
+                  <Clock type="digital" alignSelf="center" />
                 </Box>
-              ) : null}
+              )}
               <Button
                 style={{ borderRadius: 30 }}
-                hoverIndicator="accent-3"
+                hoverIndicator={{ color: 'accent-3', opacity: 'strong' }}
                 title="about"
+                size={size === 'small' ? 'small' : undefined}
                 icon={<CircleInformation />}
-                focusIndicator={false}
                 onClick={() => this.setState({ showAbout: true })}
               />
+              <ReportBug uid={this.props.uid} />
             </Box>
             {this.state.showAbout ? (
               <Layer
@@ -120,15 +130,20 @@ export default class FooterComponent extends Component {
               align="center"
               gap={size !== 'small' ? 'small' : 'xsmall'}
             >
-              <Multimedia />
-              <Text size="small">movie data provided by:</Text>
+              <Multimedia size={size === 'small' ? 'small' : undefined} />
+              <Text
+                size={size === 'small' ? 'size' : undefined}
+                textAlign="center"
+              >
+                movie data provided by:
+              </Text>
               <Anchor
+                alignSelf="center"
+                size={size !== 'small' ? 'medium' : 'xsmall'}
                 href="https://www.themoviedb.org/"
                 target="_blank"
-                size="small"
-              >
-                {size !== 'small' ? 'The Movie Database (TMDB)' : 'TMDB'}
-              </Anchor>
+                label={size !== 'small' ? 'The Movie Database (TMDB)' : 'TMDB'}
+              />
             </Box>
           </Footer>
         )}
