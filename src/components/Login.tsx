@@ -69,7 +69,7 @@ export default class Login extends Component {
         const nameRef = userRef.child('name');
         nameRef.once('value').then((snapshot) => {
           const displayName =
-            firebase.auth().currentUser!.displayName!.toLowerCase() ||
+            firebase.auth().currentUser!.displayName?.toLowerCase() ||
             'stranger';
           name = snapshot.val() || displayName;
 
