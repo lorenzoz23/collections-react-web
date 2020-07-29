@@ -42,7 +42,9 @@ const labels: Record<string, string> = {
   runtimeAsc: 'runtime (asc)',
   runtimeDesc: 'runtime (desc)',
   mpaaAsc: 'mpaa rating (g - nc17)',
-  mpaaDesc: 'mpaa rating (nc17 - g)'
+  mpaaDesc: 'mpaa rating (nc17 - g)',
+  starCountAsc: 'star count (0 - 10)',
+  starCountDesc: 'star count (10 - 0)'
 };
 
 export default class Filters extends Component<FiltersProps> {
@@ -290,6 +292,16 @@ export default class Filters extends Component<FiltersProps> {
                               {
                                 label: 'mpaa rating (nc17 - g)',
                                 onClick: () => this.handleSort('mpaaDesc'),
+                                hoverIndicator: 'accent-1'
+                              },
+                              {
+                                label: 'star count (0 - 10)',
+                                onClick: () => this.handleSort('starCountAsc'),
+                                hoverIndicator: 'accent-1'
+                              },
+                              {
+                                label: 'star count (10 - 0)',
+                                onClick: () => this.handleSort('starCountDesc'),
                                 hoverIndicator: 'accent-1'
                               }
                             ]}

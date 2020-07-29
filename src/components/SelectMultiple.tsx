@@ -148,6 +148,7 @@ export default class SelectMultiple extends Component<SelectMultipleProps> {
               <Button
                 disabled={this.state.tagsChanged ? false : true}
                 alignSelf="center"
+                hoverIndicator="accent-1"
                 label="save tags"
                 onClick={() =>
                   this.props.handleSelectedTags!(this.state.selected)

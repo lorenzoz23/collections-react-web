@@ -201,7 +201,7 @@ export default class ReportBug extends Component<ReportBugProps> {
             )}
             {this.state.showNotification && (
               <Notification
-                notificationText="bug report sent"
+                notificationText="bug report sent - thank you!"
                 onNotificationClose={() =>
                   this.setState({ showNotification: false })
                 }

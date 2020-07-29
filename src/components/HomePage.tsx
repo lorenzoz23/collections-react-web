@@ -8,7 +8,8 @@ import {
   Layer,
   CheckBox,
   Paragraph,
-  Button
+  Button,
+  Text
 } from 'grommet';
 import { Search, User, Next } from 'grommet-icons';
 import firebase from 'firebase/app';
@@ -243,7 +244,8 @@ export default class HomePage extends Component {
           newLot.push(lotMovies[i]);
         } else lotRepeats++;
       }
-    } else if (wishlistMovies.length > 0) {
+    }
+    if (wishlistMovies.length > 0) {
       const ids = this.getIDs(newWishlist);
       const wishlistRef = userRef.child('wishlist');
       for (let i = 0; i < wishlistMovies.length; i++) {
@@ -433,7 +435,6 @@ export default class HomePage extends Component {
         );
       });
     } else {
-      console.log(this.state.wishlist);
       this.setState(
         {
           showWishlist: checked,
@@ -529,11 +530,6 @@ export default class HomePage extends Component {
     const moviesToUpdate: movie[] = this.state.showWishlist
       ? this.state.wishlist
       : this.state.movies;
-    for (let i = 0; i < moviesToUpdate.length; i++) {
-      if (moviesToUpdate[i].id !== updatedMovie.id) {
-        newMovies.push(moviesToUpdate[i]);
-      }
-    }
 
     const userRef = firebase.database().ref('users/' + this.state.uid);
     const movieRef = this.state.showWishlist
@@ -546,18 +542,24 @@ export default class HomePage extends Component {
 
         if (movie.id === updatedMovie.id) {
           movieRef.child(childKey).update({ movie: updatedMovie });
-          newMovies.push(updatedMovie);
           return true;
         }
       });
     });
+    for (let i = 0; i < moviesToUpdate.length; i++) {
+      if (moviesToUpdate[i].id !== updatedMovie.id) {
+        newMovies.push(moviesToUpdate[i]);
+      } else {
+        newMovies.push(updatedMovie);
+      }
+    }
 
     if (this.state.showWishlist) {
       this.setState(
         {
           wishlist: newMovies,
           notification: true,
-          notificationText: 'wishlist film successfully updated',
+          notificationText: 'wishlist film successfully rated',
           goodNotification: true
         },
         () => {
@@ -569,7 +571,7 @@ export default class HomePage extends Component {
         {
           movies: newMovies,
           notification: true,
-          notificationText: 'lot film successfully updated',
+          notificationText: 'lot film successfully rated',
           goodNotification: true
         },
         () => {
@@ -582,11 +584,6 @@ export default class HomePage extends Component {
   handleSelectedTags = (updatedMovie: movie, tags: number[]) => {
     let newMovies: movie[] = [];
     let newTags: string[] = [];
-    for (let i = 0; i < this.state.movies.length; i++) {
-      if (this.state.movies[i].id !== updatedMovie.id) {
-        newMovies.push(this.state.movies[i]);
-      }
-    }
     tags.forEach((tagIndex) => {
       newTags.push(this.state.tags[tagIndex]);
     });
@@ -601,11 +598,31 @@ export default class HomePage extends Component {
 
         if (movie.id === updatedMovie.id) {
           collectionRef.child(childKey).update({ movie: updatedMovie });
-          newMovies.push(updatedMovie);
           return true;
         }
       });
     });
+    for (let i = 0; i < this.state.movies.length; i++) {
+      if (this.state.movies[i].id !== updatedMovie.id) {
+        newMovies.push(this.state.movies[i]);
+      } else {
+        newMovies.push(updatedMovie);
+      }
+    }
+
+    this.setState(
+      {
+        movies: newMovies,
+        notification: true,
+        notificationText: `${
+          tags.length > 1 ? 'tags' : 'tag'
+        } successfully added to ${updatedMovie.name}`,
+        goodNotification: true
+      },
+      () => {
+        setTimeout(this.onNotificationClose, 4000);
+      }
+    );
   };
 
   handleFilterByTag = (tag: string) => {
@@ -1022,10 +1039,20 @@ export default class HomePage extends Component {
                       <Heading textAlign="center">{greeting}</Heading>
                       <Paragraph textAlign="center">
                         we at cinelot (it's just one person, actually), couldn't
-                        bee happier that you chose us to help you keep track of
-                        the one thing that's most important to you: your film
+                        bee happier that you chose us to help keep track of the
+                        one thing that's most important to you: your film
                         collection!
                       </Paragraph>
+                      <Text
+                        weight="bold"
+                        textAlign="center"
+                        size="large"
+                        color="accent-3"
+                      >
+                        getting started is as easy as clicking the + button to
+                        add a film to your lot/wishlist, or trekking over to
+                        settings to import a csv file of your film data!
+                      </Text>
                       <Paragraph textAlign="center">
                         if you ever have any questions or are confused on what
                         to do/where to start, just click the question mark at

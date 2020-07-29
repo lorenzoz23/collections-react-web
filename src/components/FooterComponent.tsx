@@ -113,7 +113,7 @@ export default class FooterComponent extends Component<FooterComponentProps> {
                     for better, more concise results.) once you've added so many
                     movies that lazily scrolling through them becomes a hassle,
                     query the search bar with a film title to quickly see
-                    whether you own it, and if you don't, make sure to add it to
+                    whether you own it; if you don't, make sure to add it to
                     your wishlist!
                   </Paragraph>
 

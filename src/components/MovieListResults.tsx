@@ -9,7 +9,7 @@ import {
   Text,
   ResponsiveContext
 } from 'grommet';
-import { Next } from 'grommet-icons';
+import { Next, DocumentImage } from 'grommet-icons'; //Configure, TroubleShoot, Threats - used when no poster is available
 
 interface MovieListResultsProps {
   movieList: searchResults;
@@ -63,9 +63,17 @@ export default class MovieListResults extends Component<MovieListResultsProps> {
                     }}
                     height={{ min: '175px', max: '175px' }}
                     width={{ min: '115px', max: '115px' }}
-                    alignSelf="center"
+                    align="center"
+                    justify="center"
                     round="xsmall"
-                  />
+                  >
+                    {!item.movie.poster && (
+                      <DocumentImage
+                        alignmentBaseline="middle"
+                        size={size !== 'small' ? 'large' : 'medium'}
+                      />
+                    )}
+                  </Box>
                   <Box alignSelf="center">
                     <Heading alignSelf="start" level="3">
                       {item.movie.date

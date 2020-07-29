@@ -187,6 +187,7 @@ export default class SignUp extends Component<SignUpProps> {
                 >
                   <motion.div whileTap={{ scale: 0.9 }}>
                     <Button
+                      hoverIndicator="transparent"
                       label="submit"
                       type="submit"
                       primary
@@ -195,6 +196,7 @@ export default class SignUp extends Component<SignUpProps> {
                   </motion.div>
                   <motion.div whileTap={{ scale: 0.9 }}>
                     <Button
+                      hoverIndicator="accent-1"
                       label="reset"
                       type="reset"
                       size={size === 'small' ? 'small' : 'medium'}
