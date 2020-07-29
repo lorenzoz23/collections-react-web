@@ -35,7 +35,7 @@ export default class SignUp extends Component<SignUpProps> {
     errorMessage: ['']
   };
 
-  handleSignUp = (email: string, password: string) => {
+  handleSignUp = () => {
     const type: string = this.props.rememberMe
       ? firebase.auth.Auth.Persistence.LOCAL
       : firebase.auth.Auth.Persistence.SESSION;
@@ -45,30 +45,27 @@ export default class SignUp extends Component<SignUpProps> {
       .then(() => {
         firebase
           .auth()
-          .createUserWithEmailAndPassword(email, password)
+          .createUserWithEmailAndPassword(this.state.email, this.state.password)
           .then((result) => {
-            const user = firebase.auth().currentUser;
-            if (user) {
-              const isNew: boolean = result.additionalUserInfo!.isNewUser;
-              if (isNew) {
-                const userRef = firebase.database().ref('users/' + user.uid);
-                userRef.set({
-                  name: this.state.name
-                });
+            const user = firebase.auth().currentUser!;
+            const isNew: boolean = result.additionalUserInfo!.isNewUser;
+            if (isNew) {
+              const userRef = firebase.database().ref('users/' + user.uid);
+              userRef.set({
+                name: this.state.name
+              });
+              const tagRef = userRef.child('tags');
 
-                const tagRef = userRef.child('tags');
+              const bluRayTagRef = tagRef.push();
+              bluRayTagRef.set({ title: 'blu-ray' });
 
-                const bluRayTagRef = tagRef.push();
-                bluRayTagRef.set({ title: 'blu-ray' });
+              const uhdTagRef = tagRef.push();
+              uhdTagRef.set({ title: 'digital' });
 
-                const dvdTagRef = tagRef.push();
-                dvdTagRef.set({ title: 'dvd' });
-
-                const uhdTagRef = tagRef.push();
-                uhdTagRef.set({ title: '4k-uhd' });
-              }
+              const dvdTagRef = tagRef.push();
+              dvdTagRef.set({ title: 'dvd' });
             }
-            this.props.handleUserSignUp(email, password);
+            this.props.handleUserSignUp(this.state.email, this.state.password);
           })
           .catch((error: any) => {
             let message: string[] = ['', ''];
@@ -89,7 +86,7 @@ export default class SignUp extends Component<SignUpProps> {
                 message = ['password', 'password is too weak'];
                 break;
               default:
-                message = ['password', 'please try again'];
+                message = ['password', 'unknown error; please try again'];
                 break;
             }
             this.setState({
@@ -100,6 +97,15 @@ export default class SignUp extends Component<SignUpProps> {
       .catch((error: any) => {
         console.log(error);
       });
+  };
+
+  onFormChange = (nextFormValue: any) => {
+    this.setState({
+      name: nextFormValue.name,
+      email: nextFormValue.email,
+      password: nextFormValue.password,
+      errorMessage: ['']
+    });
   };
 
   render() {
@@ -115,13 +121,14 @@ export default class SignUp extends Component<SignUpProps> {
             <Box>
               <Form
                 onReset={() => this.setState(this.defaultState)}
-                onSubmit={() =>
-                  this.handleSignUp(this.state.email, this.state.password)
+                onSubmit={this.handleSignUp}
+                onChange={(nextFormValue: any) =>
+                  this.onFormChange(nextFormValue)
                 }
-                onChange={(nextFormValue: {}) => this.setState(nextFormValue)}
               >
                 <FormField label="name" name="name">
                   <TextInput
+                    autoComplete="name"
                     name="name"
                     size={size === 'small' ? 'medium' : 'xlarge'}
                     value={this.state.name}
@@ -141,6 +148,8 @@ export default class SignUp extends Component<SignUpProps> {
                   }
                 >
                   <TextInput
+                    type="email"
+                    autoComplete="email"
                     name="email"
                     size={size === 'small' ? 'medium' : 'xlarge'}
                     value={this.state.email}
@@ -161,6 +170,7 @@ export default class SignUp extends Component<SignUpProps> {
                 >
                   <TextInput
                     name="password"
+                    autoComplete="new-password"
                     type="password"
                     size={size === 'small' ? 'medium' : 'xlarge'}
                     value={this.state.password}

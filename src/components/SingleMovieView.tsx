@@ -12,6 +12,7 @@ interface SingleMovieViewProps {
   handleRate?(updatedMovie: movie): void;
   handleSelectedTags?(tags: number[]): void;
   handleTransfer?(): void;
+  rand?: number;
   movie: movie;
   wishlist: boolean;
   add: boolean;
@@ -22,9 +23,6 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
   render() {
     const numGenre = this.props.movie.genre.length;
     const mode = localStorage.getItem('visualModeValue') || 'wedding';
-    const rand = Math.floor(
-      Math.random() * Math.floor(this.props.movie.backDrop?.length || 0)
-    );
 
     return (
       <ResponsiveContext.Consumer>
@@ -60,7 +58,7 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                 >
                   <Image
                     fit="cover"
-                    src={this.props.movie.backDrop![rand]}
+                    src={this.props.movie.poster}
                     opacity={mode === 'solid' ? '0.2' : '0.3'}
                   />
                   {/* <Box
@@ -232,7 +230,8 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                       right: 0,
                       left: 0,
                       top: '70%',
-                      bottom: 0
+                      bottom: 0,
+                      zIndex: 2
                     }}
                   >
                     <RateFilm
@@ -258,7 +257,11 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
               >
                 <Image
                   fit="cover"
-                  src={this.props.movie.backDrop![this.props.add ? 0 : rand]}
+                  src={
+                    this.props.movie.backDrop![
+                      this.props.add ? 0 : this.props.rand!
+                    ]
+                  }
                   opacity={mode === 'solid' ? '0.2' : '0.3'}
                   style={
                     this.props.add ? { borderRadius: 0 } : { borderRadius: 25 }
@@ -338,6 +341,7 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                     {this.props.wishlist ? (
                       <Button
                         alignSelf="center"
+                        title="transfer film to lot"
                         label={size === 'small' ? 'transfer to lot' : undefined}
                         icon={<Eject />}
                         onClick={() => {

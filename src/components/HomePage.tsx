@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import {
   Box,
   Heading,
-  Anchor,
   TextInput,
   ResponsiveContext,
   Avatar,
@@ -115,7 +114,10 @@ export default class HomePage extends Component {
     super(props);
     this.state = {
       uid: props.location.state === undefined ? '' : props.location.state.id,
-      name: props.location.state === undefined ? '' : props.location.state.name,
+      name:
+        props.location.state === undefined
+          ? ''
+          : props.location.state.name.toLowerCase(),
       invalidRoute: false,
       loggedIn: true,
       movies: [],
@@ -799,10 +801,13 @@ export default class HomePage extends Component {
                       align="center"
                       justify="evenly"
                     >
-                      <Heading level="3" margin="none" alignSelf="center">
-                        <Anchor title="home" color="light-1" href="/">
-                          {title}
-                        </Anchor>
+                      <Heading
+                        level="3"
+                        margin="none"
+                        alignSelf="center"
+                        color="light-1"
+                      >
+                        {title}
                       </Heading>
                       <Box direction="row" align="center" gap="small">
                         <TextInput

@@ -26,6 +26,7 @@ export default class LoginEmail extends Component<LoginEmailProps> {
       activeIndex: 0,
       created: true
     });
+    this.props.handleLogin();
   };
 
   render() {

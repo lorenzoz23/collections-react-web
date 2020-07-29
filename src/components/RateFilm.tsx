@@ -122,9 +122,11 @@ export default class RateFilm extends Component<RateFilmProps> {
                 }}
                 //onClickOutside={() => this.setState({ showRate: false })}
                 margin={size !== 'small' ? { top: 'medium' } : undefined}
+                color="light-2"
               >
                 <Box
-                  round={size !== 'small' ? true : false}
+                  round
+                  margin="xsmall"
                   background={{ color: 'neutral-3', opacity: 0.7 }}
                   // style={{
                   //   background:
@@ -134,8 +136,7 @@ export default class RateFilm extends Component<RateFilmProps> {
                   //   borderRadius: size !== 'small' ? 30 : 0
                   // }}
                   pad="small"
-                  fill
-                  flex
+                  justify="center"
                   align="center"
                 >
                   <Box align="center" pad="small">

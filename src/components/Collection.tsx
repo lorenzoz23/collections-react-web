@@ -34,6 +34,7 @@ export default class Collection extends Component<CollectionProps> {
   state: {
     movieDetailsVisible: boolean;
     movieToShow: movie;
+    randBackDrop: number;
     //movies: movie[];
   } = {
     movieDetailsVisible: false,
@@ -50,7 +51,8 @@ export default class Collection extends Component<CollectionProps> {
       id: '',
       starCount: -1,
       backDrop: []
-    }
+    },
+    randBackDrop: 0
     //movies: []
   };
 
@@ -133,7 +135,10 @@ export default class Collection extends Component<CollectionProps> {
             showMovie={() =>
               this.setState({
                 movieDetailsVisible: true,
-                movieToShow: movie
+                movieToShow: movie,
+                randBackDrop: Math.floor(
+                  Math.random() * Math.floor(movie.backDrop?.length || 0)
+                )
               })
             }
           />
@@ -229,6 +234,7 @@ export default class Collection extends Component<CollectionProps> {
                         tags
                       )
                     }
+                    rand={this.state.randBackDrop}
                     tags={this.props.tags}
                     wishlist={this.props.wishlist}
                   />

@@ -9,7 +9,7 @@ import {
   CheckBox,
   Anchor
 } from 'grommet';
-import { Next, Previous } from 'grommet-icons';
+import { Next, Previous, Erase } from 'grommet-icons';
 import firebase from 'firebase/app';
 import 'firebase/auth';
 import { motion } from 'framer-motion';
@@ -48,6 +48,12 @@ export default class SignIn extends Component<SignInProps> {
     created: this.props.created,
     rememberMe: this.props.rememberMe,
     notificationVisible: false
+  };
+
+  defaultState = {
+    email: '',
+    password: '',
+    errorMessage: ['']
   };
 
   handleLogin = (email: string, password: string) => {
@@ -137,13 +143,21 @@ export default class SignIn extends Component<SignInProps> {
             message = ['password', 'user account is disabled'];
             break;
           default:
-            message = ['email', 'unknown error'];
+            message = ['password', 'unknown error; please try again'];
             break;
         }
         this.setState({
           errorMessage: message
         });
       });
+  };
+
+  onFormChange = (nextFormValue: any) => {
+    this.setState({
+      email: nextFormValue.email,
+      password: nextFormValue.password,
+      errorMessage: ['']
+    });
   };
 
   render() {
@@ -162,7 +176,10 @@ export default class SignIn extends Component<SignInProps> {
                 onSubmit={() =>
                   this.handleLogin(this.state.email, this.state.password)
                 }
-                onChange={(nextFormValue: {}) => this.setState(nextFormValue)}
+                onChange={(nextFormValue: any) =>
+                  this.onFormChange(nextFormValue)
+                }
+                onReset={() => this.setState(this.defaultState)}
               >
                 <FormField
                   label="email"
@@ -176,6 +193,7 @@ export default class SignIn extends Component<SignInProps> {
                 >
                   <TextInput
                     name="email"
+                    autoComplete="email"
                     size={size === 'small' ? 'medium' : 'xlarge'}
                     value={this.state.email}
                     onChange={(e: any) => {
@@ -187,6 +205,7 @@ export default class SignIn extends Component<SignInProps> {
                   label="password"
                   required
                   name="password"
+                  autoComplete="current-password"
                   error={
                     this.state.errorMessage[0] === 'password'
                       ? this.state.errorMessage[1]
@@ -210,6 +229,7 @@ export default class SignIn extends Component<SignInProps> {
                   align="center"
                 >
                   <Button
+                    alignSelf="center"
                     onClick={() => this.props.goBack()}
                     icon={<Previous />}
                     title="back"
@@ -218,6 +238,16 @@ export default class SignIn extends Component<SignInProps> {
                     size={size === 'small' ? 'small' : 'medium'}
                   />
                   <Button
+                    alignSelf="center"
+                    icon={<Erase />}
+                    title="reset"
+                    hoverIndicator="brand"
+                    size={size === 'small' ? 'small' : 'medium'}
+                    style={{ borderRadius: 30 }}
+                    type="reset"
+                  />
+                  <Button
+                    alignSelf="center"
                     icon={<Next />}
                     type="submit"
                     style={{ borderRadius: 30 }}
