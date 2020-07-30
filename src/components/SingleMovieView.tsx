@@ -13,6 +13,7 @@ interface SingleMovieViewProps {
   handleSelectedTags?(tags: number[]): void;
   handleTransfer?(): void;
   rand?: number;
+  width?: number;
   movie: movie;
   wishlist: boolean;
   add: boolean;
@@ -98,6 +99,7 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                     tags={this.props.tags!}
                     plain={false}
                     save={true}
+                    width={this.props.width!}
                     handleSelectedTags={(tags) =>
                       this.props.handleSelectedTags!(tags)
                     }
@@ -293,7 +295,13 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                 alignSelf="end"
                 style={
                   size === 'small'
-                    ? { position: 'fixed', bottom: 0, left: 0, width: '100%' }
+                    ? {
+                        position: 'fixed',
+                        bottom: 0,
+                        left: 0,
+                        width: '100%',
+                        zIndex: 2
+                      }
                     : { position: 'fixed', bottom: 0, left: 0, width: '100%' }
                 }
                 pad={size !== 'small' ? 'small' : 'none'}

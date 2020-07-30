@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Box, Select, Button, Text, ResponsiveContext } from 'grommet';
-import { FormClose } from 'grommet-icons';
+import { FormClose, CloudUpload } from 'grommet-icons'; // or Save
 
 interface SelectMultipleProps {
   movieTags?: string[];
@@ -9,6 +9,7 @@ interface SelectMultipleProps {
   backgroundColor?: string;
   plain: boolean;
   save: boolean;
+  width?: number;
   handleSelectedTags?(selected: number[]): void;
 }
 
@@ -149,7 +150,16 @@ export default class SelectMultiple extends Component<SelectMultipleProps> {
                 disabled={this.state.tagsChanged ? false : true}
                 alignSelf="center"
                 hoverIndicator="accent-1"
-                label="save tags"
+                icon={
+                  size === 'small' && this.props.width! < 400 ? (
+                    <CloudUpload />
+                  ) : undefined
+                }
+                label={
+                  size === 'small' && this.props.width! < 400
+                    ? undefined
+                    : 'save tags'
+                }
                 onClick={() =>
                   this.props.handleSelectedTags!(this.state.selected)
                 }

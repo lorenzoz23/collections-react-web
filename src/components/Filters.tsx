@@ -28,6 +28,8 @@ interface FiltersProps {
   tags: string[];
   uid: string;
   sort: string;
+  filter: string;
+  width: number;
   handleSort(sortBy: string, checked: boolean): void;
   handleFilterByTag(tag: string): void;
   handleTagDelete(tags: number[]): void;
@@ -61,7 +63,7 @@ export default class Filters extends Component<FiltersProps> {
   } = {
     showFilters: false,
     editMode: false,
-    selectedFilter: '',
+    selectedFilter: this.props.filter,
     selectedTagsToUpdate: [],
     updatedText: '',
     showUpdateBox: false,
@@ -115,9 +117,10 @@ export default class Filters extends Component<FiltersProps> {
     this.props.handleTagDelete(this.state.selectedTagsToUpdate);
   };
 
-  handleSelectedTagToFilter = (tag: string, created: boolean) => {
+  handleSelectedTagToFilter = (tag: string, created: boolean, size: string) => {
     this.setState({
-      selectedFilter: tag
+      selectedFilter: tag,
+      showFilters: size === 'small' && this.props.width < 750 ? false : true
     });
     if (created) {
       const userRef = firebase.database().ref('users/' + this.props.uid);
@@ -195,7 +198,7 @@ export default class Filters extends Component<FiltersProps> {
                 title="filters"
                 onClick={() => this.setState({ showFilters: true })}
               />
-              {this.state.selectedFilter.length > 0 && size !== 'small' && (
+              {this.state.selectedFilter.length > 0 && this.props.width > 750 && (
                 <Text
                   color="status-ok"
                   weight="bold"
@@ -207,7 +210,7 @@ export default class Filters extends Component<FiltersProps> {
               )}
               {this.state.sort.length > 0 &&
                 !this.state.checked &&
-                size !== 'small' && (
+                this.props.width > 750 && (
                   <Text
                     color="status-ok"
                     weight="bold"
@@ -221,7 +224,9 @@ export default class Filters extends Component<FiltersProps> {
             {this.state.showFilters && (
               <Layer
                 position="right"
-                responsive={true}
+                responsive={
+                  this.props.width < 750 && size === 'small' ? true : false
+                }
                 style={{ height: '100%', borderRadius: 15 }}
                 margin="small"
                 onClickOutside={() => this.setState({ showFilters: false })}
@@ -349,12 +354,16 @@ export default class Filters extends Component<FiltersProps> {
                         <FilterViewTags
                           tags={this.props.tags}
                           handleSelectedFilter={(selected, created) =>
-                            this.handleSelectedTagToFilter(selected, created)
+                            this.handleSelectedTagToFilter(
+                              selected,
+                              created,
+                              size
+                            )
                           }
                           handleSelectedTagsToUpdate={(tags) =>
                             this.setState({ selectedTagsToUpdate: tags })
                           }
-                          selectedFilter={this.state.selectedFilter}
+                          selectedFilter={this.props.filter}
                           createTagSearch={!this.state.editMode ? true : false}
                         />
                         <Box>

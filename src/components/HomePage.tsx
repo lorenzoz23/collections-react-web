@@ -8,8 +8,7 @@ import {
   Layer,
   CheckBox,
   Paragraph,
-  Button,
-  Text
+  Button
 } from 'grommet';
 import { Search, User, Next } from 'grommet-icons';
 import firebase from 'firebase/app';
@@ -862,6 +861,8 @@ export default class HomePage extends Component {
                         </Box>
                         <Box>
                           <Filters
+                            width={this.state.width}
+                            filter={this.state.filterBy}
                             sort={this.state.sortBy}
                             uid={this.state.uid}
                             tags={this.state.tags}
@@ -925,6 +926,8 @@ export default class HomePage extends Component {
                         </Box>
                         <Box>
                           <Filters
+                            width={this.state.width}
+                            filter={this.state.filterBy}
                             sort={this.state.sortBy}
                             uid={this.state.uid}
                             tags={this.state.tags}
@@ -1026,6 +1029,7 @@ export default class HomePage extends Component {
                     <Box
                       flex
                       background="layer"
+                      overflow="auto"
                       justify="center"
                       align="center"
                       pad="small"
@@ -1043,8 +1047,7 @@ export default class HomePage extends Component {
                         one thing that's most important to you: your film
                         collection!
                       </Paragraph>
-                      <Text
-                        weight="bold"
+                      <Paragraph
                         textAlign="center"
                         size="large"
                         color="accent-3"
@@ -1052,7 +1055,7 @@ export default class HomePage extends Component {
                         getting started is as easy as clicking the + button to
                         add a film to your lot/wishlist, or trekking over to
                         settings to import a csv file of your film data!
-                      </Text>
+                      </Paragraph>
                       <Paragraph textAlign="center">
                         if you ever have any questions or are confused on what
                         to do/where to start, just click the question mark at

@@ -27,7 +27,8 @@ export default class SelectSingular extends Component<SelectSingularProps> {
 
   componentDidMount = () => {
     this.setState({
-      options: this.props.tags
+      options: this.props.tags,
+      value: this.props.selectedFilter
     });
   };
 

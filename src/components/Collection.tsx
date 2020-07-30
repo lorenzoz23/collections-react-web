@@ -77,6 +77,8 @@ export default class Collection extends Component<CollectionProps> {
     let numRows: number = 0;
     if (size === 'medium' && this.props.width < 1000) {
       numRows = Math.ceil(numMovies / columns[size].length) + 1;
+    } else if (size === 'small' && this.props.width < 350) {
+      numRows = Math.ceil(numMovies / columns[size].length) + 2;
     } else {
       numRows = Math.ceil(numMovies / columns[size].length);
     }
@@ -150,7 +152,9 @@ export default class Collection extends Component<CollectionProps> {
   movieCollection = (size: string) => {
     let col: string[] = [];
     if (size === 'medium' && this.props.width < 1000) {
-      col = columns['medium'].slice(0, 4);
+      col = columns[size].slice(0, 4);
+    } else if (size === 'small' && this.props.width < 350) {
+      col = columns[size].slice(0, 2);
     } else {
       col = columns[size];
     }
@@ -234,6 +238,7 @@ export default class Collection extends Component<CollectionProps> {
                         tags
                       )
                     }
+                    width={this.props.width}
                     rand={this.state.randBackDrop}
                     tags={this.props.tags}
                     wishlist={this.props.wishlist}

@@ -95,7 +95,7 @@ export default class ReportBug extends Component<ReportBugProps> {
                     showLayer: false
                   })
                 }
-                responsive
+                responsive={this.props.width < 750 ? true : false}
               >
                 <Box
                   margin="xsmall"

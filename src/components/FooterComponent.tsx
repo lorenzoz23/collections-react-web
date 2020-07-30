@@ -133,6 +133,7 @@ export default class FooterComponent extends Component<FooterComponentProps> {
             <Box
               direction="row"
               align="center"
+              alignContent="center"
               gap={size !== 'small' ? 'small' : 'xsmall'}
             >
               <Multimedia size={this.props.width < 400 ? 'small' : undefined} />
