@@ -302,7 +302,13 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                         width: '100%',
                         zIndex: 2
                       }
-                    : { position: 'fixed', bottom: 0, left: 0, width: '100%' }
+                    : {
+                        position: 'fixed',
+                        bottom: 0,
+                        left: 0,
+                        width: '100%',
+                        zIndex: 2
+                      }
                 }
                 pad={size !== 'small' ? 'small' : 'none'}
               >

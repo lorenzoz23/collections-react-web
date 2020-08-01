@@ -18,7 +18,8 @@ import {
   Edit,
   Rewind,
   PowerReset,
-  Previous
+  Previous,
+  FormClose
 } from 'grommet-icons';
 import firebase from 'firebase';
 import 'firebase/database';
@@ -82,11 +83,21 @@ export default class Filters extends Component<FiltersProps> {
   };
 
   handleUpdateTag = () => {
-    this.setState({ showFilters: false, showUpdateBox: false });
+    const empty: number[] = [];
+    this.setState({
+      showFilters: false,
+      showUpdateBox: false,
+      editMode: false,
+      selectedTagsToUpdate: empty,
+      updatedText: ''
+    });
     if (this.state.selectedTagsToUpdate.length === 1) {
       let newTags: string[] = [];
       for (let i = 0; i < this.props.tags.length; i++) {
-        if (this.props.tags[i] !== this.state.updatedText) {
+        if (
+          this.props.tags[i] !==
+          this.props.tags[this.state.selectedTagsToUpdate[0]]
+        ) {
           newTags.push(this.props.tags[i]);
         } else {
           newTags.push(this.state.updatedText);
@@ -110,26 +121,31 @@ export default class Filters extends Component<FiltersProps> {
   };
 
   handleDeleteTags = () => {
+    const empty: number[] = [];
     this.setState({
       showFilters: false,
-      showUpdateBox: false
+      showUpdateBox: false,
+      editMode: false,
+      selectedTagsToUpdate: empty,
+      updatedText: ''
     });
     this.props.handleTagDelete(this.state.selectedTagsToUpdate);
   };
 
   handleSelectedTagToFilter = (tag: string, created: boolean, size: string) => {
-    this.setState({
-      selectedFilter: tag,
-      showFilters: size === 'small' && this.props.width < 750 ? false : true
-    });
     if (created) {
       const userRef = firebase.database().ref('users/' + this.props.uid);
       const tagsRef = userRef.child('tags');
       const newTagRef = tagsRef.push();
       newTagRef.set({ title: tag });
       this.props.handleTagAdded(tag);
+    } else {
+      this.setState({
+        selectedFilter: tag,
+        showFilters: size === 'small' && this.props.width < 750 ? false : true
+      });
+      this.props.handleFilterByTag(tag);
     }
-    this.props.handleFilterByTag(tag);
   };
 
   handleSort = (sortBy: string) => {
@@ -147,7 +163,8 @@ export default class Filters extends Component<FiltersProps> {
       sort: '',
       showFilters: false,
       checked: false,
-      showUpdateBox: false
+      showUpdateBox: false,
+      editMode: false
     });
     this.props.handleResetFilters();
   };
@@ -229,7 +246,13 @@ export default class Filters extends Component<FiltersProps> {
                 }
                 style={{ height: '100%', borderRadius: 15 }}
                 margin="small"
-                onClickOutside={() => this.setState({ showFilters: false })}
+                onClickOutside={() =>
+                  this.setState({
+                    showFilters: false,
+                    editMode: false,
+                    showUpdateBox: false
+                  })
+                }
               >
                 <Box
                   fill={size === 'small' ? true : false}
@@ -336,10 +359,12 @@ export default class Filters extends Component<FiltersProps> {
                       </Box>
                       <Box
                         pad={size !== 'small' ? 'small' : 'medium'}
+                        overflow="auto"
                         gap="small"
                         justify="between"
                         align="center"
                         round
+                        flex
                         fill="horizontal"
                         border={{
                           side: 'all',
@@ -351,21 +376,49 @@ export default class Filters extends Component<FiltersProps> {
                         <Text textAlign="center" weight="bold">
                           tags
                         </Text>
-                        <FilterViewTags
-                          tags={this.props.tags}
-                          handleSelectedFilter={(selected, created) =>
-                            this.handleSelectedTagToFilter(
-                              selected,
-                              created,
-                              size
-                            )
-                          }
-                          handleSelectedTagsToUpdate={(tags) =>
-                            this.setState({ selectedTagsToUpdate: tags })
-                          }
-                          selectedFilter={this.props.filter}
-                          createTagSearch={!this.state.editMode ? true : false}
-                        />
+                        {this.state.showUpdateBox ? (
+                          <TextInput
+                            placeholder={`update '${
+                              this.props.tags[
+                                this.state.selectedTagsToUpdate[0]
+                              ]
+                            }' here`}
+                            value={this.state.updatedText}
+                            onChange={(event) =>
+                              this.setState({
+                                updatedText: event.target.value
+                              })
+                            }
+                          />
+                        ) : (
+                          <FilterViewTags
+                            tags={this.props.tags}
+                            handleSelectedFilter={(selected, created) =>
+                              this.handleSelectedTagToFilter(
+                                selected,
+                                created,
+                                size
+                              )
+                            }
+                            handleSelectedTagsToUpdate={(tags) =>
+                              this.setState({ selectedTagsToUpdate: tags })
+                            }
+                            selectedFilter={
+                              !this.state.editMode && this.props.filter.length
+                                ? this.props.filter
+                                : undefined
+                            }
+                            selectedFilters={
+                              this.state.editMode &&
+                              this.state.selectedTagsToUpdate.length
+                                ? this.state.selectedTagsToUpdate
+                                : undefined
+                            }
+                            createTagSearch={
+                              !this.state.editMode ? true : false
+                            }
+                          />
+                        )}
                         <Box>
                           {!this.state.editMode ? (
                             <Button
@@ -382,66 +435,74 @@ export default class Filters extends Component<FiltersProps> {
                             />
                           ) : (
                             <Box gap="small" align="center">
-                              {this.state.showUpdateBox && (
-                                <TextInput
-                                  placeholder={`update '${
-                                    this.props.tags[
-                                      this.state.selectedTagsToUpdate[0]
-                                    ]
-                                  }' here`}
-                                  value={this.state.updatedText}
-                                  onChange={(event) =>
-                                    this.setState({
-                                      updatedText: event.target.value
-                                    })
+                              {this.state.showUpdateBox ? (
+                                <Button
+                                  disabled={
+                                    this.state.updatedText.length < 1
+                                      ? true
+                                      : false
                                   }
+                                  primary
+                                  label="done"
+                                  onClick={this.handleUpdateTag}
+                                  title="finish tag update"
+                                />
+                              ) : (
+                                <Box direction="row" gap="small">
+                                  <Button
+                                    disabled={
+                                      this.state.selectedTagsToUpdate.length > 0
+                                        ? false
+                                        : true
+                                    }
+                                    style={{ borderRadius: 30 }}
+                                    primary
+                                    title="delete selected tag(s)"
+                                    color="neutral-4"
+                                    onClick={this.handleDeleteTags}
+                                    icon={<FormTrash />}
+                                  />
+                                  <Button
+                                    disabled={
+                                      this.state.selectedTagsToUpdate.length ===
+                                      1
+                                        ? false
+                                        : true
+                                    }
+                                    style={{ borderRadius: 30 }}
+                                    title="update selected tag"
+                                    onClick={() =>
+                                      this.setState({ showUpdateBox: true })
+                                    }
+                                    icon={<FormRefresh />}
+                                    primary
+                                    color="accent-4"
+                                  />
+                                </Box>
+                              )}
+                              {this.state.showUpdateBox ? (
+                                <Button
+                                  icon={<FormClose />}
+                                  title="cancel update"
+                                  onClick={() =>
+                                    this.setState({ showUpdateBox: false })
+                                  }
+                                />
+                              ) : (
+                                <Button
+                                  icon={<Rewind />}
+                                  title="back"
+                                  style={{ borderRadius: 30 }}
+                                  primary
+                                  hoverIndicator="accent-1"
+                                  onClick={() => {
+                                    this.setState({
+                                      editMode: false,
+                                      selectedFilter: ''
+                                    });
+                                  }}
                                 />
                               )}
-                              <Box direction="row" gap="small">
-                                <Button
-                                  disabled={
-                                    this.state.selectedTagsToUpdate.length > 0
-                                      ? false
-                                      : true
-                                  }
-                                  style={{ borderRadius: 30 }}
-                                  primary
-                                  title="delete selected tag(s)"
-                                  color="neutral-4"
-                                  onClick={this.handleDeleteTags}
-                                  icon={<FormTrash />}
-                                />
-                                <Button
-                                  disabled={
-                                    this.state.selectedTagsToUpdate.length === 1
-                                      ? false
-                                      : true
-                                  }
-                                  style={{ borderRadius: 30 }}
-                                  title="update selected tag"
-                                  onClick={() =>
-                                    this.state.showUpdateBox
-                                      ? this.handleUpdateTag()
-                                      : this.setState({ showUpdateBox: true })
-                                  }
-                                  icon={<FormRefresh />}
-                                  primary
-                                  color="accent-4"
-                                />
-                              </Box>
-                              <Button
-                                icon={<Rewind />}
-                                title="back"
-                                style={{ borderRadius: 30 }}
-                                primary
-                                hoverIndicator="accent-1"
-                                onClick={() => {
-                                  this.setState({
-                                    editMode: false,
-                                    selectedFilter: ''
-                                  });
-                                }}
-                              />
                             </Box>
                           )}
                         </Box>
@@ -461,7 +522,13 @@ export default class Filters extends Component<FiltersProps> {
                       alignSelf="center"
                       title="back"
                       icon={<Previous />}
-                      onClick={() => this.setState({ showFilters: false })}
+                      onClick={() =>
+                        this.setState({
+                          showFilters: false,
+                          editMode: false,
+                          showUpdateBox: false
+                        })
+                      }
                     />
                   )}
                 </Box>

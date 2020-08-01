@@ -103,9 +103,9 @@ export default class FooterComponent extends Component<FooterComponentProps> {
                     double purchasing blu-rays due to unforseen lapses in
                     memory.
                   </Paragraph>
-                  <Paragraph textAlign="center">
-                    cinelot is here for you, forever and always...
-                  </Paragraph>
+                  <Text textAlign="center" weight="bold">
+                    tips and tricks:
+                  </Text>
                   <Paragraph textAlign="center">
                     looking to add a film to your lot or wishlist? click on the
                     + button at the top of the app and search by film title and

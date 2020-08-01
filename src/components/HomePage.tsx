@@ -54,7 +54,7 @@ export type movie = {
   id: string;
   key?: string;
   starCount: number;
-  tags: string[];
+  tags: number[];
 };
 
 export default class HomePage extends Component {
@@ -581,47 +581,64 @@ export default class HomePage extends Component {
   };
 
   handleSelectedTags = (updatedMovie: movie, tags: number[]) => {
+    const moviesToUpdate: movie[] = this.state.showWishlist
+      ? this.state.wishlist
+      : this.state.movies;
     let newMovies: movie[] = [];
-    let newTags: string[] = [];
-    tags.forEach((tagIndex) => {
-      newTags.push(this.state.tags[tagIndex]);
-    });
-    updatedMovie.tags = newTags;
+    updatedMovie.tags = tags;
     const userRef = firebase.database().ref('users/' + this.state.uid);
-    const collectionRef = userRef.child('collection');
+    const movieRef = this.state.showWishlist
+      ? userRef.child('wishlist')
+      : userRef.child('collection');
 
-    collectionRef.once('value', (snapshot) => {
+    movieRef.once('value', (snapshot) => {
       snapshot.forEach((childSnapshot) => {
         const childKey = childSnapshot.key!;
         const movie = childSnapshot.val().movie;
 
         if (movie.id === updatedMovie.id) {
-          collectionRef.child(childKey).update({ movie: updatedMovie });
+          movieRef.child(childKey).update({ movie: updatedMovie });
           return true;
         }
       });
     });
-    for (let i = 0; i < this.state.movies.length; i++) {
-      if (this.state.movies[i].id !== updatedMovie.id) {
-        newMovies.push(this.state.movies[i]);
+    for (let i = 0; i < moviesToUpdate.length; i++) {
+      if (moviesToUpdate[i].id !== updatedMovie.id) {
+        newMovies.push(moviesToUpdate[i]);
       } else {
         newMovies.push(updatedMovie);
       }
     }
 
-    this.setState(
-      {
-        movies: newMovies,
-        notification: true,
-        notificationText: `${
-          tags.length > 1 ? 'tags' : 'tag'
-        } successfully added to ${updatedMovie.name}`,
-        goodNotification: true
-      },
-      () => {
-        setTimeout(this.onNotificationClose, 4000);
-      }
-    );
+    if (this.state.showWishlist) {
+      this.setState(
+        {
+          wishlist: newMovies,
+          notification: true,
+          notificationText: `${
+            tags.length > 1 ? 'tags' : 'tag'
+          } successfully added to ${updatedMovie.name}`,
+          goodNotification: true
+        },
+        () => {
+          setTimeout(this.onNotificationClose, 4000);
+        }
+      );
+    } else {
+      this.setState(
+        {
+          movies: newMovies,
+          notification: true,
+          notificationText: `${
+            tags.length > 1 ? 'tags' : 'tag'
+          } successfully added to ${updatedMovie.name}`,
+          goodNotification: true
+        },
+        () => {
+          setTimeout(this.onNotificationClose, 4000);
+        }
+      );
+    }
   };
 
   handleFilterByTag = (tag: string) => {
@@ -669,21 +686,24 @@ export default class HomePage extends Component {
     );
   };
 
-  handleTagDelete = (tags: number[]) => {
+  handleTagDelete = async (tags: number[]) => {
+    this.setState({
+      loading: true
+    });
     let newTags: string[] = [];
     let tagsToDelete: string[] = [];
     tags.forEach((tagIndex) => {
       tagsToDelete.push(this.state.tags[tagIndex]);
     });
     for (let i = 0; i < this.state.tags.length; i++) {
-      if (i !== tags[i]) {
+      if (!tags.includes(i, 0)) {
         newTags.push(this.state.tags[i]);
       }
     }
 
     const userRef = firebase.database().ref('users/' + this.state.uid);
     const tagsRef = userRef.child('tags');
-    tagsRef.once('value', (snapshot) => {
+    await tagsRef.once('value', (snapshot) => {
       snapshot.forEach((childSnapshot) => {
         const childKey = childSnapshot.key!;
         const title = childSnapshot.val().title;
@@ -693,17 +713,62 @@ export default class HomePage extends Component {
         }
       });
     });
+    const collectionRef = userRef.child('collection');
+    let newLot: movie[] = [];
+    await collectionRef.once('value', (snapshot) => {
+      snapshot.forEach((childSnapshot) => {
+        const childKey = childSnapshot.key!;
+        const movie = childSnapshot.val().movie;
+        const movieTags: number[] = movie.tags || [];
+        let newMovieTags: number[] = movieTags.filter(
+          (tag) => !tags.includes(tag, 0)
+        );
+        newMovieTags = newMovieTags.map((tagIndex) => {
+          const title = this.state.tags[tagIndex];
+          return newTags.indexOf(title);
+        });
+        const newMovie: movie = movie;
+        newMovie.tags = newMovieTags;
+        newLot.push(newMovie);
+        collectionRef.child(childKey).update({ movie: newMovie });
+      });
+    });
+    const wishlistRef = userRef.child('wishlist');
+    let newWishlist: movie[] = [];
+    await wishlistRef.once('value', (snapshot) => {
+      snapshot.forEach((childSnapshot) => {
+        const childKey = childSnapshot.key!;
+        const wishlistMovie = childSnapshot.val().movie;
+        const movieTags: number[] = wishlistMovie.tags || [];
+        let newMovieTags: number[] = movieTags.filter(
+          (tag) => !tags.includes(tag, 0)
+        );
+        newMovieTags = newMovieTags.map((tagIndex) => {
+          const title = this.state.tags[tagIndex];
+          return newTags.indexOf(title);
+        });
+        const newWishlistMovie: movie = wishlistMovie;
+        newWishlistMovie.tags = newMovieTags;
+        newWishlist.push(newWishlistMovie);
+        wishlistRef.child(childKey).update({ movie: newWishlistMovie });
+      });
+    });
 
+    this.setState({
+      movies: newLot,
+      wishlist: newWishlist,
+      tags: newTags,
+      loading: false
+    });
     this.setState(
       {
-        tags: newTags,
         notification: true,
-        notificationText: 'tag successfully deleted',
+        notificationText: `${
+          tags.length > 1 ? 'tags' : 'tag'
+        } successfully deleted`,
         goodNotification: true
       },
-      () => {
-        setTimeout(this.onNotificationClose, 4000);
-      }
+      () => setTimeout(this.onNotificationClose, 4000)
     );
   };
 
@@ -746,6 +811,20 @@ export default class HomePage extends Component {
         sortBy: '',
         notification: true,
         notificationText: 'filters have been reset',
+        goodNotification: true
+      },
+      () => {
+        setTimeout(this.onNotificationClose, 4000);
+      }
+    );
+  };
+
+  handleUpdatedTags = (updatedTags: string[]) => {
+    this.setState(
+      {
+        tags: updatedTags,
+        notification: true,
+        notificationText: 'tag successfully updated',
         goodNotification: true
       },
       () => {
@@ -876,17 +955,7 @@ export default class HomePage extends Component {
                               this.handleTagDelete(tags)
                             }
                             handleUpdatedTags={(updatedTags) =>
-                              this.setState(
-                                {
-                                  tags: updatedTags,
-                                  notification: true,
-                                  notificationText: 'tag successfully updated',
-                                  goodNotification: true
-                                },
-                                () => {
-                                  setTimeout(this.onNotificationClose, 4000);
-                                }
-                              )
+                              this.handleUpdatedTags(updatedTags)
                             }
                             handleTagAdded={(tag) => this.handleTagAdded(tag)}
                             handleResetFilters={this.handleResetFilters}
@@ -941,17 +1010,7 @@ export default class HomePage extends Component {
                               this.handleTagDelete(tags)
                             }
                             handleUpdatedTags={(updatedTags) =>
-                              this.setState(
-                                {
-                                  tags: updatedTags,
-                                  notification: true,
-                                  notificationText: 'tag successfully updated',
-                                  goodNotification: true
-                                },
-                                () => {
-                                  setTimeout(this.onNotificationClose, 4000);
-                                }
-                              )
+                              this.handleUpdatedTags(updatedTags)
                             }
                             handleTagAdded={(tag) => this.handleTagAdded(tag)}
                             handleResetFilters={this.handleResetFilters}

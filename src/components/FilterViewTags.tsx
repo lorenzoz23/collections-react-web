@@ -9,6 +9,7 @@ interface FilterViewTagsProps {
   handleSelectedFilter(selected: string, created: boolean): void;
   handleSelectedTagsToUpdate(tags: number[]): void;
   selectedFilter?: string;
+  selectedFilters?: number[];
 }
 
 export default class FilterViewTags extends Component<FilterViewTagsProps> {
@@ -37,6 +38,7 @@ export default class FilterViewTags extends Component<FilterViewTagsProps> {
           />
         ) : (
           <SelectMultiple
+            selectedFilters={this.props.selectedFilters!}
             title="select a tag to delete or update!"
             save={false}
             plain={true}

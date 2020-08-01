@@ -65,7 +65,7 @@ export default class SelectSingular extends Component<SelectSingularProps> {
           background="white"
           round="full"
           margin={{ left: 'xsmall' }}
-          title="clear tag"
+          title="clear selected tag"
         >
           <FormClose
             color="accent-1"
@@ -136,9 +136,7 @@ export default class SelectSingular extends Component<SelectSingularProps> {
           onChange={({ option }) => {
             if (option.includes(prefix)) {
               this.state.defaultOptions.pop();
-              this.state.defaultOptions.push(this.state.searchText);
               this.props.handleSelected(this.state.searchText, true);
-              //this.setState({ value: this.state.searchText });
             } else {
               this.setState({ value: option });
               this.props.handleSelected(option, false);

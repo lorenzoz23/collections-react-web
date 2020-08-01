@@ -3,12 +3,13 @@ import { Box, Select, Button, Text, ResponsiveContext } from 'grommet';
 import { FormClose, CloudUpload } from 'grommet-icons'; // or Save
 
 interface SelectMultipleProps {
-  movieTags?: string[];
+  movieTags?: number[];
   title: string;
   tags: string[];
   backgroundColor?: string;
   plain: boolean;
   save: boolean;
+  selectedFilters?: number[];
   width?: number;
   handleSelectedTags?(selected: number[]): void;
 }
@@ -23,22 +24,26 @@ export default class SelectMultiple extends Component<SelectMultipleProps> {
   };
 
   componentDidMount = () => {
-    let selectedTags: number[] = [];
-    if (this.props.movieTags!) {
-      this.props.movieTags!.forEach((tag) => {
-        selectedTags.push(this.props.tags.indexOf(tag));
-      });
+    if (this.props.movieTags! && !this.props.selectedFilters) {
       this.setState({
-        selected: selectedTags
+        selected: this.props.movieTags!
+      });
+    }
+    if (this.props.selectedFilters) {
+      this.setState({
+        selected: this.props.selectedFilters!
       });
     }
   };
 
   handleRemoveTag = (tag: string) => {
-    const tagIndex = this.props.tags.indexOf(tag);
-    const updatedSelected: number[] = this.state.selected.filter(
-      (selectedTag) => selectedTag !== tagIndex
-    );
+    let updatedSelected: number[] = [];
+    if (!tag.includes('tags selected')) {
+      const tagIndex = this.props.tags.indexOf(tag);
+      updatedSelected = this.state.selected.filter(
+        (selectedTag) => selectedTag !== tagIndex
+      );
+    }
     if (this.props.handleSelectedTags && !this.props.save) {
       this.props.handleSelectedTags(updatedSelected);
     }
@@ -77,7 +82,7 @@ export default class SelectMultiple extends Component<SelectMultipleProps> {
           background="white"
           round="full"
           margin={{ left: 'xsmall' }}
-          title="clear tag"
+          title="clear selected tag"
         >
           <FormClose
             color="accent-1"
@@ -90,6 +95,7 @@ export default class SelectMultiple extends Component<SelectMultipleProps> {
   );
 
   render() {
+    const tagLabel = `${this.state.selected.length} tags selected`;
     return (
       <ResponsiveContext.Consumer>
         {(size) => (
@@ -112,14 +118,14 @@ export default class SelectMultiple extends Component<SelectMultipleProps> {
               emptySearchMessage="no tags found :("
               multiple
               valueLabel={
-                <Box
-                  wrap
-                  direction="row"
-                  width={this.state.selected.length > 4 ? 'medium' : 'small'}
-                >
+                <Box wrap direction="row" width="small">
                   {this.state.selected && this.state.selected.length ? (
-                    this.state.selected.map((index) =>
-                      this.renderTag(this.props.tags[index], size)
+                    this.state.selected.length <= (this.props.save ? 2 : 1) ? (
+                      this.state.selected.map((index) =>
+                        this.renderTag(this.props.tags[index], size)
+                      )
+                    ) : (
+                      this.renderTag(tagLabel, size)
                     )
                   ) : (
                     <Box

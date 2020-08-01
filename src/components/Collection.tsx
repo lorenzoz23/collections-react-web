@@ -122,10 +122,9 @@ export default class Collection extends Component<CollectionProps> {
       this.props.searchVal.length > 0
         ? this.props.searchList
         : this.props.movies;
+    const filterIndex = this.props.tags.indexOf(this.props.filterBy);
     const filteredMovies = this.props.filterBy
-      ? moviesToMap.filter((child) =>
-          child.tags.includes(this.props.filterBy, 0)
-        )
+      ? moviesToMap.filter((child) => child.tags.includes(filterIndex, 0))
       : moviesToMap;
 
     return (
