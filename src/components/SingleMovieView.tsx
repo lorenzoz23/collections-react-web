@@ -366,7 +366,7 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                       <Button
                         alignSelf="center"
                         title="transfer film to lot"
-                        label={size === 'small' ? 'transfer to lot' : undefined}
+                        label={size !== 'small' ? 'transfer to lot' : undefined}
                         icon={<Eject />}
                         onClick={() => {
                           this.props.handleTransfer!();

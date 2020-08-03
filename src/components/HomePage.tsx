@@ -20,7 +20,8 @@ import {
   FormDown,
   FormUp,
   UserSettings,
-  Logout
+  Logout,
+  Down
 } from 'grommet-icons';
 import firebase from 'firebase/app';
 import 'firebase/auth';
@@ -41,6 +42,7 @@ import FooterComponent from './FooterComponent';
 import Filters from './Filters';
 import { searchResults } from './MovieSearchResult';
 import Notification from './Notification';
+import { motion } from 'framer-motion';
 
 export const AppBar = (props: any) => (
   <Box
@@ -84,6 +86,7 @@ export default class HomePage extends Component {
     loading: boolean;
     greeting: boolean;
     greetingChecked: boolean;
+    welcomeChecked: boolean;
     notification: boolean;
     notificationText: string;
     width: number;
@@ -94,6 +97,7 @@ export default class HomePage extends Component {
     imports: searchResults;
     goodNotification: boolean;
     userProfileClicked: boolean;
+    welcomeBack: boolean;
   } = {
     uid: '',
     name: '',
@@ -109,6 +113,7 @@ export default class HomePage extends Component {
     loading: true,
     greeting: false,
     greetingChecked: false,
+    welcomeChecked: false,
     notification: false,
     notificationText: '',
     width: 0,
@@ -120,7 +125,8 @@ export default class HomePage extends Component {
       movies: []
     },
     goodNotification: false,
-    userProfileClicked: false
+    userProfileClicked: false,
+    welcomeBack: false
   };
 
   constructor(props: any) {
@@ -140,6 +146,7 @@ export default class HomePage extends Component {
       loading: true,
       greeting: false,
       greetingChecked: false,
+      welcomeChecked: false,
       notification: false,
       notificationText: '',
       width: 0,
@@ -151,14 +158,15 @@ export default class HomePage extends Component {
         movies: []
       },
       goodNotification: false,
-      userProfileClicked: false
+      userProfileClicked: false,
+      welcomeBack: false
     };
     //console.log('uid: ' + this.state.uid);
     //console.log('name: ' + this.state.name);
   }
 
   componentDidMount = () => {
-    console.log('component mounted');
+    console.log('home mounted');
     const remember = localStorage.getItem('rememberMe');
     if (this.state.uid === '' && !remember) {
       this.setState({ invalidRoute: true });
@@ -174,7 +182,11 @@ export default class HomePage extends Component {
           : this.state.uid;
 
       const greeting = localStorage.getItem('greeting') || 'show';
-      const showGreeting = greeting === 'show' ? true : false;
+      let showGreeting = greeting === 'show' ? true : false;
+
+      const welcome = localStorage.getItem('welcomeBack');
+      let showWelcome =
+        welcome === null ? false : welcome === 'show' ? true : false;
 
       const userRef = firebase.database().ref('users/' + uid);
       const sort = localStorage.getItem('sortBy') || '';
@@ -207,14 +219,29 @@ export default class HomePage extends Component {
           };
           lot.push(entry);
         });
-        this.setState({
-          movies: lot,
-          sortBy: sort,
-          tags: tags,
-          loading: false,
-          greeting: showGreeting,
-          uid: uid
-        });
+
+        if (lot.length > 0 && showGreeting) {
+          localStorage.setItem('greeting', 'noShow');
+          localStorage.setItem('welcomeBack', 'show');
+          showGreeting = false;
+          showWelcome = true;
+        }
+        if (!showGreeting && lot.length > 0 && welcome === null) {
+          localStorage.setItem('welcomeBack', 'show');
+          showWelcome = true;
+        }
+        this.setState(
+          {
+            movies: lot,
+            sortBy: sort,
+            tags: tags,
+            loading: false,
+            greeting: showGreeting,
+            uid: uid,
+            welcomeBack: showWelcome
+          },
+          () => setTimeout(this.dismissWelcomeBack, 4000)
+        );
       });
     }
   };
@@ -303,6 +330,7 @@ export default class HomePage extends Component {
         notificationType = false;
       }
     }
+
     if (wishlistMovies.length === 0) {
       this.setState(
         {
@@ -883,6 +911,16 @@ export default class HomePage extends Component {
     });
   };
 
+  dismissWelcomeBack = () => {
+    localStorage.setItem(
+      'welcomeBack',
+      this.state.welcomeChecked ? 'noShow' : 'show'
+    );
+    this.setState({
+      welcomeBack: false
+    });
+  };
+
   handleParsed = (movieList: searchResults) => {
     console.log(movieList);
     this.setState({
@@ -1188,7 +1226,11 @@ export default class HomePage extends Component {
                   />
                 ) : null}
                 {this.state.greeting ? (
-                  <Layer position="center" style={{ borderRadius: 30 }}>
+                  <Layer
+                    position="center"
+                    style={{ borderRadius: 30 }}
+                    onClickOutside={this.dismissGreeting}
+                  >
                     <Box
                       flex
                       background="layer"
@@ -1224,18 +1266,20 @@ export default class HomePage extends Component {
                         If you ever have any questions, or are confused on what
                         to do/where to start, just click the{' '}
                         <CircleInformation /> at the bottom of the page for some
-                        useful info and tips!
+                        useful info!
                       </Paragraph>
                       <Box gap="small">
-                        <CheckBox
-                          checked={this.state.greetingChecked}
-                          label="never show this message again"
-                          onChange={(event) =>
-                            this.setState({
-                              greetingChecked: event.target.checked
-                            })
-                          }
-                        />
+                        <motion.div whileTap={{ scale: 0.9 }}>
+                          <CheckBox
+                            checked={this.state.greetingChecked}
+                            label="Never show this message again"
+                            onChange={(event) =>
+                              this.setState({
+                                greetingChecked: event.target.checked
+                              })
+                            }
+                          />
+                        </motion.div>
                         <Button
                           hoverIndicator="accent-1"
                           alignSelf="center"
@@ -1246,7 +1290,65 @@ export default class HomePage extends Component {
                       </Box>
                     </Box>
                   </Layer>
-                ) : null}
+                ) : (
+                  this.state.welcomeBack && (
+                    <Layer
+                      color="layer"
+                      responsive={false}
+                      position="bottom-right"
+                      style={{ borderRadius: 30 }}
+                      modal={false}
+                      margin={{ bottom: 'medium', right: 'medium' }}
+                    >
+                      <Box
+                        flex
+                        direction="row"
+                        animation={{ duration: 500, type: 'pulse' }}
+                        justify="between"
+                        background="accent-1"
+                        align="center"
+                        pad={{ horizontal: 'medium', bottom: 'medium' }}
+                        round={size === 'small' ? 'large' : true}
+                      >
+                        <Box>
+                          <Heading level={4} textAlign="start">
+                            Welcome back to your{' '}
+                            <Text color="brand" size="large" weight="bold">
+                              {this.state.movies.length}
+                            </Text>
+                            {this.state.movies.length === 1
+                              ? ' film'
+                              : ' films'}
+                            , {this.state.name.split(' ', 1)}!
+                          </Heading>
+                          <Box direction="row" gap="small" align="center">
+                            <motion.div
+                              whileTap={{ scale: 0.9 }}
+                              style={{ flexDirection: 'row' }}
+                            >
+                              <CheckBox
+                                checked={this.state.welcomeChecked}
+                                label="Stop welcoming me back"
+                                onChange={(event) =>
+                                  this.setState({
+                                    welcomeChecked: event.target.checked
+                                  })
+                                }
+                              />
+                            </motion.div>
+                            <Button
+                              hoverIndicator="accent-1"
+                              alignSelf="center"
+                              style={{ borderRadius: 30 }}
+                              icon={<Down />}
+                              onClick={this.dismissWelcomeBack}
+                            />
+                          </Box>
+                        </Box>
+                      </Box>
+                    </Layer>
+                  )
+                )}
                 {this.state.notification && (
                   <Notification
                     top={this.state.goodNotification ? false : true}
