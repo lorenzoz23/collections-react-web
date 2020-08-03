@@ -103,7 +103,7 @@ export default class LoginGoogle extends Component<LoginGoogleProps> {
               primary
               color="#CDFEE2"
               size={size === 'small' ? 'medium' : 'large'}
-              label="continue with google"
+              label="Continue with Google"
               icon={<Google color="plain" />}
               reverse
               onClick={() => this.signInWithGoogle(size)}

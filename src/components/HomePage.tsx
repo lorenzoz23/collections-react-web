@@ -8,9 +8,20 @@ import {
   Layer,
   CheckBox,
   Paragraph,
-  Button
+  Button,
+  Text,
+  DropButton
 } from 'grommet';
-import { Search, User, Next } from 'grommet-icons';
+import {
+  Search,
+  User,
+  Next,
+  CircleInformation,
+  FormDown,
+  FormUp,
+  UserSettings,
+  Logout
+} from 'grommet-icons';
 import firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/database';
@@ -82,6 +93,7 @@ export default class HomePage extends Component {
     parsed: boolean;
     imports: searchResults;
     goodNotification: boolean;
+    userProfileClicked: boolean;
   } = {
     uid: '',
     name: '',
@@ -107,17 +119,15 @@ export default class HomePage extends Component {
     imports: {
       movies: []
     },
-    goodNotification: false
+    goodNotification: false,
+    userProfileClicked: false
   };
 
   constructor(props: any) {
     super(props);
     this.state = {
       uid: props.location.state === undefined ? '' : props.location.state.id,
-      name:
-        props.location.state === undefined
-          ? ''
-          : props.location.state.name.toLowerCase(),
+      name: props.location.state === undefined ? '' : props.location.state.name,
       invalidRoute: false,
       loggedIn: true,
       movies: [],
@@ -140,7 +150,8 @@ export default class HomePage extends Component {
       imports: {
         movies: []
       },
-      goodNotification: false
+      goodNotification: false,
+      userProfileClicked: false
     };
     //console.log('uid: ' + this.state.uid);
     //console.log('name: ' + this.state.name);
@@ -256,20 +267,49 @@ export default class HomePage extends Component {
       }
     }
 
-    const lotLen = lotMovies.length - lotRepeats;
-    const wishlistLen = wishlistMovies.length - wishlistRepeats;
-    notificationText =
-      lotLen +
-      ` ${lotLen === 1 ? 'movie' : 'movies'} added to your lot and ` +
-      wishlistLen +
-      ` ${wishlistLen === 1 ? 'movie' : 'movies'} added to your wishlist`;
+    let notificationType: boolean = false;
+    if (this.state.parsed) {
+      notificationType = true;
+      const lotLen = lotMovies.length - lotRepeats;
+      const wishlistLen = wishlistMovies.length - wishlistRepeats;
+      notificationText =
+        lotLen +
+        ` ${lotLen === 1 ? 'movie' : 'movies'} added to your lot and ` +
+        wishlistLen +
+        ` ${wishlistLen === 1 ? 'movie' : 'movies'} added to your wishlist`;
+    } else {
+      if (lotRepeats === 0 && lotMovies.length === 1) {
+        notificationText = `${
+          lotMovies[0].name + ' has been added to your lot!'
+        } `;
+        notificationType = true;
+      }
+      if (lotRepeats) {
+        notificationText = `${
+          lotMovies[0].name + ' already exists in your lot'
+        } `;
+        notificationType = false;
+      }
+      if (wishlistRepeats === 0 && wishlistMovies.length === 1) {
+        notificationText = `${
+          wishlistMovies[0].name + ' has been added to your wishlist!'
+        } `;
+        notificationType = true;
+      }
+      if (wishlistRepeats) {
+        notificationText = `${
+          wishlistMovies[0].name + ' already exists in your wishlist'
+        } `;
+        notificationType = false;
+      }
+    }
     if (wishlistMovies.length === 0) {
       this.setState(
         {
           movies: newLot,
           notification: true,
           notificationText: notificationText,
-          goodNotification: true
+          goodNotification: notificationType
         },
         () => {
           setTimeout(this.onNotificationClose, 4000);
@@ -281,7 +321,7 @@ export default class HomePage extends Component {
           wishlist: newWishlist,
           notification: true,
           notificationText: notificationText,
-          goodNotification: true
+          goodNotification: notificationType
         },
         () => {
           setTimeout(this.onNotificationClose, 4000);
@@ -294,7 +334,7 @@ export default class HomePage extends Component {
           wishlist: newWishlist,
           notification: true,
           notificationText: notificationText,
-          goodNotification: true
+          goodNotification: notificationType
         },
         () => {
           setTimeout(this.onNotificationClose, 4000);
@@ -866,11 +906,9 @@ export default class HomePage extends Component {
   };
 
   render() {
-    const title = this.state.showWishlist ? 'my wishlist' : 'my lot';
-    const greeting =
-      this.state.name !== ''
-        ? 'greetings ' + this.state.name.split(' ', 1) + '!'
-        : 'greetings!';
+    const title = this.state.showWishlist ? 'Your Wishlist' : 'Your Lot';
+    const welcome = 'Welcome, ' + this.state.name.split(' ', 1) + '!';
+    const mode = localStorage.getItem('visualModeValue') || 'wedding';
     return (
       <Router>
         {!this.state.loggedIn || this.state.invalidRoute ? (
@@ -883,11 +921,20 @@ export default class HomePage extends Component {
                 pad={{ horizontal: size === 'small' ? 'medium' : undefined }}
               >
                 <AppBar
-                  pad={
+                  pad={{ bottom: mode === 'wedding' ? 'xsmall' : 'none' }}
+                  margin={
                     size !== 'small'
-                      ? { right: 'small', left: 'small' }
+                      ? {
+                          right: 'none',
+                          left: 'small'
+                        }
                       : { vertical: 'xsmall' }
                   }
+                  border={{
+                    side: 'bottom',
+                    color: 'lotBorder',
+                    size: 'small'
+                  }}
                 >
                   {size !== 'small' ? (
                     <Box
@@ -896,19 +943,30 @@ export default class HomePage extends Component {
                       align="center"
                       justify="evenly"
                     >
-                      <Heading
-                        level="3"
-                        margin="none"
-                        alignSelf="center"
-                        color="light-1"
-                      >
-                        {title}
-                      </Heading>
+                      <CheckBox
+                        checked={this.state.showWishlist}
+                        toggle
+                        reverse
+                        onChange={(event) =>
+                          this.handleWishlist(event.target.checked)
+                        }
+                        label={
+                          <Heading
+                            textAlign="center"
+                            level="3"
+                            margin="none"
+                            alignSelf="center"
+                            color="light-1"
+                          >
+                            {title}
+                          </Heading>
+                        }
+                      />
                       <Box direction="row" align="center" gap="small">
                         <TextInput
                           value={this.state.searchVal}
-                          title="search your film lot!"
-                          placeholder={`search ${
+                          title="Search your film lot!"
+                          placeholder={`Search ${
                             this.state.showWishlist
                               ? this.state.wishlist.length
                               : this.state.movies.length
@@ -975,11 +1033,13 @@ export default class HomePage extends Component {
                           value={this.state.searchVal}
                           focusIndicator={false}
                           placeholder={
-                            this.state.showWishlist ? 'my wishlist' : 'my lot'
+                            this.state.showWishlist
+                              ? 'Your wishlist'
+                              : 'Your lot'
                           }
                           icon={<Search />}
                           suggestions={[
-                            `search ${this.state.movies.length} films...`
+                            `Search ${this.state.movies.length} films...`
                           ]}
                           onChange={(event) => this.handleSearch(event)}
                         />
@@ -1019,17 +1079,66 @@ export default class HomePage extends Component {
                       </Box>
                     </Box>
                   )}
-                  <Box>
-                    <Avatar
-                      focusIndicator={false}
-                      hoverIndicator={size !== 'small' ? 'brand' : undefined}
-                      onClick={this.toggleSettings}
-                      title="settings"
-                      align="center"
-                    >
-                      <User color="accent-1" />
-                    </Avatar>
-                  </Box>
+                  <DropButton
+                    style={{ borderRadius: 25 }}
+                    plain
+                    hoverIndicator="brand"
+                    margin={{ right: 'small' }}
+                    onClose={() => this.setState({ userProfileClicked: false })}
+                    onOpen={() => this.setState({ userProfileClicked: true })}
+                    label={
+                      <Box direction="row" align="center">
+                        <Avatar align="center">
+                          <User color="accent-1" />
+                        </Avatar>
+                        <Text weight="bold">
+                          {this.state.name.split(' ', 1)}
+                        </Text>
+                        <Avatar align="center">
+                          {this.state.userProfileClicked ? (
+                            <FormUp />
+                          ) : (
+                            <FormDown />
+                          )}
+                        </Avatar>
+                      </Box>
+                    }
+                    dropAlign={{ top: 'bottom', right: 'left' }}
+                    dropContent={
+                      <Box background="light-2">
+                        <Box
+                          direction="row"
+                          justify="between"
+                          pad={{
+                            left: 'small',
+                            top: 'medium',
+                            bottom: 'medium',
+                            right: 'medium'
+                          }}
+                          hoverIndicator="accent-1"
+                          onClick={this.toggleSettings}
+                        >
+                          <Text>settings</Text>
+                          <UserSettings color="brand" />
+                        </Box>
+                        <Box
+                          direction="row"
+                          justify="between"
+                          pad={{
+                            left: 'small',
+                            top: 'medium',
+                            bottom: 'medium',
+                            right: 'medium'
+                          }}
+                          hoverIndicator="accent-1"
+                          onClick={this.logOut}
+                        >
+                          <Text>sign out</Text>
+                          <Logout color="brand" />
+                        </Box>
+                      </Box>
+                    }
+                  />
                 </AppBar>
                 <Box
                   overflow={{ horizontal: 'hidden' }}
@@ -1067,12 +1176,7 @@ export default class HomePage extends Component {
                 />
                 {this.state.showSettings ? (
                   <Settings
-                    loggedIn={this.state.loggedIn}
-                    logOut={this.logOut}
                     toggleSettings={this.toggleSettings}
-                    handleWishlist={(checked: boolean) =>
-                      this.handleWishlist(checked)
-                    }
                     wishlist={this.state.showWishlist}
                     uid={this.state.uid}
                     handleAccountDelete={this.handleAccountDelete}
@@ -1099,10 +1203,10 @@ export default class HomePage extends Component {
                         size: 'medium'
                       }}
                     >
-                      <Heading textAlign="center">{greeting}</Heading>
+                      <Heading textAlign="center">{welcome}</Heading>
                       <Paragraph textAlign="center">
-                        we at cinelot (it's just one person, actually), couldn't
-                        bee happier that you chose us to help keep track of the
+                        We at Cinelot (it's just one person, actually), couldn't
+                        be happier that you chose us to help keep track of the
                         one thing that's most important to you: your film
                         collection!
                       </Paragraph>
@@ -1111,14 +1215,16 @@ export default class HomePage extends Component {
                         size="large"
                         color="accent-3"
                       >
-                        getting started is as easy as clicking the + button to
-                        add a film to your lot/wishlist, or trekking over to
-                        settings to import a csv file of your film data!
+                        Getting started is as easy as clicking the + button next
+                        to the search bar to add a film to your lot/wishlist, or
+                        trekking over to settings to import a csv file of your
+                        film data!
                       </Paragraph>
                       <Paragraph textAlign="center">
-                        if you ever have any questions or are confused on what
-                        to do/where to start, just click the question mark at
-                        the bottom of the page for some useful info and tips!
+                        If you ever have any questions, or are confused on what
+                        to do/where to start, just click the{' '}
+                        <CircleInformation /> at the bottom of the page for some
+                        useful info and tips!
                       </Paragraph>
                       <Box gap="small">
                         <CheckBox

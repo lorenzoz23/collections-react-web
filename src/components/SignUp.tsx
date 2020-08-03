@@ -126,7 +126,7 @@ export default class SignUp extends Component<SignUpProps> {
                   this.onFormChange(nextFormValue)
                 }
               >
-                <FormField label="name" name="name">
+                <FormField label="Name" name="name">
                   <TextInput
                     autoComplete="name"
                     name="name"
@@ -138,7 +138,7 @@ export default class SignUp extends Component<SignUpProps> {
                   />
                 </FormField>
                 <FormField
-                  label="email"
+                  label="Email"
                   required
                   name="email"
                   error={
@@ -159,7 +159,7 @@ export default class SignUp extends Component<SignUpProps> {
                   />
                 </FormField>
                 <FormField
-                  label="password"
+                  label="Password"
                   required
                   name="password"
                   error={
@@ -188,7 +188,7 @@ export default class SignUp extends Component<SignUpProps> {
                   <motion.div whileTap={{ scale: 0.9 }}>
                     <Button
                       hoverIndicator="transparent"
-                      label="submit"
+                      label="Submit"
                       type="submit"
                       primary
                       size={size === 'small' ? 'small' : 'medium'}
@@ -197,7 +197,7 @@ export default class SignUp extends Component<SignUpProps> {
                   <motion.div whileTap={{ scale: 0.9 }}>
                     <Button
                       hoverIndicator="accent-1"
-                      label="reset"
+                      label="Reset"
                       type="reset"
                       size={size === 'small' ? 'small' : 'medium'}
                     />

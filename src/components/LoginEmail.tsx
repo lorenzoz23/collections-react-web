@@ -40,7 +40,7 @@ export default class LoginEmail extends Component<LoginEmailProps> {
                 this.setState({ activeIndex: index });
               }}
             >
-              <Tab title="sign in">
+              <Tab title="Sign in">
                 <SignIn
                   goBack={this.props.goBack}
                   email={this.state.email}
@@ -53,7 +53,7 @@ export default class LoginEmail extends Component<LoginEmailProps> {
                   rememberMe={this.props.rememberMe}
                 />
               </Tab>
-              <Tab title="sign up">
+              <Tab title="Sign up">
                 <SignUp
                   handleUserSignUp={(email: string, password: string) =>
                     this.handleUserSignUp(email, password)

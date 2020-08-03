@@ -3,11 +3,9 @@ import {
   Layer,
   Box,
   Heading,
-  RadioButtonGroup,
   Button,
   Text,
   ResponsiveContext,
-  CheckBox,
   Select,
   TextInput
 } from 'grommet';
@@ -17,10 +15,7 @@ import { movie } from './HomePage';
 import { searchResults } from './MovieSearchResult';
 
 interface SettingsProps {
-  logOut(): void;
   toggleSettings(): void;
-  loggedIn: boolean;
-  handleWishlist(checked: boolean): void;
   handleParsed(movieList: searchResults): void;
   wishlist: boolean;
   uid: string;
@@ -33,7 +28,6 @@ interface SettingsProps {
 
 export default class Settings extends Component<SettingsProps> {
   state = {
-    loggedIn: this.props.loggedIn,
     wishlistChecked: this.props.wishlist,
     theme: '',
     showDeleteAccountLayer: false,
@@ -43,21 +37,6 @@ export default class Settings extends Component<SettingsProps> {
   componentDidMount = () => {
     const mode = localStorage.getItem('visualModeValue') || 'wedding';
     this.setState({ theme: mode });
-  };
-
-  logOut = () => {
-    this.setState({
-      loggedIn: false
-    });
-    this.props.logOut();
-  };
-
-  handleWishlist = (event: any) => {
-    this.setState({
-      wishlistChecked: event.target.checked
-    });
-
-    this.props.handleWishlist(event.target.checked);
   };
 
   handleThemeChange = (mode: string) => {
@@ -128,31 +107,12 @@ export default class Settings extends Component<SettingsProps> {
               background="layer"
               justify="center"
               align="center"
-              pad="small"
+              pad={{ bottom: 'medium', right: 'small', left: 'small' }}
               round
               border={{ color: 'accent-1', side: 'all', size: 'medium' }}
             >
               <Heading level="2">settings</Heading>
               <Box gap="small" alignContent="center">
-                <Box gap="xsmall" align="center">
-                  <Text weight="bold">status</Text>
-                  <RadioButtonGroup
-                    name="status"
-                    value={this.state.loggedIn ? 'logged in' : 'log out'}
-                    onChange={this.logOut}
-                    direction="row"
-                    options={['logged in', 'log out']}
-                  />
-                </Box>
-                <Box gap="xsmall" align="center">
-                  <Text weight="bold">wishlist view</Text>
-                  <CheckBox
-                    checked={this.state.wishlistChecked}
-                    toggle
-                    reverse
-                    onChange={(event) => this.handleWishlist(event)}
-                  />
-                </Box>
                 <Box align="center" gap="xsmall">
                   <Text weight="bold">import/export data</Text>
                   <CSV

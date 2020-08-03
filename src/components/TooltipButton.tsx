@@ -28,21 +28,21 @@ export const TooltipButton = (props: any) => {
           />
 
           {ref.current && over && size !== 'small' && (
-            <Drop align={{ left: 'right' }} target={ref.current} plain>
+            <Drop align={{ top: 'bottom' }} target={ref.current} plain>
               <Box
-                animation="slideRight"
-                margin="xsmall"
+                animation="slideDown"
+                margin="small"
                 pad="medium"
                 width="medium"
                 background={{ color: 'accent-1' }}
                 round="medium"
               >
                 <Text size="small">
-                  we only support searching a film through its title and year.
-                  however, if you wanted to search/add films based on a wider
+                  We only support searching a film through its title and year.
+                  However, if you wanted to search/add films based on a wider
                   range of criteria, we recommend creating a csv file containing
                   all the films you wish to add along with the relevant
-                  information required to add films from a csv file. for more
+                  information required to add films from a csv file. For more
                   information on adding films from a csv file, go to settings!
                 </Text>
               </Box>
@@ -62,11 +62,11 @@ export const TooltipButton = (props: any) => {
                 overflow={{ vertical: 'auto', horizontal: 'hidden' }}
               >
                 <Text textAlign="center" size="small">
-                  we only support searching a film through its title and year.
-                  however, if you wanted to search/add films based on a wider
+                  We only support searching a film through its title and year.
+                  However, if you wanted to search/add films based on a wider
                   range of criteria, we recommend creating a csv file containing
                   all the films you wish to add along with the relevant
-                  information required to add films from a csv file. for more
+                  information required to add films from a csv file. For more
                   information on adding films from a csv file, go to settings!
                 </Text>
                 <Button

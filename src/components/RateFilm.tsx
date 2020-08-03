@@ -120,7 +120,7 @@ export default class RateFilm extends Component<RateFilmProps> {
                   borderRadius: size !== 'small' ? 30 : 0,
                   width: size === 'small' ? '100%' : undefined
                 }}
-                //onClickOutside={() => this.setState({ showRate: false })}
+                onClickOutside={this.handleCancel}
                 margin={size !== 'small' ? { top: 'medium' } : undefined}
                 color="light-2"
               >
@@ -155,7 +155,7 @@ export default class RateFilm extends Component<RateFilmProps> {
                       side: 'all',
                       color: 'accent-1',
                       size: 'medium',
-                      style: 'ridge'
+                      style: 'outset'
                     }}
                     round
                   >

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Box, Button, ResponsiveContext, Text } from 'grommet';
-import { Close, Previous, Trash } from 'grommet-icons';
+import { Close, Previous } from 'grommet-icons';
 import SyncLoader from 'react-spinners/SyncLoader';
 
 import { movie, AppBar } from './HomePage';
@@ -118,7 +118,19 @@ export default class MovieSearchResult extends Component<
     }
   };
 
-  checkedMovie = (movie: searchResultMovie, wishlist: boolean) => {
+  handleCheck = (movie: searchResultMovie, wishlist: boolean) => {
+    if (this.props.parsed) {
+      this.handleImportChecked(movie, wishlist);
+    } else {
+      if (wishlist) {
+        this.props.moviesAdded([], [movie.movie]);
+      } else {
+        this.props.moviesAdded([movie.movie], []);
+      }
+    }
+  };
+
+  handleImportChecked = (movie: searchResultMovie, wishlist: boolean) => {
     const bothUnchecked = !movie.checkedLot && !movie.checkedWishlist;
     let results: searchResultMovie[] = [];
     let updatedMovie = movie;
@@ -219,9 +231,6 @@ export default class MovieSearchResult extends Component<
   };
 
   render() {
-    const label = !this.props.parsed
-      ? 'click to add ' + this.state.numToAdd
-      : this.state.numToAdd;
     if (this.state.loading) {
       return (
         <Box align="center" justify="center" flex background="header">
@@ -291,7 +300,7 @@ export default class MovieSearchResult extends Component<
                             direction="row"
                           >
                             <Button
-                              label={label}
+                              label={this.state.numToAdd}
                               primary
                               size="small"
                               hoverIndicator="accent-1"
@@ -299,38 +308,17 @@ export default class MovieSearchResult extends Component<
                               onClick={this.moviesToAdd}
                             />
                             <Button
-                              focusIndicator={false}
-                              icon={<Trash color="deleteMovie" />}
+                              primary
+                              color="deleteMovie"
+                              size="small"
                               alignSelf="center"
-                              title="clear selection"
+                              label="clear selection"
                               onClick={this.clearSelectedMovies}
                             />
                           </Box>
                         )}
                       </Box>
                     )}
-                    {this.state.numToAdd > 0 && !this.props.parsed ? (
-                      <Box
-                        gap={size === 'small' ? 'none' : 'xsmall'}
-                        direction="row"
-                      >
-                        <Button
-                          label={label}
-                          primary
-                          size="small"
-                          hoverIndicator="accent-1"
-                          alignSelf="center"
-                          onClick={this.moviesToAdd}
-                        />
-                        <Button
-                          focusIndicator={false}
-                          icon={<Trash color="deleteMovie" />}
-                          alignSelf="center"
-                          title="clear selection"
-                          onClick={this.clearSelectedMovies}
-                        />
-                      </Box>
-                    ) : null}
                     <Button
                       title="cancel"
                       icon={<Close />}
@@ -338,9 +326,10 @@ export default class MovieSearchResult extends Component<
                     />
                   </AppBar>
                   <MovieListResults
+                    parsed={this.props.parsed}
                     movieList={this.state.movieList}
                     checkedMovie={(movie, wishlist) =>
-                      this.checkedMovie(movie, wishlist)
+                      this.handleCheck(movie, wishlist)
                     }
                     showMovieDetails={(movie) => this.showMovieDetails(movie)}
                   />

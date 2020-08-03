@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
-import { Box, Text, ResponsiveContext, Grid, Layer } from 'grommet';
+import { Box, Text, ResponsiveContext, Grid, Layer, Button } from 'grommet';
 import DotLoader from 'react-spinners/DotLoader';
 
 import type { movie } from './HomePage';
 import SingleMovieView from './SingleMovieView';
 import { Movie } from './Movie';
 import { Sort } from './Sort';
+import { Aed, Add, Dislike } from 'grommet-icons';
 
 const columns: Record<string, string[]> = {
   small: ['auto', 'auto', 'auto'],
@@ -30,11 +31,54 @@ interface CollectionProps {
   tags: string[];
 }
 
+const DeleteMovieConfirmation = (props: any) => {
+  return (
+    <Layer
+      onClickOutside={() => props.closeModal(false)}
+      position="bottom"
+      style={{ borderRadius: 30 }}
+      margin="small"
+    >
+      <Box
+        align="center"
+        pad="medium"
+        round
+        gap="medium"
+        background="home"
+        border={{ side: 'all', size: 'small', color: 'light-2' }}
+      >
+        <Text weight="bold" textAlign="center">
+          Are you sure you want to delete this movie from your
+          {props.wishlist ? ' wishlist' : ' lot'}?
+        </Text>
+        <Box align="center" gap="small">
+          <Button
+            color="status-error"
+            primary
+            label="Yes, I'm sure"
+            onClick={() => {
+              props.closeModal(false);
+              props.handleDelete(props.movie.id);
+            }}
+          />
+          <Button
+            primary
+            color="accent-1"
+            label="No, I'll keep it around"
+            onClick={() => props.closeModal(false)}
+          />
+        </Box>
+      </Box>
+    </Layer>
+  );
+};
+
 export default class Collection extends Component<CollectionProps> {
   state: {
     movieDetailsVisible: boolean;
     movieToShow: movie;
     randBackDrop: number;
+    showConfirm: boolean;
     //movies: movie[];
   } = {
     movieDetailsVisible: false,
@@ -52,7 +96,8 @@ export default class Collection extends Component<CollectionProps> {
       starCount: -1,
       backDrop: []
     },
-    randBackDrop: 0
+    randBackDrop: 0,
+    showConfirm: false
     //movies: []
   };
 
@@ -61,11 +106,22 @@ export default class Collection extends Component<CollectionProps> {
       <Box align="center" justify="center" flex>
         {this.props.searchList.length === 0 &&
         this.props.searchVal.length > 0 ? (
-          <Text>no such title</Text>
+          <Box align="center" gap="small">
+            <Text>
+              No such title present in your{' '}
+              {this.props.wishlist ? 'wishlist' : 'lot'}
+            </Text>
+            <Dislike size="large" />
+          </Box>
         ) : (
-          <Text>
-            there is nothing in your {this.props.wishlist ? 'wishlist' : 'lot'}
-          </Text>
+          <Box align="center" gap="small">
+            <Text>
+              There is nothing in your{' '}
+              {this.props.wishlist ? 'wishlist' : 'lot'}.
+            </Text>
+            <Aed size="large" />
+            Add a film by clicking on the <Add /> button!
+          </Box>
         )}
       </Box>
     );
@@ -170,13 +226,6 @@ export default class Collection extends Component<CollectionProps> {
     );
   };
 
-  handleDelete = (id: string) => {
-    this.setState({
-      movieDetailsVisible: false
-    });
-    this.props.handleDelete(id);
-  };
-
   render() {
     const moviesToMap: movie[] =
       this.props.searchVal.length > 0
@@ -224,7 +273,11 @@ export default class Collection extends Component<CollectionProps> {
                     }}
                     movie={this.state.movieToShow}
                     add={false}
-                    handleDelete={(id: string) => this.handleDelete(id)}
+                    handleDelete={() =>
+                      this.setState({
+                        showConfirm: true
+                      })
+                    }
                     handleRate={(updatedMovie: movie) =>
                       this.props.handleRate(updatedMovie)
                     }
@@ -242,6 +295,17 @@ export default class Collection extends Component<CollectionProps> {
                     tags={this.props.tags}
                     wishlist={this.props.wishlist}
                   />
+                  {this.state.showConfirm && (
+                    <DeleteMovieConfirmation
+                      movie={this.state.movieToShow}
+                      wishlist={this.props.wishlist}
+                      closeModal={() => this.setState({ showConfirm: false })}
+                      handleDelete={() => {
+                        this.setState({ movieDetailsVisible: false });
+                        this.props.handleDelete(this.state.movieToShow.id);
+                      }}
+                    />
+                  )}
                 </Layer>
               ) : null}
             </Box>

@@ -51,7 +51,7 @@ export default class LoginFacebook extends Component<LoginFacebookProps> {
               primary
               color="#006AFF"
               size={size === 'small' ? 'medium' : 'large'}
-              label="continue with facebook"
+              label="Continue with Facebook"
               icon={<Facebook color="#00E0FF" />}
               reverse
               onClick={async () => await this.signInWithFb()}

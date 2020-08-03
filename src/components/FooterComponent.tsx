@@ -63,7 +63,11 @@ export default class FooterComponent extends Component<FooterComponentProps> {
                     );
                   }}
                 >
-                  <Clock type="digital" alignSelf="center" />
+                  <Clock
+                    type="digital"
+                    alignSelf="center"
+                    precision="minutes"
+                  />
                 </Box>
               )}
               <Button
@@ -96,21 +100,21 @@ export default class FooterComponent extends Component<FooterComponentProps> {
                   overflow="auto"
                   border={{ size: 'medium', side: 'all', color: 'accent-1' }}
                 >
-                  <Heading textAlign="center">about cinelot</Heading>
+                  <Heading textAlign="center">About Cinelot</Heading>
                   <Paragraph textAlign="center">
-                    cinelot allows you to browse, search, and maintain your
+                    Cinelot allows you to browse, search, and maintain your
                     physical film collection on the go. gone are the days of
                     double purchasing blu-rays due to unforseen lapses in
                     memory.
                   </Paragraph>
                   <Text textAlign="center" weight="bold">
-                    tips and tricks:
+                    How to Use:
                   </Text>
                   <Paragraph textAlign="center">
-                    looking to add a film to your lot or wishlist? click on the
+                    Looking to add a film to your lot or wishlist? Click on the
                     + button at the top of the app and search by film title and
                     year (year is an optional field but is highly recommended
-                    for better, more concise results.) once you've added so many
+                    for better, more concise results.) Once you've added so many
                     movies that lazily scrolling through them becomes a hassle,
                     query the search bar with a film title to quickly see
                     whether you own it; if you don't, make sure to add it to
@@ -142,8 +146,8 @@ export default class FooterComponent extends Component<FooterComponentProps> {
                 textAlign="center"
               >
                 {this.props.width < 400
-                  ? 'movie data:'
-                  : 'movie data provided by:'}
+                  ? 'Movie data:'
+                  : 'Movie data provided by:'}
               </Text>
               <Anchor
                 alignSelf="center"

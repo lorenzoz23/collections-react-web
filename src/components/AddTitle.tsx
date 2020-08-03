@@ -6,9 +6,16 @@ import {
   TextInput,
   Layer,
   FormField,
-  ResponsiveContext
+  ResponsiveContext,
+  Form
 } from 'grommet';
-import { Add, FormNextLink, FormClose, CircleQuestion } from 'grommet-icons';
+import {
+  Add,
+  FormNextLink,
+  FormClose,
+  CircleQuestion,
+  Refresh
+} from 'grommet-icons';
 
 import MovieSearchResult, { searchResults } from './MovieSearchResult';
 import { movie } from './HomePage';
@@ -114,8 +121,7 @@ export default class AddTitle extends Component<AddTitleProps> {
   };
 
   moviesAdded = async (lotMovies: movie[], wishlistMovies: movie[]) => {
-    if (!this.props.parsed) this.closeAddTitle();
-    else this.props.handleFinishedImport!();
+    if (this.props.parsed) this.props.handleFinishedImport!();
     let updatedLotMovies: movie[] = [];
     let updatedWishlistMovies: movie[] = [];
     if (lotMovies) {
@@ -146,7 +152,12 @@ export default class AddTitle extends Component<AddTitleProps> {
                 position="center"
                 responsive={size === 'small' ? true : false}
                 onClickOutside={() => {
-                  this.setState({ visible: false });
+                  this.setState({
+                    visible: false,
+                    searchTitle: '',
+                    searchYear: '',
+                    searched: false
+                  });
                 }}
               >
                 <MovieSearchResult
@@ -167,7 +178,12 @@ export default class AddTitle extends Component<AddTitleProps> {
                 position="center"
                 responsive={size === 'small' ? true : false}
                 onClickOutside={() => {
-                  this.setState({ visible: false });
+                  this.setState({
+                    visible: false,
+                    searchTitle: '',
+                    searchYear: '',
+                    searched: false
+                  });
                 }}
               >
                 {this.state.searched ? (
@@ -195,52 +211,69 @@ export default class AddTitle extends Component<AddTitleProps> {
                     round={size === 'small' ? false : true}
                   >
                     <Heading textAlign="center" level="3">
-                      search a film to add!
+                      Search a film to add!
                     </Heading>
-                    <Box gap="small">
-                      <FormField label="title">
-                        <TextInput
-                          placeholder="parasite"
-                          value={this.state.searchTitle}
-                          onChange={(e) => {
-                            this.setState({
-                              searchTitle: e.target.value
-                            });
-                          }}
-                        />
-                      </FormField>
-                      <FormField label="year">
-                        <TextInput
-                          title="recommended for better results"
-                          placeholder="2019"
-                          value={this.state.searchYear}
-                          onChange={(e) => {
-                            this.setState({
-                              searchYear: e.target.value
-                            });
-                          }}
-                        />
-                      </FormField>
-                    </Box>
-                    <Box
-                      pad={{ top: 'medium' }}
-                      gap={size === 'small' ? 'medium' : 'small'}
-                    >
-                      <Button
-                        style={{ borderRadius: 100 }}
-                        size="small"
-                        hoverIndicator={{
-                          color: 'accent-1'
-                        }}
-                        primary
-                        disabled={
-                          this.state.searchTitle.length === 0 ? true : false
+                    <Box gap="small" align="center">
+                      <Form
+                        onSubmit={this.search}
+                        onReset={() =>
+                          this.setState({ searchTitle: '', searchYear: '' })
                         }
-                        icon={<FormNextLink />}
-                        onClick={() => {
-                          this.search();
-                        }}
-                      />
+                      >
+                        <FormField label="Title">
+                          <TextInput
+                            autoFocus
+                            placeholder="Parasite"
+                            value={this.state.searchTitle}
+                            onChange={(e) => {
+                              this.setState({
+                                searchTitle: e.target.value
+                              });
+                            }}
+                          />
+                        </FormField>
+                        <FormField label="Year">
+                          <TextInput
+                            title="recommended for better results"
+                            placeholder="2019"
+                            value={this.state.searchYear}
+                            onChange={(e) => {
+                              this.setState({
+                                searchYear: e.target.value
+                              });
+                            }}
+                          />
+                        </FormField>
+                        <Box direction="row" justify="between">
+                          <Button
+                            style={{ borderRadius: 100 }}
+                            size="small"
+                            type="submit"
+                            hoverIndicator="accent-1"
+                            primary
+                            disabled={
+                              this.state.searchTitle.length === 0 ? true : false
+                            }
+                            icon={<FormNextLink />}
+                          />
+                          <Button
+                            icon={<Refresh />}
+                            type="reset"
+                            style={{ borderRadius: 100 }}
+                            size="small"
+                            hoverIndicator="accent-1"
+                            primary
+                            disabled={
+                              this.state.searchTitle.length === 0 &&
+                              this.state.searchYear.length === 0
+                                ? true
+                                : false
+                            }
+                          />
+                        </Box>
+                      </Form>
+                    </Box>
+                    <Box>
                       {size === 'small' ? (
                         <Box alignContent="center">
                           <Button

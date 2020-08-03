@@ -71,7 +71,6 @@ export default class Login extends Component {
           const displayName =
             firebase.auth().currentUser!.displayName || 'stranger';
           name = snapshot.val() || displayName;
-          name = name.toLowerCase();
 
           this.setState({
             valid: true,
@@ -132,7 +131,7 @@ export default class Login extends Component {
                       bottom: this.state.width >= 500 ? 500 : 50
                     }}
                   >
-                    <Heading color="#FF6C88">cinelot</Heading>
+                    <Heading color="#FF6C88">Cinelot</Heading>
                   </motion.div>
                 </Box>
                 {!this.state.loading ? (
@@ -161,7 +160,7 @@ export default class Login extends Component {
                       }}
                     >
                       <Heading color="#FF6C88" level="2">
-                        your film collection on the go
+                        Your film collection on the go
                       </Heading>
                     </motion.div>
                   </Box>
@@ -177,7 +176,7 @@ export default class Login extends Component {
                       }}
                     >
                       <Heading color="#FF6C88" level="3">
-                        your films on the go
+                        Your films on the go
                       </Heading>
                     </motion.div>
                   </Box>

@@ -63,7 +63,7 @@ export default class LoginButtons extends Component<LoginButtonProps> {
                     <Button
                       primary
                       size={size === 'small' ? 'medium' : 'large'}
-                      label="continue with email"
+                      label="Continue with email"
                       icon={<MailOption />}
                       reverse
                       onClick={() => {
@@ -82,7 +82,7 @@ export default class LoginButtons extends Component<LoginButtonProps> {
                   <Box align="center">
                     <motion.div whileTap={{ scale: 0.9 }}>
                       <CheckBox
-                        label="remember me?"
+                        label="Remember me?"
                         checked={this.state.rememberMe}
                         onChange={(event) =>
                           this.setState({ rememberMe: event.target.checked })

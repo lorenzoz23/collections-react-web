@@ -90,6 +90,11 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                   }}
                 >
                   <SelectMultiple
+                    placeholder={
+                      this.props.wishlist
+                        ? 'how would you like to own this?'
+                        : 'how do you own this?'
+                    }
                     title={
                       this.props.wishlist
                         ? 'how would you like to own this title?'
@@ -111,7 +116,7 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                   color={
                     size === 'small' && mode === 'solid' ? 'black' : undefined
                   }
-                  level="3"
+                  level="2"
                   textAlign="center"
                 >
                   {this.props.movie.name}
@@ -321,6 +326,11 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                 )}
                 {size !== 'small' && (
                   <SelectMultiple
+                    placeholder={
+                      this.props.wishlist
+                        ? 'how would you like to own this?'
+                        : 'how do you own this?'
+                    }
                     title={
                       this.props.wishlist
                         ? 'how would you like to own this title?'

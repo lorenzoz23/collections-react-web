@@ -4,6 +4,7 @@ import { FormClose } from 'grommet-icons';
 
 interface SelectSingularProps {
   tags: string[];
+  placeholder: string;
   title: string;
   plain: boolean;
   handleSelected(selected: string, created: boolean): void;
@@ -124,7 +125,7 @@ export default class SelectSingular extends Component<SelectSingularProps> {
                   pad={{ vertical: 'xsmall', horizontal: 'small' }}
                   margin="xsmall"
                 >
-                  <Text>select tags</Text>
+                  <Text>{this.props.placeholder}</Text>
                 </Box>
               )}
             </Box>

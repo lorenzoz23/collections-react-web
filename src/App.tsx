@@ -87,6 +87,24 @@ const themeWeird = {
       size: '14px',
       height: '20px'
     }
+  },
+  tab: {
+    color: 'light-2',
+    hover: {
+      color: 'accent-1'
+    },
+    active: {
+      color: 'accent-1'
+    },
+    border: {
+      color: 'light-2',
+      hover: {
+        color: 'accent-1'
+      },
+      active: {
+        color: 'accent-1'
+      }
+    }
   }
 };
 

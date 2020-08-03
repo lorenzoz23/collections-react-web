@@ -13,6 +13,7 @@ import { Next, DocumentImage } from 'grommet-icons'; //Configure, TroubleShoot, 
 
 interface MovieListResultsProps {
   movieList: searchResults;
+  parsed: boolean;
   checkedMovie(movie: searchResultMovie, wishlist: boolean): void;
   showMovieDetails(movie: movie): void;
 }
@@ -83,31 +84,65 @@ export default class MovieListResults extends Component<MovieListResultsProps> {
                           ')'
                         : item.movie.name}
                     </Heading>
-                    <Box direction="row" gap="small" alignSelf="start">
-                      <CheckBox
-                        checked={item.checkedLot}
-                        label={size === 'small' ? 'lot?' : 'add film to lot?'}
-                        onChange={() => {
-                          this.props.checkedMovie(item, false);
-                        }}
-                      />
-                      <CheckBox
-                        checked={item.checkedWishlist}
-                        label={
-                          size === 'small'
-                            ? 'wishlist?'
-                            : 'add film to wishlist?'
-                        }
-                        onChange={() => {
-                          this.props.checkedMovie(item, true);
-                        }}
-                      />
-                      <Button
-                        icon={<Next />}
-                        title="details"
-                        onClick={() => this.props.showMovieDetails(item.movie)}
-                      />
-                    </Box>
+                    {this.props.parsed ? (
+                      <Box direction="row" gap="small" alignSelf="start">
+                        <CheckBox
+                          checked={item.checkedLot}
+                          label={size === 'small' ? 'lot?' : 'add film to lot?'}
+                          onChange={() => {
+                            this.props.checkedMovie(item, false);
+                          }}
+                        />
+                        <CheckBox
+                          checked={item.checkedWishlist}
+                          label={
+                            size === 'small'
+                              ? 'wishlist?'
+                              : 'add film to wishlist?'
+                          }
+                          onChange={() => {
+                            this.props.checkedMovie(item, true);
+                          }}
+                        />
+                        <Button
+                          icon={<Next />}
+                          title="details"
+                          onClick={() =>
+                            this.props.showMovieDetails(item.movie)
+                          }
+                        />
+                      </Box>
+                    ) : (
+                      <Box direction="row" gap="small" alignSelf="start">
+                        <Button
+                          hoverIndicator="accent-1"
+                          label={
+                            size === 'small' ? 'add to lot' : 'add film to lot'
+                          }
+                          onClick={() => {
+                            this.props.checkedMovie(item, false);
+                          }}
+                        />
+                        <Button
+                          hoverIndicator="accent-1"
+                          label={
+                            size === 'small'
+                              ? 'add to wishlist'
+                              : 'add film to wishlist'
+                          }
+                          onClick={() => {
+                            this.props.checkedMovie(item, true);
+                          }}
+                        />
+                        <Button
+                          icon={<Next />}
+                          title="details"
+                          onClick={() =>
+                            this.props.showMovieDetails(item.movie)
+                          }
+                        />
+                      </Box>
+                    )}
                   </Box>
                 </Box>
               ))

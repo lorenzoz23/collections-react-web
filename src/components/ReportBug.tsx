@@ -107,7 +107,7 @@ export default class ReportBug extends Component<ReportBugProps> {
                   overflow="auto"
                 >
                   <Heading margin="small" textAlign="center">
-                    report a bug
+                    Report a Bug
                   </Heading>
                   <Bug size="large" />
                   <Form
@@ -130,7 +130,7 @@ export default class ReportBug extends Component<ReportBugProps> {
                         title="c'mon, get clever"
                         name="title"
                         size="large"
-                        placeholder="title (optional)"
+                        placeholder="Title (optional)"
                       />
                     </FormField>
                     <FormField
@@ -144,7 +144,7 @@ export default class ReportBug extends Component<ReportBugProps> {
                         size="large"
                         focusIndicator
                         id="description-input-id"
-                        placeholder="description of bug"
+                        placeholder="Description of bug"
                       />
                     </FormField>
                     <FormField
@@ -158,7 +158,7 @@ export default class ReportBug extends Component<ReportBugProps> {
                         size="large"
                         focusIndicator
                         id="message-input-id"
-                        placeholder="how can we reproduce this bug?"
+                        placeholder="How can we reproduce this bug?"
                       />
                     </FormField>
                     <Box

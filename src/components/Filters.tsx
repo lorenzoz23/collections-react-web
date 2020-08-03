@@ -40,14 +40,14 @@ interface FiltersProps {
 }
 
 const labels: Record<string, string> = {
-  nameAsc: 'title (asc)',
-  nameDesc: 'title (desc)',
-  runtimeAsc: 'runtime (asc)',
-  runtimeDesc: 'runtime (desc)',
-  mpaaAsc: 'mpaa rating (g - nc17)',
-  mpaaDesc: 'mpaa rating (nc17 - g)',
-  starCountAsc: 'star count (0 - 10)',
-  starCountDesc: 'star count (10 - 0)'
+  nameAsc: 'Title (asc)',
+  nameDesc: 'Title (desc)',
+  runtimeAsc: 'Runtime (asc)',
+  runtimeDesc: 'Runtime (desc)',
+  mpaaAsc: 'MPAA rating (G - NC17)',
+  mpaaDesc: 'MPAA rating (NC17 - G)',
+  starCountAsc: 'Your rating (0 - 10)',
+  starCountDesc: 'Your rating (10 - 0)'
 };
 
 export default class Filters extends Component<FiltersProps> {
@@ -69,7 +69,7 @@ export default class Filters extends Component<FiltersProps> {
     updatedText: '',
     showUpdateBox: false,
     sort: '',
-    sortLabel: 'time added',
+    sortLabel: 'Time added',
     checked: false
   };
 
@@ -175,7 +175,7 @@ export default class Filters extends Component<FiltersProps> {
       this.setState({
         checked: checked,
         sort: '',
-        sortLabel: 'time added'
+        sortLabel: 'Time added'
       });
       this.props.handleSort('', this.state.checked);
     } else {
@@ -222,7 +222,7 @@ export default class Filters extends Component<FiltersProps> {
                   textAlign="center"
                   wordBreak="keep-all"
                 >
-                  active filter
+                  Active filter
                 </Text>
               )}
               {this.state.sort.length > 0 &&
@@ -234,7 +234,7 @@ export default class Filters extends Component<FiltersProps> {
                     textAlign="center"
                     wordBreak="keep-all"
                   >
-                    active sort
+                    Active sort
                   </Text>
                 )}
             </Box>
@@ -265,7 +265,7 @@ export default class Filters extends Component<FiltersProps> {
                   justify="between"
                 >
                   <Box>
-                    <Heading textAlign="center">filters</Heading>
+                    <Heading textAlign="center">Filters</Heading>
                     <Box gap="medium">
                       <Box
                         pad={size === 'small' ? 'medium' : 'small'}
@@ -280,7 +280,7 @@ export default class Filters extends Component<FiltersProps> {
                       >
                         <Box border="between" gap="small" align="center">
                           <Text textAlign="center" weight="bold">
-                            sort by
+                            Sort by
                           </Text>
                           <Menu
                             margin="xsmall"
@@ -293,42 +293,42 @@ export default class Filters extends Component<FiltersProps> {
                             icon={<Sort />}
                             items={[
                               {
-                                label: 'title (asc)',
+                                label: 'Title (asc)',
                                 onClick: () => this.handleSort('nameAsc'),
                                 hoverIndicator: 'accent-1'
                               },
                               {
-                                label: 'title (desc)',
+                                label: 'Title (desc)',
                                 onClick: () => this.handleSort('nameDesc'),
                                 hoverIndicator: 'accent-1'
                               },
                               {
-                                label: 'runtime (asc)',
+                                label: 'Runtime (asc)',
                                 onClick: () => this.handleSort('runtimeAsc'),
                                 hoverIndicator: 'accent-1'
                               },
                               {
-                                label: 'runtime (desc)',
+                                label: 'Runtime (desc)',
                                 onClick: () => this.handleSort('runtimeDesc'),
                                 hoverIndicator: 'accent-1'
                               },
                               {
-                                label: 'mpaa rating (g - nc17)',
+                                label: 'MPAA rating (G - NC17)',
                                 onClick: () => this.handleSort('mpaaAsc'),
                                 hoverIndicator: 'accent-1'
                               },
                               {
-                                label: 'mpaa rating (nc17 - g)',
+                                label: 'MPAA rating (NC17 - G)',
                                 onClick: () => this.handleSort('mpaaDesc'),
                                 hoverIndicator: 'accent-1'
                               },
                               {
-                                label: 'star count (0 - 10)',
+                                label: 'Your rating (0 - 10)',
                                 onClick: () => this.handleSort('starCountAsc'),
                                 hoverIndicator: 'accent-1'
                               },
                               {
-                                label: 'star count (10 - 0)',
+                                label: 'Your rating (10 - 0)',
                                 onClick: () => this.handleSort('starCountDesc'),
                                 hoverIndicator: 'accent-1'
                               }
@@ -338,7 +338,7 @@ export default class Filters extends Component<FiltersProps> {
                             <CheckBox
                               toggle
                               checked={this.state.checked}
-                              label="save sorted order"
+                              label="Save sorted order"
                               reverse
                               onChange={(event) =>
                                 this.handleOrderChange(event.target.checked)
@@ -346,12 +346,12 @@ export default class Filters extends Component<FiltersProps> {
                             />
                             <Box direction="row" gap="xsmall" align="center">
                               <Text size="small" weight="bold">
-                                default:
+                                Default:
                               </Text>
                               <Text size="small">
                                 {this.state.checked
                                   ? this.state.sortLabel
-                                  : 'time added'}
+                                  : 'Time added'}
                               </Text>
                             </Box>
                           </Box>
@@ -374,7 +374,7 @@ export default class Filters extends Component<FiltersProps> {
                         }}
                       >
                         <Text textAlign="center" weight="bold">
-                          tags
+                          Tags
                         </Text>
                         {this.state.showUpdateBox ? (
                           <TextInput
@@ -510,7 +510,7 @@ export default class Filters extends Component<FiltersProps> {
                       <Button
                         alignSelf="center"
                         onClick={this.handleResetFilters}
-                        label="reset filters"
+                        label="Reset filters"
                         hoverIndicator="accent-1"
                         icon={<PowerReset />}
                         reverse

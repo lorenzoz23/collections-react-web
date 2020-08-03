@@ -5,6 +5,7 @@ import { FormClose, CloudUpload } from 'grommet-icons'; // or Save
 interface SelectMultipleProps {
   movieTags?: number[];
   title: string;
+  placeholder: string;
   tags: string[];
   backgroundColor?: string;
   plain: boolean;
@@ -132,7 +133,7 @@ export default class SelectMultiple extends Component<SelectMultipleProps> {
                       pad={{ vertical: 'xsmall', horizontal: 'small' }}
                       margin="xsmall"
                     >
-                      <Text>select tags</Text>
+                      <Text>{this.props.placeholder}</Text>
                     </Box>
                   )}
                 </Box>

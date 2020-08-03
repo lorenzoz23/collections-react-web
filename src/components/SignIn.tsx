@@ -182,7 +182,7 @@ export default class SignIn extends Component<SignInProps> {
                 onReset={() => this.setState(this.defaultState)}
               >
                 <FormField
-                  label="email"
+                  label="Email"
                   required
                   name="email"
                   error={
@@ -202,7 +202,7 @@ export default class SignIn extends Component<SignInProps> {
                   />
                 </FormField>
                 <FormField
-                  label="password"
+                  label="Password"
                   required
                   name="password"
                   autoComplete="current-password"
@@ -259,7 +259,7 @@ export default class SignIn extends Component<SignInProps> {
                 <Box align="center" gap="small">
                   <motion.div whileTap={{ scale: 0.9 }}>
                     <CheckBox
-                      label="remember me?"
+                      label="Remember me?"
                       checked={this.state.rememberMe}
                       onChange={(event) => this.handleRemember(event)}
                     />
@@ -273,7 +273,7 @@ export default class SignIn extends Component<SignInProps> {
                   >
                     <Anchor
                       disabled={this.state.email.length === 0}
-                      label="forgot password"
+                      label="Forgot password"
                       alignSelf="center"
                       onClick={this.handleResetPassword}
                     />
