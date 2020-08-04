@@ -10,7 +10,6 @@ import {
   Form
 } from 'grommet';
 import {
-  Add,
   FormNextLink,
   FormClose,
   CircleQuestion,
@@ -26,11 +25,12 @@ interface AddTitleProps {
   parsed?: boolean;
   movieList?: searchResults;
   handleFinishedImport?(): void;
+  handleClose?(): void;
+  title?: string;
 }
 
 export default class AddTitle extends Component<AddTitleProps> {
   state = {
-    visible: false,
     searchTitle: '',
     searchYear: '',
     searched: false
@@ -44,11 +44,11 @@ export default class AddTitle extends Component<AddTitleProps> {
 
   closeAddTitle = () => {
     this.setState({
-      visible: false,
       searchTitle: '',
       searchYear: '',
       searched: false
     });
+    this.props.handleClose!();
   };
 
   closeMovieSearchResult = () => {
@@ -138,29 +138,15 @@ export default class AddTitle extends Component<AddTitleProps> {
     return (
       <ResponsiveContext.Consumer>
         {(size) => (
-          <Box title="add a film!" align="center">
-            <Button
-              focusIndicator={false}
-              hoverIndicator="accent-1"
-              onClick={() => {
-                this.setState({ visible: true });
-              }}
-              icon={<Add />}
-            />
+          <Box align="center">
             {this.props.parsed ? (
               <Layer
                 position="center"
                 responsive={size === 'small' ? true : false}
-                onClickOutside={() => {
-                  this.setState({
-                    visible: false,
-                    searchTitle: '',
-                    searchYear: '',
-                    searched: false
-                  });
-                }}
+                onClickOutside={this.closeAddTitle}
               >
                 <MovieSearchResult
+                  back={false}
                   imports={this.props.movieList}
                   closeAdd={this.props.handleFinishedImport!}
                   parsed={true}
@@ -169,7 +155,7 @@ export default class AddTitle extends Component<AddTitleProps> {
                   }
                 />
               </Layer>
-            ) : this.state.visible ? (
+            ) : (
               <Layer
                 style={{
                   borderRadius:
@@ -177,19 +163,13 @@ export default class AddTitle extends Component<AddTitleProps> {
                 }}
                 position="center"
                 responsive={size === 'small' ? true : false}
-                onClickOutside={() => {
-                  this.setState({
-                    visible: false,
-                    searchTitle: '',
-                    searchYear: '',
-                    searched: false
-                  });
-                }}
+                onClickOutside={this.closeAddTitle}
               >
-                {this.state.searched ? (
+                {this.state.searched || this.props.title?.length! > 0 ? (
                   <MovieSearchResult
+                    back={this.props.title ? false : true}
                     parsed={false}
-                    title={this.state.searchTitle}
+                    title={this.props.title || this.state.searchTitle}
                     year={this.state.searchYear}
                     closeAdd={this.closeAddTitle}
                     closeResult={this.closeMovieSearchResult}
@@ -278,9 +258,7 @@ export default class AddTitle extends Component<AddTitleProps> {
                         <Box alignContent="center">
                           <Button
                             icon={<FormClose />}
-                            onClick={() => {
-                              this.setState({ visible: false });
-                            }}
+                            onClick={this.props.handleClose}
                           />
                           <TooltipButton
                             title=""
@@ -299,7 +277,7 @@ export default class AddTitle extends Component<AddTitleProps> {
                   </Box>
                 )}
               </Layer>
-            ) : null}
+            )}
           </Box>
         )}
       </ResponsiveContext.Consumer>

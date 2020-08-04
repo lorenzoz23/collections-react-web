@@ -10,7 +10,9 @@ import {
   Paragraph,
   Button,
   Text,
-  DropButton
+  DropButton,
+  Form,
+  Anchor
 } from 'grommet';
 import {
   Search,
@@ -21,7 +23,9 @@ import {
   FormUp,
   UserSettings,
   Logout,
-  Down
+  Down,
+  Add,
+  Checkmark
 } from 'grommet-icons';
 import firebase from 'firebase/app';
 import 'firebase/auth';
@@ -50,7 +54,7 @@ export const AppBar = (props: any) => (
     align="center"
     justify="between"
     background="header"
-    style={{ zIndex: '1' }}
+    style={{ zIndex: 10 }}
     {...props}
   />
 );
@@ -86,7 +90,6 @@ export default class HomePage extends Component {
     loading: boolean;
     greeting: boolean;
     greetingChecked: boolean;
-    welcomeChecked: boolean;
     notification: boolean;
     notificationText: string;
     width: number;
@@ -98,6 +101,10 @@ export default class HomePage extends Component {
     goodNotification: boolean;
     userProfileClicked: boolean;
     welcomeBack: boolean;
+    randAddFilmBackDrop: number;
+    addFilmSearchVal: string;
+    tmdbSearched: boolean;
+    showAdvancedSearch: boolean;
   } = {
     uid: '',
     name: '',
@@ -113,7 +120,6 @@ export default class HomePage extends Component {
     loading: true,
     greeting: false,
     greetingChecked: false,
-    welcomeChecked: false,
     notification: false,
     notificationText: '',
     width: 0,
@@ -126,7 +132,11 @@ export default class HomePage extends Component {
     },
     goodNotification: false,
     userProfileClicked: false,
-    welcomeBack: false
+    welcomeBack: false,
+    randAddFilmBackDrop: 0,
+    addFilmSearchVal: '',
+    tmdbSearched: false,
+    showAdvancedSearch: false
   };
 
   constructor(props: any) {
@@ -146,7 +156,6 @@ export default class HomePage extends Component {
       loading: true,
       greeting: false,
       greetingChecked: false,
-      welcomeChecked: false,
       notification: false,
       notificationText: '',
       width: 0,
@@ -159,10 +168,12 @@ export default class HomePage extends Component {
       },
       goodNotification: false,
       userProfileClicked: false,
-      welcomeBack: false
+      welcomeBack: false,
+      randAddFilmBackDrop: 0,
+      addFilmSearchVal: '',
+      tmdbSearched: false,
+      showAdvancedSearch: false
     };
-    //console.log('uid: ' + this.state.uid);
-    //console.log('name: ' + this.state.name);
   }
 
   componentDidMount = () => {
@@ -230,17 +241,17 @@ export default class HomePage extends Component {
           localStorage.setItem('welcomeBack', 'show');
           showWelcome = true;
         }
-        this.setState(
-          {
-            movies: lot,
-            sortBy: sort,
-            tags: tags,
-            loading: false,
-            greeting: showGreeting,
-            uid: uid,
-            welcomeBack: showWelcome
-          },
-          () => setTimeout(this.dismissWelcomeBack, 4000)
+        this.setState({
+          movies: lot,
+          sortBy: sort,
+          tags: tags,
+          loading: false,
+          greeting: showGreeting,
+          uid: uid,
+          randAddFilmBackDrop: Math.floor(Math.random() * 20)
+        });
+        this.setState({ welcomeBack: showWelcome }, () =>
+          setTimeout(() => this.setState({ welcomeBack: false }), 4000)
         );
       });
     }
@@ -536,6 +547,10 @@ export default class HomePage extends Component {
       searchVal: event.target.value,
       searchList: searchList
     });
+  };
+
+  handleSearchToAdd = () => {
+    this.setState({ tmdbSearched: this.state.addFilmSearchVal.length > 0 });
   };
 
   handleDeleteMovie = (id: string) => {
@@ -911,11 +926,8 @@ export default class HomePage extends Component {
     });
   };
 
-  dismissWelcomeBack = () => {
-    localStorage.setItem(
-      'welcomeBack',
-      this.state.welcomeChecked ? 'noShow' : 'show'
-    );
+  dismissWelcomeBack = (checked: boolean) => {
+    localStorage.setItem('welcomeBack', checked ? 'noShow' : 'show');
     this.setState({
       welcomeBack: false
     });
@@ -959,11 +971,10 @@ export default class HomePage extends Component {
                 pad={{ horizontal: size === 'small' ? 'medium' : undefined }}
               >
                 <AppBar
-                  pad={{ bottom: mode === 'wedding' ? 'xsmall' : 'none' }}
-                  margin={
+                  pad={
                     size !== 'small'
                       ? {
-                          right: 'none',
+                          bottom: mode === 'wedding' ? 'xsmall' : 'none',
                           left: 'small'
                         }
                       : { vertical: 'xsmall' }
@@ -1000,64 +1011,52 @@ export default class HomePage extends Component {
                           </Heading>
                         }
                       />
-                      <Box direction="row" align="center" gap="small">
-                        <TextInput
-                          value={this.state.searchVal}
-                          title="Search your film lot!"
-                          placeholder={`Search ${
-                            this.state.showWishlist
-                              ? this.state.wishlist.length
-                              : this.state.movies.length
-                          } ${
-                            this.state.movies.length === 1 ? 'film' : 'films'
-                          }...`}
-                          icon={<Search />}
-                          onChange={(event) => this.handleSearch(event)}
-                        />
-                        <Box>
-                          {this.state.parsed ? (
-                            <AddTitle
-                              moviesAdded={(
-                                lotMovies: movie[],
-                                wishlistMovies: movie[]
-                              ) => this.moviesAdded(lotMovies, wishlistMovies)}
-                              parsed={true}
-                              movieList={this.state.imports}
-                              handleFinishedImport={this.handleFinishedImport}
+                      <Box>
+                        <Form onSubmit={this.handleSearchToAdd}>
+                          <Box direction="row" gap="medium" width="large">
+                            <TextInput
+                              value={this.state.addFilmSearchVal}
+                              placeholder="Search a film to add by title!"
+                              icon={<Add />}
+                              onChange={(event) =>
+                                this.setState({
+                                  addFilmSearchVal: event.target.value
+                                })
+                              }
                             />
-                          ) : (
-                            <AddTitle
-                              moviesAdded={(
-                                lotMovies: movie[],
-                                wishlistMovies: movie[]
-                              ) => this.moviesAdded(lotMovies, wishlistMovies)}
+                            <Anchor
+                              label="Advanced Search"
+                              alignSelf="center"
+                              onClick={() =>
+                                this.setState({ showAdvancedSearch: true })
+                              }
                             />
-                          )}
-                        </Box>
+                            <Button
+                              disabled={
+                                this.state.addFilmSearchVal.length === 0
+                              }
+                              hoverIndicator="accent-1"
+                              label="Done"
+                              type="submit"
+                              icon={<Checkmark />}
+                              reverse
+                            />
+                          </Box>
+                        </Form>
+                      </Box>
+                      {this.state.parsed && (
                         <Box>
-                          <Filters
-                            width={this.state.width}
-                            filter={this.state.filterBy}
-                            sort={this.state.sortBy}
-                            uid={this.state.uid}
-                            tags={this.state.tags}
-                            handleSort={(sortBy, checked) =>
-                              this.handleSort(sortBy, checked)
-                            }
-                            handleFilterByTag={(tag) =>
-                              this.handleFilterByTag(tag)
-                            }
-                            handleTagDelete={(tags) =>
-                              this.handleTagDelete(tags)
-                            }
-                            handleUpdatedTags={(updatedTags) =>
-                              this.handleUpdatedTags(updatedTags)
-                            }
-                            handleTagAdded={(tag) => this.handleTagAdded(tag)}
-                            handleResetFilters={this.handleResetFilters}
+                          <AddTitle
+                            moviesAdded={(
+                              lotMovies: movie[],
+                              wishlistMovies: movie[]
+                            ) => this.moviesAdded(lotMovies, wishlistMovies)}
+                            parsed={true}
+                            movieList={this.state.imports}
+                            handleFinishedImport={this.handleFinishedImport}
                           />
                         </Box>
-                      </Box>
+                      )}
                     </Box>
                   ) : (
                     <Box
@@ -1082,38 +1081,27 @@ export default class HomePage extends Component {
                           onChange={(event) => this.handleSearch(event)}
                         />
                       </Box>
-                      <Box align="center" direction="row" gap="xsmall">
-                        <Box>
-                          <AddTitle
-                            moviesAdded={(
-                              lotMovies: movie[],
-                              wishlistMovies: movie[]
-                            ) => this.moviesAdded(lotMovies, wishlistMovies)}
-                          />
-                        </Box>
-                        <Box>
-                          <Filters
-                            width={this.state.width}
-                            filter={this.state.filterBy}
-                            sort={this.state.sortBy}
-                            uid={this.state.uid}
-                            tags={this.state.tags}
-                            handleSort={(sortBy, checked) =>
-                              this.handleSort(sortBy, checked)
-                            }
-                            handleFilterByTag={(tag) =>
-                              this.handleFilterByTag(tag)
-                            }
-                            handleTagDelete={(tags) =>
-                              this.handleTagDelete(tags)
-                            }
-                            handleUpdatedTags={(updatedTags) =>
-                              this.handleUpdatedTags(updatedTags)
-                            }
-                            handleTagAdded={(tag) => this.handleTagAdded(tag)}
-                            handleResetFilters={this.handleResetFilters}
-                          />
-                        </Box>
+                      <Box align="center">
+                        <Filters
+                          wishlist={this.state.showWishlist}
+                          width={this.state.width}
+                          filter={this.state.filterBy}
+                          sort={this.state.sortBy}
+                          uid={this.state.uid}
+                          tags={this.state.tags}
+                          handleSort={(sortBy, checked) =>
+                            this.handleSort(sortBy, checked)
+                          }
+                          handleFilterByTag={(tag) =>
+                            this.handleFilterByTag(tag)
+                          }
+                          handleTagDelete={(tags) => this.handleTagDelete(tags)}
+                          handleUpdatedTags={(updatedTags) =>
+                            this.handleUpdatedTags(updatedTags)
+                          }
+                          handleTagAdded={(tag) => this.handleTagAdded(tag)}
+                          handleResetFilters={this.handleResetFilters}
+                        />
                       </Box>
                     </Box>
                   )}
@@ -1122,6 +1110,9 @@ export default class HomePage extends Component {
                     plain
                     hoverIndicator="brand"
                     margin={{ right: 'small' }}
+                    open={
+                      this.state.userProfileClicked && !this.state.showSettings
+                    }
                     onClose={() => this.setState({ userProfileClicked: false })}
                     onOpen={() => this.setState({ userProfileClicked: true })}
                     label={
@@ -1184,6 +1175,47 @@ export default class HomePage extends Component {
                   alignContent="center"
                   flex
                 >
+                  <Box
+                    direction="row"
+                    align="center"
+                    gap="small"
+                    pad={{ top: 'small', left: 'medium' }}
+                    width="large"
+                  >
+                    <TextInput
+                      value={this.state.searchVal}
+                      title="Search your film lot!"
+                      placeholder={`Search your ${
+                        this.state.showWishlist
+                          ? this.state.wishlist.length
+                          : this.state.movies.length
+                      } ${
+                        this.state.movies.length === 1 ? 'film' : 'films'
+                      }...`}
+                      icon={<Search />}
+                      onChange={(event) => this.handleSearch(event)}
+                    />
+                    <Box>
+                      <Filters
+                        wishlist={this.state.showWishlist}
+                        width={this.state.width}
+                        filter={this.state.filterBy}
+                        sort={this.state.sortBy}
+                        uid={this.state.uid}
+                        tags={this.state.tags}
+                        handleSort={(sortBy, checked) =>
+                          this.handleSort(sortBy, checked)
+                        }
+                        handleFilterByTag={(tag) => this.handleFilterByTag(tag)}
+                        handleTagDelete={(tags) => this.handleTagDelete(tags)}
+                        handleUpdatedTags={(updatedTags) =>
+                          this.handleUpdatedTags(updatedTags)
+                        }
+                        handleTagAdded={(tag) => this.handleTagAdded(tag)}
+                        handleResetFilters={this.handleResetFilters}
+                      />
+                    </Box>
+                  </Box>
                   <Collection
                     handleTransfer={(movie) => this.handleTransfer(movie)}
                     wishlist={this.state.showWishlist}
@@ -1201,17 +1233,47 @@ export default class HomePage extends Component {
                     handleSelectedTags={(movie, tags) =>
                       this.handleSelectedTags(movie, tags)
                     }
+                    moviesAdded={(lotMovies, wishlistMovies) =>
+                      this.moviesAdded(lotMovies, wishlistMovies)
+                    }
                     loading={this.state.loading}
                     width={this.state.width}
                     sortBy={this.state.sortBy}
                     filterBy={this.state.filterBy}
                     tags={this.state.tags}
+                    rand={this.state.randAddFilmBackDrop}
                   />
                 </Box>
                 <FooterComponent
                   uid={this.state.uid}
                   width={this.state.width}
                 />
+                {this.state.tmdbSearched && (
+                  <AddTitle
+                    title={this.state.addFilmSearchVal}
+                    handleClose={() =>
+                      this.setState({
+                        tmdbSearched: false,
+                        addFilmSearchVal: ''
+                      })
+                    }
+                    moviesAdded={(lotMovies, wishlistMovies) =>
+                      this.moviesAdded(lotMovies, wishlistMovies)
+                    }
+                  />
+                )}
+                {this.state.showAdvancedSearch && (
+                  <AddTitle
+                    handleClose={() =>
+                      this.setState({
+                        showAdvancedSearch: false
+                      })
+                    }
+                    moviesAdded={(lotMovies, wishlistMovies) =>
+                      this.moviesAdded(lotMovies, wishlistMovies)
+                    }
+                  />
+                )}
                 {this.state.showSettings ? (
                   <Settings
                     toggleSettings={this.toggleSettings}
@@ -1296,7 +1358,7 @@ export default class HomePage extends Component {
                       color="layer"
                       responsive={false}
                       position="bottom-right"
-                      style={{ borderRadius: 30 }}
+                      style={{ borderRadius: 30, zIndex: 1000 }}
                       modal={false}
                       margin={{ bottom: 'medium', right: 'medium' }}
                     >
@@ -1327,12 +1389,9 @@ export default class HomePage extends Component {
                               style={{ flexDirection: 'row' }}
                             >
                               <CheckBox
-                                checked={this.state.welcomeChecked}
                                 label="Stop welcoming me back"
                                 onChange={(event) =>
-                                  this.setState({
-                                    welcomeChecked: event.target.checked
-                                  })
+                                  this.dismissWelcomeBack(event.target.checked)
                                 }
                               />
                             </motion.div>
@@ -1341,7 +1400,9 @@ export default class HomePage extends Component {
                               alignSelf="center"
                               style={{ borderRadius: 30 }}
                               icon={<Down />}
-                              onClick={this.dismissWelcomeBack}
+                              onClick={() =>
+                                this.setState({ welcomeBack: false })
+                              }
                             />
                           </Box>
                         </Box>

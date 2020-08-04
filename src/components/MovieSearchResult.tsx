@@ -11,6 +11,7 @@ interface MovieSearchResultProps {
   title?: string;
   year?: string;
   parsed: boolean;
+  back: boolean;
   imports?: searchResults;
   closeAdd(): void;
   closeResult?(): void;
@@ -277,14 +278,16 @@ export default class MovieSearchResult extends Component<
                     style={{ position: 'fixed', top: 0, right: 0, left: 0 }}
                     fill="horizontal"
                     background="movieSearchResultHeader"
+                    justify={!this.props.back ? 'end' : 'between'}
                   >
-                    {!this.props.parsed ? (
+                    {this.props.back && (
                       <Button
                         title="back"
                         icon={<Previous />}
                         onClick={() => this.props.closeResult!()}
                       />
-                    ) : (
+                    )}
+                    {this.props.parsed && (
                       <Box
                         direction="row"
                         align="center"

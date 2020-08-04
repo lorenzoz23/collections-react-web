@@ -45,6 +45,10 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
               //   min: size !== 'small' ? 'medium' : undefined
               // }}
               height={size !== 'small' ? 'medium' : undefined}
+              width={{
+                min: size !== 'small' && !this.props.add ? 'large' : undefined
+              }}
+              justify="center"
             >
               {size === 'small' && (
                 <Box

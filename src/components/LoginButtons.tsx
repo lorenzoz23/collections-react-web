@@ -63,7 +63,7 @@ export default class LoginButtons extends Component<LoginButtonProps> {
                     <Button
                       primary
                       size={size === 'small' ? 'medium' : 'large'}
-                      label="Continue with email"
+                      label="Continue with Email"
                       icon={<MailOption />}
                       reverse
                       onClick={() => {

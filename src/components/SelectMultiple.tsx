@@ -1,6 +1,18 @@
 import React, { Component } from 'react';
-import { Box, Select, Button, Text, ResponsiveContext } from 'grommet';
-import { FormClose, CloudUpload } from 'grommet-icons'; // or Save
+import {
+  Box,
+  Select,
+  Button,
+  Text,
+  ResponsiveContext,
+  Layer,
+  Table,
+  TableHeader,
+  TableRow,
+  TableCell,
+  TableBody
+} from 'grommet';
+import { FormClose, CloudUpload, Inspect } from 'grommet-icons'; // or Save
 
 interface SelectMultipleProps {
   movieTags?: number[];
@@ -19,9 +31,11 @@ export default class SelectMultiple extends Component<SelectMultipleProps> {
   state: {
     selected: number[];
     tagsChanged: boolean;
+    showSelected: boolean;
   } = {
     selected: [],
-    tagsChanged: false
+    tagsChanged: false,
+    showSelected: false
   };
 
   componentDidMount = () => {
@@ -152,9 +166,27 @@ export default class SelectMultiple extends Component<SelectMultipleProps> {
                 });
               }}
             />
-            {this.props.save && (
+            {this.props.save &&
+              this.state.selected.length > 2 &&
+              !this.state.tagsChanged && (
+                <Button
+                  label={
+                    size === 'small' && this.props.width! < 400
+                      ? undefined
+                      : 'view selected tags'
+                  }
+                  alignSelf="center"
+                  hoverIndicator="accent-1"
+                  icon={
+                    size === 'small' && this.props.width! < 400 ? (
+                      <Inspect />
+                    ) : undefined
+                  }
+                  onClick={() => this.setState({ showSelected: true })}
+                />
+              )}
+            {this.props.save && this.state.tagsChanged && (
               <Button
-                disabled={this.state.tagsChanged ? false : true}
                 alignSelf="center"
                 hoverIndicator="accent-1"
                 icon={
@@ -167,10 +199,56 @@ export default class SelectMultiple extends Component<SelectMultipleProps> {
                     ? undefined
                     : 'save tags'
                 }
-                onClick={() =>
-                  this.props.handleSelectedTags!(this.state.selected)
-                }
+                onClick={() => {
+                  this.setState({ tagsChanged: false });
+                  this.props.handleSelectedTags!(this.state.selected);
+                }}
               />
+            )}
+            {this.state.showSelected && (
+              <Layer
+                position={size === 'small' ? 'bottom' : 'center'}
+                onClickOutside={() => this.setState({ showSelected: false })}
+                responsive={false}
+                style={{ borderRadius: 30 }}
+              >
+                <Box
+                  pad="medium"
+                  align="center"
+                  gap="small"
+                  background={{ color: 'accent-1', opacity: 'weak' }}
+                  round
+                  border={{
+                    size: 'medium',
+                    side: 'all',
+                    color: 'accent-3',
+                    style: 'outset'
+                  }}
+                >
+                  <Box align="center">
+                    <Text textAlign="center">You own this title</Text>
+                    <Text textAlign="center">on</Text>
+                  </Box>
+                  <Table alignSelf="center">
+                    <TableHeader>
+                      <TableRow>
+                        <TableCell scope="col" border="bottom">
+                          <Text weight="bold">Media Type</Text>
+                        </TableCell>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {this.state.selected.map((index) => (
+                        <TableRow>
+                          <TableCell scope="row">
+                            <Text>{this.props.tags[index]}</Text>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </Box>
+              </Layer>
             )}
           </Box>
         )}

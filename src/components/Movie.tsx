@@ -38,7 +38,7 @@ export const Movie = (props: any) => {
                 margin="xsmall"
                 animation={{ type: 'slideDown', duration: 1000 }}
                 pad="small"
-                background="dark-2"
+                background={{ color: 'dark-2', opacity: 'strong' }}
                 elevation="small"
                 round={{ size: 'medium' }}
               >

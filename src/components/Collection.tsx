@@ -7,6 +7,7 @@ import SingleMovieView from './SingleMovieView';
 import { Movie } from './Movie';
 import { Sort } from './Sort';
 import { Aed, Add, Dislike } from 'grommet-icons';
+import AddMovieTemplate from './AddMovieTemplate';
 
 const columns: Record<string, string[]> = {
   small: ['auto', 'auto', 'auto'],
@@ -24,11 +25,13 @@ interface CollectionProps {
   handleRate(updatedMovie: movie): void;
   handleSelectedTags(movie: movie, tags: number[]): void;
   handleTransfer(movie: movie): void;
+  moviesAdded(lotMovies: movie[], wishlistMovies: movie[]): void;
   loading: boolean;
   width: number;
   sortBy: string;
   filterBy: string;
   tags: string[];
+  rand: number;
 }
 
 const DeleteMovieConfirmation = (props: any) => {
@@ -136,7 +139,9 @@ export default class Collection extends Component<CollectionProps> {
     } else if (size === 'small' && this.props.width < 350) {
       numRows = Math.ceil(numMovies / columns[size].length) + 2;
     } else {
-      numRows = Math.ceil(numMovies / columns[size].length);
+      if (numMovies % 6 === 0) {
+        numRows = Math.ceil(numMovies / columns[size].length) + 1;
+      } else numRows = Math.ceil(numMovies / columns[size].length);
     }
 
     let i: number = 0;
@@ -184,7 +189,7 @@ export default class Collection extends Component<CollectionProps> {
       : moviesToMap;
 
     return (
-      <Sort by={this.props.sortBy}>
+      <Sort by={this.props.sortBy} key={1}>
         {filteredMovies.map((movie) => (
           <Movie
             key={movie.id}
@@ -213,6 +218,18 @@ export default class Collection extends Component<CollectionProps> {
     } else {
       col = columns[size];
     }
+    let gridMovies = [];
+
+    gridMovies.push(
+      <AddMovieTemplate
+        key={0}
+        moviesAdded={(lotMovies: movie[], wishlistMovies: movie[]) =>
+          this.props.moviesAdded(lotMovies, wishlistMovies)
+        }
+        rand={this.props.rand}
+      />
+    );
+    gridMovies.push(this.listMovieBoxes());
     return (
       <Grid
         gap="medium"
@@ -221,7 +238,7 @@ export default class Collection extends Component<CollectionProps> {
         areas={undefined}
         pad="medium"
       >
-        {this.listMovieBoxes()}
+        {gridMovies}
       </Grid>
     );
   };

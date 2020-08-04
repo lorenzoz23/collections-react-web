@@ -31,6 +31,7 @@ interface FiltersProps {
   sort: string;
   filter: string;
   width: number;
+  wishlist: boolean;
   handleSort(sortBy: string, checked: boolean): void;
   handleFilterByTag(tag: string): void;
   handleTagDelete(tags: number[]): void;
@@ -196,8 +197,8 @@ export default class Filters extends Component<FiltersProps> {
             <Box
               direction="row"
               align="center"
-              gap="xsmall"
-              width={size !== 'small' ? 'medium' : 'small'}
+              gap="small"
+              width={size !== 'small' ? 'large' : 'small'}
             >
               <Button
                 icon={
@@ -210,7 +211,13 @@ export default class Filters extends Component<FiltersProps> {
                     }
                   />
                 }
-                hoverIndicator="accent-1"
+                label={
+                  this.props.wishlist
+                    ? 'Advanced Wishlist Search'
+                    : 'Advanced Lot Search'
+                }
+                reverse
+                hoverIndicator="layer"
                 focusIndicator={false}
                 title="filters"
                 onClick={() => this.setState({ showFilters: true })}
@@ -222,7 +229,7 @@ export default class Filters extends Component<FiltersProps> {
                   textAlign="center"
                   wordBreak="keep-all"
                 >
-                  Active filter
+                  Active Filter
                 </Text>
               )}
               {this.state.sort.length > 0 &&
@@ -234,7 +241,7 @@ export default class Filters extends Component<FiltersProps> {
                     textAlign="center"
                     wordBreak="keep-all"
                   >
-                    Active sort
+                    Active Sort
                   </Text>
                 )}
             </Box>
