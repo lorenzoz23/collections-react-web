@@ -60,12 +60,12 @@ export default class SortMoviesMenu extends Component<SortMoviesMenuProps> {
             hoverIndicator: 'accent-1'
           },
           {
-            label: 'Your Rating (Asc)',
+            label: 'Star Count (Asc)',
             onClick: () => this.handleSort('starCountAsc'),
             hoverIndicator: 'accent-1'
           },
           {
-            label: 'Your Rating (Desc)',
+            label: 'Star Count (Desc)',
             onClick: () => this.handleSort('starCountDesc'),
             hoverIndicator: 'accent-1'
           },

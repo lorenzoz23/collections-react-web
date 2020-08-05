@@ -6,7 +6,7 @@ import SelectSingular from './SelectSingular';
 interface FilterViewTagsProps {
   tags: string[];
   createTagSearch?: boolean;
-  handleSelectedFilter(selected: string, created: boolean): void;
+  handleSelectedFilter(selected: string): void;
   handleSelectedTagsToUpdate(tags: number[]): void;
   selectedFilter?: string;
   selectedFilters?: number[];
@@ -33,8 +33,8 @@ export default class FilterViewTags extends Component<FilterViewTagsProps> {
             selectedFilter={this.props.selectedFilter!}
             plain={true}
             tags={this.props.tags}
-            handleSelected={(selected, created) =>
-              this.props.handleSelectedFilter(selected, created)
+            handleSelected={(selected) =>
+              this.props.handleSelectedFilter(selected)
             }
           />
         ) : (

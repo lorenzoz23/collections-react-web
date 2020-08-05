@@ -26,7 +26,8 @@ import {
   Down,
   Add,
   Checkmark,
-  Filter
+  Filter,
+  SearchAdvanced
 } from 'grommet-icons';
 import firebase from 'firebase/app';
 import 'firebase/auth';
@@ -49,7 +50,7 @@ import { searchResults } from './MovieSearchResult';
 import Notification from './Notification';
 import { motion } from 'framer-motion';
 import SortMoviesMenu from './SortMoviesMenu';
-import FilterSearch from './FilterSearch';
+import FilterSearch, { filter } from './FilterSearch';
 
 export const AppBar = (props: any) => (
   <Box
@@ -84,8 +85,8 @@ const sortLabels: Record<string, string> = {
   runtimeDesc: 'Runtime (Desc)',
   mpaaAsc: 'MPAA Rating (G - NC17)',
   mpaaDesc: 'MPAA Rating (NC17 - G)',
-  starCountAsc: 'Your Rating (Asc)',
-  starCountDesc: 'Your Rating (Desc)',
+  starCountAsc: 'Star Count (Asc)',
+  starCountDesc: 'Star Count (Desc)',
   reset: 'Original Order'
 };
 
@@ -110,7 +111,7 @@ export default class HomePage extends Component {
     width: number;
     fetchedWishlist: boolean;
     sortBy: string;
-    filterBy: string;
+    filterBy: filter[];
     parsed: boolean;
     imports: searchResults;
     goodNotification: boolean;
@@ -122,6 +123,7 @@ export default class HomePage extends Component {
     showAdvancedSearch: boolean;
     saveSortedOrder: boolean;
     showFilters: boolean;
+    allGenres: string[];
   } = {
     uid: '',
     name: '',
@@ -142,7 +144,7 @@ export default class HomePage extends Component {
     width: 0,
     fetchedWishlist: false,
     sortBy: '',
-    filterBy: '',
+    filterBy: [],
     parsed: false,
     imports: {
       movies: []
@@ -155,7 +157,8 @@ export default class HomePage extends Component {
     tmdbSearched: false,
     showAdvancedSearch: false,
     saveSortedOrder: false,
-    showFilters: false
+    showFilters: false,
+    allGenres: ['']
   };
 
   constructor(props: any) {
@@ -180,7 +183,7 @@ export default class HomePage extends Component {
       width: 0,
       fetchedWishlist: false,
       sortBy: '',
-      filterBy: '',
+      filterBy: [],
       parsed: false,
       imports: {
         movies: []
@@ -193,11 +196,12 @@ export default class HomePage extends Component {
       tmdbSearched: false,
       showAdvancedSearch: false,
       saveSortedOrder: false,
-      showFilters: false
+      showFilters: false,
+      allGenres: ['']
     };
   }
 
-  componentDidMount = () => {
+  componentDidMount = async () => {
     console.log('home mounted');
     const remember = localStorage.getItem('rememberMe');
     if (this.state.uid === '' && !remember) {
@@ -223,6 +227,8 @@ export default class HomePage extends Component {
 
       const userRef = firebase.database().ref('users/' + uid);
       const sort = localStorage.getItem('sortBy') || '';
+
+      const genres = await this.getAllGenres();
 
       const collectionRef = userRef.child('collection');
       const tagsRef = userRef.child('tags');
@@ -270,6 +276,7 @@ export default class HomePage extends Component {
           loading: false,
           greeting: showGreeting,
           uid: uid,
+          allGenres: genres,
           randAddFilmBackDrop: Math.floor(Math.random() * 20)
         });
         this.setState({ welcomeBack: showWelcome }, () =>
@@ -724,13 +731,15 @@ export default class HomePage extends Component {
     }
   };
 
-  handleFilterByTag = (tag: string) => {
-    if (tag.length > 0) {
+  handleFilterByTag = (filters: filter[]) => {
+    if (filters.length > 0) {
       this.setState(
         {
-          filterBy: tag,
+          filterBy: filters,
           notification: true,
-          notificationText: `Movies successfully filtered by tag: ${tag}`,
+          notificationText: `The ${
+            filters[filters.length - 1].name
+          } filter has been activated`,
           goodNotification: true
         },
         () => {
@@ -738,9 +747,10 @@ export default class HomePage extends Component {
         }
       );
     } else {
+      const empty: filter[] = [];
       this.setState(
         {
-          filterBy: tag,
+          filterBy: empty,
           notification: true,
           notificationText: 'Filters have been reset',
           goodNotification: true
@@ -888,9 +898,10 @@ export default class HomePage extends Component {
   };
 
   handleResetFilters = () => {
+    const empty: filter[] = [];
     this.setState(
       {
-        filterBy: '',
+        filterBy: empty,
         notification: true,
         notificationText: 'Filters have been reset',
         goodNotification: true
@@ -932,6 +943,19 @@ export default class HomePage extends Component {
         setTimeout(this.onNotificationClose, 4000);
       }
     );
+  };
+
+  getAllGenres = async () => {
+    const response = await fetch(
+      `https://api.themoviedb.org/3/genre/movie/list?api_key=${process.env.REACT_APP_TMDB_API_KEY}&language=en-US`
+    );
+    const data = await response.json();
+    let genres: string[] = [];
+    for (let i = 0; i < data.genres.length; i++) {
+      genres.push(data.genres[i].name);
+    }
+
+    return genres;
   };
 
   dismissGreeting = () => {
@@ -1008,6 +1032,7 @@ export default class HomePage extends Component {
                       direction="row"
                       gap="medium"
                       align="center"
+                      alignSelf="end"
                       justify="evenly"
                     >
                       <CheckBox
@@ -1022,7 +1047,6 @@ export default class HomePage extends Component {
                             textAlign="center"
                             level="3"
                             margin="none"
-                            alignSelf="center"
                             color="light-1"
                           >
                             {title}
@@ -1042,23 +1066,27 @@ export default class HomePage extends Component {
                                 })
                               }
                             />
-                            <Anchor
-                              label="Advanced Search"
-                              alignSelf="center"
-                              onClick={() =>
-                                this.setState({ showAdvancedSearch: true })
-                              }
-                            />
-                            <Button
-                              disabled={
-                                this.state.addFilmSearchVal.length === 0
-                              }
-                              hoverIndicator="accent-1"
-                              label="Done"
-                              type="submit"
-                              icon={<Checkmark />}
-                              reverse
-                            />
+                            <Box direction="row" align="center" gap="medium">
+                              <Anchor
+                                icon={<SearchAdvanced />}
+                                label="Advanced Search"
+                                alignSelf="center"
+                                onClick={() =>
+                                  this.setState({ showAdvancedSearch: true })
+                                }
+                              />
+                              <Button
+                                disabled={
+                                  this.state.addFilmSearchVal.length === 0
+                                }
+                                hoverIndicator="accent-1"
+                                label="Done"
+                                alignSelf="center"
+                                type="submit"
+                                icon={<Checkmark />}
+                                reverse
+                              />
+                            </Box>
                           </Box>
                         </Form>
                       </Box>
@@ -1103,12 +1131,8 @@ export default class HomePage extends Component {
                         <EditFilters
                           wishlist={this.state.showWishlist}
                           width={this.state.width}
-                          filter={this.state.filterBy}
                           uid={this.state.uid}
                           tags={this.state.tags}
-                          handleFilterByTag={(tag) =>
-                            this.handleFilterByTag(tag)
-                          }
                           handleTagDelete={(tags) => this.handleTagDelete(tags)}
                           handleUpdatedTags={(updatedTags) =>
                             this.handleUpdatedTags(updatedTags)
@@ -1122,6 +1146,7 @@ export default class HomePage extends Component {
                   <DropButton
                     style={{ borderRadius: 25 }}
                     plain
+                    alignSelf="end"
                     hoverIndicator="brand"
                     margin={{ right: 'small' }}
                     open={
@@ -1193,7 +1218,6 @@ export default class HomePage extends Component {
                     direction="row"
                     justify="between"
                     align="center"
-                    gap="small"
                     pad={{ left: 'medium', right: 'medium', top: 'xsmall' }}
                   >
                     <Box align="center" direction="row" gap="small">
@@ -1213,7 +1237,7 @@ export default class HomePage extends Component {
                         alignSelf="center"
                         icon={<Filter />}
                         color={this.state.showFilters ? 'neutral-4' : undefined}
-                        label={this.state.showFilters ? 'Close' : 'Filters'}
+                        label={this.state.showFilters ? 'Hide' : 'Filters'}
                         reverse
                         hoverIndicator={
                           this.state.showFilters ? 'neutral-4' : 'layer'
@@ -1231,13 +1255,13 @@ export default class HomePage extends Component {
                         handleSort={(sortBy) => this.handleSort(sortBy)}
                       />
                     </Box>
-                    <Box direction="row" align="center" gap="small">
-                      <Box
-                        align="center"
-                        gap="small"
-                        pad="small"
-                        direction="row"
-                      >
+                    <Box
+                      direction="row"
+                      align="center"
+                      gap="medium"
+                      border="between"
+                    >
+                      <Box align="center" gap="small" direction="row">
                         <CheckBox
                           disabled={this.state.sortBy === ''}
                           toggle
@@ -1255,17 +1279,15 @@ export default class HomePage extends Component {
                           <Text size="small">
                             {this.state.saveSortedOrder
                               ? sortLabels[this.state.sortBy]
-                              : 'Time Added'}
+                              : 'Original Order'}
                           </Text>
                         </Box>
                       </Box>
                       <EditFilters
                         wishlist={this.state.showWishlist}
                         width={this.state.width}
-                        filter={this.state.filterBy}
                         uid={this.state.uid}
                         tags={this.state.tags}
-                        handleFilterByTag={(tag) => this.handleFilterByTag(tag)}
                         handleTagDelete={(tags) => this.handleTagDelete(tags)}
                         handleUpdatedTags={(updatedTags) =>
                           this.handleUpdatedTags(updatedTags)
@@ -1276,11 +1298,36 @@ export default class HomePage extends Component {
                     </Box>
                   </Box>
                   {this.state.showFilters && (
-                    <FilterSearch
-                      handleFilterByTag={(tag) => this.handleFilterByTag(tag)}
-                      tags={this.state.tags}
-                      handleResetFilters={this.handleResetFilters}
-                    />
+                    <Box
+                    // border={{
+                    //   side: 'all',
+                    //   color: 'lotBorder',
+                    //   size: 'medium',
+                    //   style: 'inset'
+                    // }}
+                    // round
+                    >
+                      <FilterSearch
+                        handleFilterByTag={(filters) =>
+                          this.handleFilterByTag(filters)
+                        }
+                        mediaTags={this.state.tags}
+                        genreTags={this.state.allGenres}
+                        ratings={[
+                          '1',
+                          '2',
+                          '3',
+                          '4',
+                          '5',
+                          '6',
+                          '7',
+                          '8',
+                          '9',
+                          '10'
+                        ]}
+                        handleResetFilters={this.handleResetFilters}
+                      />
+                    </Box>
                   )}
                   <Collection
                     handleTransfer={(movie) => this.handleTransfer(movie)}

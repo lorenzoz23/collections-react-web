@@ -1,17 +1,15 @@
 import React, { Component } from 'react';
 import { Button, Box, Select, Text } from 'grommet';
-import { FormClose } from 'grommet-icons';
+import { FormClose, Star, Multimedia } from 'grommet-icons';
 
 interface SelectSingularProps {
   tags: string[];
   placeholder: string;
-  title: string;
+  title?: string;
   plain: boolean;
-  handleSelected(selected: string, created: boolean): void;
+  handleSelected(selected: string): void;
   selectedFilter: string;
 }
-
-const prefix: string = 'create';
 
 export default class SelectSingular extends Component<SelectSingularProps> {
   state: {
@@ -37,7 +35,7 @@ export default class SelectSingular extends Component<SelectSingularProps> {
     this.setState({
       value: ''
     });
-    this.props.handleSelected('', false);
+    this.props.handleSelected('');
   };
 
   renderTag = (tag: string) => (
@@ -78,44 +76,34 @@ export default class SelectSingular extends Component<SelectSingularProps> {
     </Button>
   );
 
-  getRegExp = (text: string) => {
-    // The line below escapes regular expression special characters:
-    // [ \ ^ $ . | ? * + ( )
-    const escapedText = text.replace(/[-\\^$*+?.()|[\]{}]/g, '\\$&');
-
-    // Create the regular expression with modified value which
-    // handles escaping special characters. Without escaping special
-    // characters, errors will appear in the console
-    return new RegExp(escapedText, 'i');
-  };
-
-  updateCreateOption = (text: string) => {
-    const len = this.state.defaultOptions.length;
-    if (len > 0 && this.state.defaultOptions[len - 1].includes(prefix)) {
-      // remove Create option before adding an updated one
-      this.state.defaultOptions.pop();
-    }
-    this.state.defaultOptions.push(`${prefix} '${text}'`);
-  };
-
   render() {
     return (
-      <Box align="center" justify="center" round title={this.props.title}>
+      <Box
+        align="center"
+        justify="center"
+        round={!this.props.plain ? false : true}
+        style={{ borderRadius: 5 }}
+        title={this.props.title || undefined}
+        border={{
+          color: this.props.placeholder.includes('star count')
+            ? 'accent-4'
+            : this.props.placeholder.includes('genre')
+            ? 'accent-3'
+            : undefined
+        }}
+      >
         <Select
+          icon={
+            this.props.placeholder.includes('star count') ? (
+              <Star color="plain" />
+            ) : this.props.placeholder.includes('genre') ? (
+              <Multimedia color="accent-3" />
+            ) : undefined
+          }
           closeOnChange={true}
           focusIndicator={this.props.plain ? false : true}
           plain={this.props.plain}
-          onSearch={(text) => {
-            this.updateCreateOption(text);
-            const exp = this.getRegExp(text);
-            this.setState({
-              options: this.state.defaultOptions.filter((o) => exp.test(o)),
-              searchText: text
-            });
-          }}
           onClose={() => this.setState({ options: this.state.defaultOptions })}
-          searchPlaceholder="filter films/create tags..."
-          emptySearchMessage="no tags found :("
           valueLabel={
             <Box wrap direction="row" width="small">
               {this.state.value && this.state.value.length > 0 ? (
@@ -131,17 +119,10 @@ export default class SelectSingular extends Component<SelectSingularProps> {
             </Box>
           }
           value={this.state.value}
-          options={this.state.options.filter(
-            (selectedTag) => selectedTag !== "create ''"
-          )}
+          options={this.state.options}
           onChange={({ option }) => {
-            if (option.includes(prefix)) {
-              this.state.defaultOptions.pop();
-              this.props.handleSelected(this.state.searchText, true);
-            } else {
-              this.setState({ value: option });
-              this.props.handleSelected(option, false);
-            }
+            this.setState({ value: option === this.state.value ? '' : option });
+            this.props.handleSelected(option);
           }}
         />
       </Box>

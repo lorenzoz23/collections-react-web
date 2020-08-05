@@ -17,10 +17,8 @@ import FilterViewTags from './FilterViewTags';
 interface FiltersProps {
   tags: string[];
   uid: string;
-  filter: string;
   width: number;
   wishlist: boolean;
-  handleFilterByTag(tag: string): void;
   handleTagDelete(tags: number[]): void;
   handleUpdatedTags(tags: string[]): void;
   handleTagAdded(tag: string): void;
@@ -31,7 +29,6 @@ export default class EditFilters extends Component<FiltersProps> {
   state: {
     showFilters: boolean;
     editMode: boolean;
-    selectedFilter: string;
     selectedTagsToUpdate: number[];
     updatedText: string;
     createText: string;
@@ -39,7 +36,6 @@ export default class EditFilters extends Component<FiltersProps> {
   } = {
     showFilters: false,
     editMode: false,
-    selectedFilter: this.props.filter,
     selectedTagsToUpdate: [],
     updatedText: '',
     createText: '',
@@ -96,20 +92,12 @@ export default class EditFilters extends Component<FiltersProps> {
     this.props.handleTagDelete(this.state.selectedTagsToUpdate);
   };
 
-  handleSelectedTagToFilter = (tag: string, created: boolean, size: string) => {
-    if (created) {
-      const userRef = firebase.database().ref('users/' + this.props.uid);
-      const tagsRef = userRef.child('tags');
-      const newTagRef = tagsRef.push();
-      newTagRef.set({ title: tag });
-      this.props.handleTagAdded(tag);
-    } else {
-      this.setState({
-        selectedFilter: tag,
-        showFilters: size === 'small' && this.props.width < 750 ? false : true
-      });
-      this.props.handleFilterByTag(tag);
-    }
+  handleCreatedTag = (tag: string) => {
+    const userRef = firebase.database().ref('users/' + this.props.uid);
+    const tagsRef = userRef.child('tags');
+    const newTagRef = tagsRef.push();
+    newTagRef.set({ title: tag });
+    this.props.handleTagAdded(tag);
   };
 
   render() {
@@ -184,11 +172,7 @@ export default class EditFilters extends Component<FiltersProps> {
                           icon={<Like />}
                           reverse
                           onClick={() =>
-                            this.handleSelectedTagToFilter(
-                              this.state.createText,
-                              true,
-                              size
-                            )
+                            this.handleCreatedTag(this.state.createText)
                           }
                         />
                       </Box>
@@ -198,26 +182,11 @@ export default class EditFilters extends Component<FiltersProps> {
                         </Text>
                         <FilterViewTags
                           tags={this.props.tags}
-                          handleSelectedFilter={(selected, created) =>
-                            this.handleSelectedTagToFilter(
-                              selected,
-                              created,
-                              size
-                            )
+                          handleSelectedFilter={(selected) =>
+                            this.handleCreatedTag(selected)
                           }
                           handleSelectedTagsToUpdate={(tags) =>
                             this.setState({ selectedTagsToUpdate: tags })
-                          }
-                          selectedFilter={
-                            !this.state.editMode && this.props.filter.length
-                              ? this.props.filter
-                              : undefined
-                          }
-                          selectedFilters={
-                            this.state.editMode &&
-                            this.state.selectedTagsToUpdate.length
-                              ? this.state.selectedTagsToUpdate
-                              : undefined
                           }
                           createTagSearch={false}
                         />

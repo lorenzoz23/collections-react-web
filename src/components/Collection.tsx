@@ -6,8 +6,9 @@ import type { movie } from './HomePage';
 import SingleMovieView from './SingleMovieView';
 import { Movie } from './Movie';
 import { Sort } from './Sort';
-import { Aed, Add, Dislike } from 'grommet-icons';
+import { Dislike } from 'grommet-icons';
 import AddMovieTemplate from './AddMovieTemplate';
+import { filter } from './FilterSearch';
 
 const columns: Record<string, string[]> = {
   small: ['auto', 'auto', 'auto'],
@@ -29,7 +30,7 @@ interface CollectionProps {
   loading: boolean;
   width: number;
   sortBy: string;
-  filterBy: string;
+  filterBy: filter[];
   tags: string[];
   rand: number;
 }
@@ -118,12 +119,12 @@ export default class Collection extends Component<CollectionProps> {
           </Box>
         ) : (
           <Box align="center" gap="small">
-            <Text>
-              There is nothing in your{' '}
-              {this.props.wishlist ? 'wishlist' : 'lot'}.
-            </Text>
-            <Aed size="large" />
-            Add a film by clicking on the <Add /> button!
+            <AddMovieTemplate
+              moviesAdded={(lotMovies, wishlistMovies) =>
+                this.props.moviesAdded(lotMovies, wishlistMovies)
+              }
+              rand={this.props.rand}
+            />
           </Box>
         )}
       </Box>
@@ -132,7 +133,11 @@ export default class Collection extends Component<CollectionProps> {
 
   getRows = (size: string) => {
     let rows: string[] = [];
-    const numMovies: number = this.props.movies.length;
+    const moviesToMap: movie[] =
+      this.props.searchVal.length > 0
+        ? this.props.searchList
+        : this.props.movies;
+    const numMovies: number = moviesToMap.length;
     let numRows: number = 0;
     if (size === 'medium' && this.props.width < 1000) {
       numRows = Math.ceil(numMovies / columns[size].length) + 1;
@@ -178,35 +183,57 @@ export default class Collection extends Component<CollectionProps> {
   //   });
   // };
 
+  showMovie = (movie: movie) => {
+    this.setState({
+      movieDetailsVisible: true,
+      movieToShow: movie,
+      randBackDrop: Math.floor(
+        Math.random() * Math.floor(movie.backDrop?.length || 0)
+      )
+    });
+  };
+
+  getSortedFilteredFilms = (filteredMovies: movie[]) => (
+    <Sort by={this.props.sortBy} key={1}>
+      {filteredMovies.map((movie) => (
+        <Movie
+          key={movie.id}
+          movie={movie}
+          showMovie={() => this.showMovie(movie)}
+        />
+      ))}
+    </Sort>
+  );
+
   listMovieBoxes = () => {
     const moviesToMap: movie[] =
       this.props.searchVal.length > 0
         ? this.props.searchList
         : this.props.movies;
-    const filterIndex = this.props.tags.indexOf(this.props.filterBy);
-    const filteredMovies = this.props.filterBy
-      ? moviesToMap.filter((child) => child.tags.includes(filterIndex, 0))
-      : moviesToMap;
+    let filteredMovies: movie[] = [];
+    if (this.props.filterBy.length !== 0) {
+      this.props.filterBy.forEach((filter) => {
+        if (filter.type === 'starCount') {
+          filteredMovies = moviesToMap.filter(
+            (child) => child.starCount === +filter.name
+          );
+        } else if (filter.type === 'genre') {
+          filteredMovies = moviesToMap.filter((child) =>
+            child.genre.includes(filter.name, 0)
+          );
+        } else {
+          const filterIndex = this.props.tags.indexOf(filter.name);
+          filteredMovies = moviesToMap.filter((child) =>
+            child.tags.includes(filterIndex, 0)
+          );
+        }
+      });
+      //this.setState({ filteredMovies: filteredMovies });
+    } else {
+      filteredMovies = moviesToMap;
+    }
 
-    return (
-      <Sort by={this.props.sortBy} key={1}>
-        {filteredMovies.map((movie) => (
-          <Movie
-            key={movie.id}
-            movie={movie}
-            showMovie={() =>
-              this.setState({
-                movieDetailsVisible: true,
-                movieToShow: movie,
-                randBackDrop: Math.floor(
-                  Math.random() * Math.floor(movie.backDrop?.length || 0)
-                )
-              })
-            }
-          />
-        ))}
-      </Sort>
-    );
+    return this.getSortedFilteredFilms(filteredMovies);
   };
 
   movieCollection = (size: string) => {
