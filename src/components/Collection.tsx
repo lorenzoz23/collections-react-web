@@ -236,7 +236,7 @@ export default class Collection extends Component<CollectionProps> {
         columns={col}
         rows={this.getRows(size)}
         areas={undefined}
-        pad="medium"
+        pad={{ horizontal: 'medium', top: 'small', bottom: 'medium' }}
       >
         {gridMovies}
       </Grid>

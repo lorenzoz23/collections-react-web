@@ -193,6 +193,7 @@ export default class SignIn extends Component<SignInProps> {
                 >
                   <TextInput
                     name="email"
+                    autoFocus
                     autoComplete="email"
                     size={size === 'small' ? 'medium' : 'xlarge'}
                     value={this.state.email}

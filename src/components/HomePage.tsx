@@ -25,7 +25,8 @@ import {
   Logout,
   Down,
   Add,
-  Checkmark
+  Checkmark,
+  Filter
 } from 'grommet-icons';
 import firebase from 'firebase/app';
 import 'firebase/auth';
@@ -43,10 +44,12 @@ import Settings from './Settings';
 import AddTitle from './AddTitle';
 import Collection from './Collection';
 import FooterComponent from './FooterComponent';
-import Filters from './Filters';
+import EditFilters from './EditFilters';
 import { searchResults } from './MovieSearchResult';
 import Notification from './Notification';
 import { motion } from 'framer-motion';
+import SortMoviesMenu from './SortMoviesMenu';
+import FilterSearch from './FilterSearch';
 
 export const AppBar = (props: any) => (
   <Box
@@ -72,6 +75,18 @@ export type movie = {
   key?: string;
   starCount: number;
   tags: number[];
+};
+
+const sortLabels: Record<string, string> = {
+  nameAsc: 'Title (Asc)',
+  nameDesc: 'Title (Desc)',
+  runtimeAsc: 'Runtime (Asc)',
+  runtimeDesc: 'Runtime (Desc)',
+  mpaaAsc: 'MPAA Rating (G - NC17)',
+  mpaaDesc: 'MPAA Rating (NC17 - G)',
+  starCountAsc: 'Your Rating (Asc)',
+  starCountDesc: 'Your Rating (Desc)',
+  reset: 'Original Order'
 };
 
 export default class HomePage extends Component {
@@ -105,6 +120,8 @@ export default class HomePage extends Component {
     addFilmSearchVal: string;
     tmdbSearched: boolean;
     showAdvancedSearch: boolean;
+    saveSortedOrder: boolean;
+    showFilters: boolean;
   } = {
     uid: '',
     name: '',
@@ -136,7 +153,9 @@ export default class HomePage extends Component {
     randAddFilmBackDrop: 0,
     addFilmSearchVal: '',
     tmdbSearched: false,
-    showAdvancedSearch: false
+    showAdvancedSearch: false,
+    saveSortedOrder: false,
+    showFilters: false
   };
 
   constructor(props: any) {
@@ -172,7 +191,9 @@ export default class HomePage extends Component {
       randAddFilmBackDrop: 0,
       addFilmSearchVal: '',
       tmdbSearched: false,
-      showAdvancedSearch: false
+      showAdvancedSearch: false,
+      saveSortedOrder: false,
+      showFilters: false
     };
   }
 
@@ -182,6 +203,7 @@ export default class HomePage extends Component {
     if (this.state.uid === '' && !remember) {
       this.setState({ invalidRoute: true });
     } else {
+      document.title = 'Cinelot | Your film lot on the go';
       this.updateWindowDimensions();
       window.addEventListener('resize', this.updateWindowDimensions);
 
@@ -314,7 +336,7 @@ export default class HomePage extends Component {
         lotLen +
         ` ${lotLen === 1 ? 'movie' : 'movies'} added to your lot and ` +
         wishlistLen +
-        ` ${wishlistLen === 1 ? 'movie' : 'movies'} added to your wishlist`;
+        ` ${wishlistLen === 1 ? 'movie' : 'movies'} added to your wishlist!`;
     } else {
       if (lotRepeats === 0 && lotMovies.length === 1) {
         notificationText = `${
@@ -413,7 +435,7 @@ export default class HomePage extends Component {
         {
           tags: newTags,
           notification: true,
-          notificationText: 'new tag added',
+          notificationText: 'New tag added!',
           goodNotification: true
         },
         () => {
@@ -423,43 +445,15 @@ export default class HomePage extends Component {
     }
   };
 
-  handleSort = (sortBy: string, checked: boolean) => {
-    let method: string = '';
-    switch (sortBy) {
-      case 'nameAsc':
-        method = 'title (asc)';
-        break;
-      case 'runtimeAsc':
-        method = 'runtime (asc)';
-        break;
-      case 'mpaaAsc':
-        method = 'rating (asc)';
-        break;
-      case 'starCountAsc':
-        method = 'star count (asc)';
-        break;
-      case 'nameDesc':
-        method = 'title (desc)';
-        break;
-      case 'runtimeDesc':
-        method = 'runtime (desc)';
-        break;
-      case 'mpaaDesc':
-        method = 'rating (desc)';
-        break;
-      case 'starCountDesc':
-        method = 'star count (desc)';
-        break;
-      default:
-        method = 'original order';
-        break;
+  handleSort = (sortBy: string) => {
+    if (this.state.saveSortedOrder) {
+      localStorage.setItem('sortBy', sortBy);
     }
-
-    const text: string = checked
-      ? `your films will now be default sorted by ${method}`
-      : `film ${
-          this.state.showWishlist ? 'wishlist' : 'lot'
-        } successfully sorted by ${method}`;
+    const text: string = this.state.saveSortedOrder
+      ? `Your films will now be default sorted by ${sortLabels[sortBy]}`
+      : `Your films have been successfully sorted by ${
+          sortLabels[sortBy || 'reset']
+        }`;
     this.setState(
       {
         sortBy: sortBy,
@@ -475,6 +469,7 @@ export default class HomePage extends Component {
 
   handleWishlist = (checked: boolean) => {
     if (checked && !this.state.fetchedWishlist) {
+      document.title = 'Cinelot | Your wishlist on the go';
       const wishlistMovies: movie[] = [];
       const userRef = firebase.database().ref('users/' + this.state.uid);
       const wishlistRef = userRef.child('wishlist');
@@ -504,7 +499,7 @@ export default class HomePage extends Component {
             wishlist: wishlistMovies,
             fetchedWishlist: true,
             notification: true,
-            notificationText: 'switched to wishlist view',
+            notificationText: 'Switched to Wishlist View',
             goodNotification: true
           },
           () => {
@@ -513,14 +508,19 @@ export default class HomePage extends Component {
         );
       });
     } else {
+      if (checked) {
+        document.title = 'Cinelot | Your film wishlist on the go';
+      } else {
+        document.title = 'Cinelot | Your film lot on the go';
+      }
       this.setState(
         {
           showWishlist: checked,
           notification: true,
           goodNotification: true,
           notificationText: checked
-            ? 'switched to wishlist view'
-            : 'switched to lot view'
+            ? 'Switched to Wishlist View'
+            : 'Switched to Lot View'
         },
         () => {
           setTimeout(this.onNotificationClose, 4000);
@@ -585,7 +585,7 @@ export default class HomePage extends Component {
         {
           wishlist: newMovies,
           notification: true,
-          notificationText: 'film successfully deleted from wishlist',
+          notificationText: 'Film successfully deleted from wishlist',
           goodNotification: true
         },
         () => {
@@ -597,7 +597,7 @@ export default class HomePage extends Component {
         {
           movies: newMovies,
           notification: true,
-          notificationText: 'film successfully deleted from lot',
+          notificationText: 'Film successfully deleted from lot',
           goodNotification: true
         },
         () => {
@@ -641,7 +641,7 @@ export default class HomePage extends Component {
         {
           wishlist: newMovies,
           notification: true,
-          notificationText: 'wishlist film successfully rated',
+          notificationText: 'Wishlist film successfully rated',
           goodNotification: true
         },
         () => {
@@ -653,7 +653,7 @@ export default class HomePage extends Component {
         {
           movies: newMovies,
           notification: true,
-          notificationText: 'lot film successfully rated',
+          notificationText: 'Lot film successfully rated',
           goodNotification: true
         },
         () => {
@@ -700,7 +700,7 @@ export default class HomePage extends Component {
           notification: true,
           notificationText: `${
             tags.length > 1 ? 'tags' : 'tag'
-          } successfully added to ${updatedMovie.name}`,
+          } successfully added to ${updatedMovie.name}!`,
           goodNotification: true
         },
         () => {
@@ -714,7 +714,7 @@ export default class HomePage extends Component {
           notification: true,
           notificationText: `${
             tags.length > 1 ? 'tags' : 'tag'
-          } successfully added to ${updatedMovie.name}`,
+          } successfully added to ${updatedMovie.name}!`,
           goodNotification: true
         },
         () => {
@@ -730,7 +730,7 @@ export default class HomePage extends Component {
         {
           filterBy: tag,
           notification: true,
-          notificationText: `movies successfully filtered by tag: ${tag}`,
+          notificationText: `Movies successfully filtered by tag: ${tag}`,
           goodNotification: true
         },
         () => {
@@ -742,7 +742,7 @@ export default class HomePage extends Component {
         {
           filterBy: tag,
           notification: true,
-          notificationText: 'filter has been reset',
+          notificationText: 'Filters have been reset',
           goodNotification: true
         },
         () => {
@@ -759,7 +759,7 @@ export default class HomePage extends Component {
     this.setState(
       {
         notification: true,
-        notificationText: `${movie.name} has been transferred to your lot`,
+        notificationText: `${movie.name} has been transferred to your lot!`,
         goodNotification: true,
         showWishlist: false
       },
@@ -891,9 +891,8 @@ export default class HomePage extends Component {
     this.setState(
       {
         filterBy: '',
-        sortBy: '',
         notification: true,
-        notificationText: 'filters have been reset',
+        notificationText: 'Filters have been reset',
         goodNotification: true
       },
       () => {
@@ -902,12 +901,31 @@ export default class HomePage extends Component {
     );
   };
 
+  handleSaveOrderChange = (checked: boolean) => {
+    if (!checked) {
+      localStorage.removeItem('sortBy');
+      this.setState({
+        checked: checked,
+        sort: '',
+        sortLabel: 'Time added'
+      });
+      this.handleSort('');
+    } else {
+      if (this.state.sortBy !== '') {
+        localStorage.setItem('sortBy', this.state.sortBy);
+      }
+      this.setState({
+        checked: checked
+      });
+    }
+  };
+
   handleUpdatedTags = (updatedTags: string[]) => {
     this.setState(
       {
         tags: updatedTags,
         notification: true,
-        notificationText: 'tag successfully updated',
+        notificationText: 'Tag successfully updated',
         goodNotification: true
       },
       () => {
@@ -1082,16 +1100,12 @@ export default class HomePage extends Component {
                         />
                       </Box>
                       <Box align="center">
-                        <Filters
+                        <EditFilters
                           wishlist={this.state.showWishlist}
                           width={this.state.width}
                           filter={this.state.filterBy}
-                          sort={this.state.sortBy}
                           uid={this.state.uid}
                           tags={this.state.tags}
-                          handleSort={(sortBy, checked) =>
-                            this.handleSort(sortBy, checked)
-                          }
                           handleFilterByTag={(tag) =>
                             this.handleFilterByTag(tag)
                           }
@@ -1147,7 +1161,7 @@ export default class HomePage extends Component {
                           hoverIndicator="accent-1"
                           onClick={this.toggleSettings}
                         >
-                          <Text>settings</Text>
+                          <Text>Settings</Text>
                           <UserSettings color="brand" />
                         </Box>
                         <Box
@@ -1162,7 +1176,7 @@ export default class HomePage extends Component {
                           hoverIndicator="accent-1"
                           onClick={this.logOut}
                         >
-                          <Text>sign out</Text>
+                          <Text>Sign out</Text>
                           <Logout color="brand" />
                         </Box>
                       </Box>
@@ -1177,35 +1191,80 @@ export default class HomePage extends Component {
                 >
                   <Box
                     direction="row"
+                    justify="between"
                     align="center"
                     gap="small"
-                    pad={{ top: 'small', left: 'medium' }}
-                    width="large"
+                    pad={{ left: 'medium', right: 'medium', top: 'xsmall' }}
                   >
-                    <TextInput
-                      value={this.state.searchVal}
-                      title="Search your film lot!"
-                      placeholder={`Search your ${
-                        this.state.showWishlist
-                          ? this.state.wishlist.length
-                          : this.state.movies.length
-                      } ${
-                        this.state.movies.length === 1 ? 'film' : 'films'
-                      }...`}
-                      icon={<Search />}
-                      onChange={(event) => this.handleSearch(event)}
-                    />
-                    <Box>
-                      <Filters
+                    <Box align="center" direction="row" gap="small">
+                      <TextInput
+                        value={this.state.searchVal}
+                        placeholder={`Search your ${
+                          this.state.showWishlist
+                            ? this.state.wishlist.length
+                            : this.state.movies.length
+                        } ${
+                          this.state.movies.length === 1 ? 'film' : 'films'
+                        }...`}
+                        icon={<Search />}
+                        onChange={(event) => this.handleSearch(event)}
+                      />
+                      <Button
+                        alignSelf="center"
+                        icon={<Filter />}
+                        color={this.state.showFilters ? 'neutral-4' : undefined}
+                        label={this.state.showFilters ? 'Close' : 'Filters'}
+                        reverse
+                        hoverIndicator={
+                          this.state.showFilters ? 'neutral-4' : 'layer'
+                        }
+                        focusIndicator={false}
+                        title="Filter your search"
+                        onClick={() =>
+                          this.setState({
+                            showFilters: !this.state.showFilters
+                          })
+                        }
+                      />
+                      <SortMoviesMenu
+                        sortBy={this.state.sortBy}
+                        handleSort={(sortBy) => this.handleSort(sortBy)}
+                      />
+                    </Box>
+                    <Box direction="row" align="center" gap="small">
+                      <Box
+                        align="center"
+                        gap="small"
+                        pad="small"
+                        direction="row"
+                      >
+                        <CheckBox
+                          disabled={this.state.sortBy === ''}
+                          toggle
+                          checked={this.state.saveSortedOrder}
+                          label="Save sorted order"
+                          reverse
+                          onChange={(event) =>
+                            this.handleSaveOrderChange(event.target.checked)
+                          }
+                        />
+                        <Box direction="row" gap="xsmall" align="center">
+                          <Text size="small" weight="bold">
+                            Default Sort:
+                          </Text>
+                          <Text size="small">
+                            {this.state.saveSortedOrder
+                              ? sortLabels[this.state.sortBy]
+                              : 'Time Added'}
+                          </Text>
+                        </Box>
+                      </Box>
+                      <EditFilters
                         wishlist={this.state.showWishlist}
                         width={this.state.width}
                         filter={this.state.filterBy}
-                        sort={this.state.sortBy}
                         uid={this.state.uid}
                         tags={this.state.tags}
-                        handleSort={(sortBy, checked) =>
-                          this.handleSort(sortBy, checked)
-                        }
                         handleFilterByTag={(tag) => this.handleFilterByTag(tag)}
                         handleTagDelete={(tags) => this.handleTagDelete(tags)}
                         handleUpdatedTags={(updatedTags) =>
@@ -1216,6 +1275,13 @@ export default class HomePage extends Component {
                       />
                     </Box>
                   </Box>
+                  {this.state.showFilters && (
+                    <FilterSearch
+                      handleFilterByTag={(tag) => this.handleFilterByTag(tag)}
+                      tags={this.state.tags}
+                      handleResetFilters={this.handleResetFilters}
+                    />
+                  )}
                   <Collection
                     handleTransfer={(movie) => this.handleTransfer(movie)}
                     wishlist={this.state.showWishlist}

@@ -128,6 +128,7 @@ export default class SignUp extends Component<SignUpProps> {
               >
                 <FormField label="Name" name="name">
                   <TextInput
+                    autoFocus
                     autoComplete="name"
                     name="name"
                     size={size === 'small' ? 'medium' : 'xlarge'}
