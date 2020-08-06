@@ -11,7 +11,7 @@ import AddMovieTemplate from './AddMovieTemplate';
 import { filter } from './FilterSearch';
 
 const columns: Record<string, string[]> = {
-  small: ['auto', 'auto', 'auto'],
+  small: ['auto', 'auto'],
   medium: ['auto', 'auto', 'auto', 'auto'],
   large: ['auto', 'auto', 'auto', 'auto', 'auto', 'auto'],
   xlarge: ['auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto']
@@ -120,6 +120,7 @@ export default class Collection extends Component<CollectionProps> {
         ) : (
           <Box align="center" gap="small">
             <AddMovieTemplate
+              width={this.props.width}
               moviesAdded={(lotMovies, wishlistMovies) =>
                 this.props.moviesAdded(lotMovies, wishlistMovies)
               }
@@ -249,6 +250,7 @@ export default class Collection extends Component<CollectionProps> {
 
     gridMovies.push(
       <AddMovieTemplate
+        width={this.props.width}
         key={0}
         moviesAdded={(lotMovies: movie[], wishlistMovies: movie[]) =>
           this.props.moviesAdded(lotMovies, wishlistMovies)

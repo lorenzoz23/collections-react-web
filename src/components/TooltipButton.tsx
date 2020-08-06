@@ -8,7 +8,7 @@ export const TooltipButton = (props: any) => {
   const ref = useRef() as RefObject<HTMLButtonElement>;
 
   const handleClick = (size: string) => {
-    if (size === 'small') {
+    if (size === 'small' && props.width < 700) {
       setShow(!show);
     }
   };
@@ -27,7 +27,7 @@ export const TooltipButton = (props: any) => {
             onClick={() => handleClick(size)}
           />
 
-          {ref.current && over && size !== 'small' && (
+          {ref.current && over && (size !== 'small' || props.width > 700) && (
             <Drop align={{ top: 'bottom' }} target={ref.current} plain>
               <Box
                 animation="slideDown"

@@ -14,6 +14,7 @@ interface FilterSearchProps {
   ratings: string[];
   handleResetFilters(): void;
   handleFilterByTag(filters: filter[]): void;
+  allowedFilters: boolean[];
 }
 
 export default class FilterSearch extends Component<FilterSearchProps> {
@@ -111,18 +112,9 @@ export default class FilterSearch extends Component<FilterSearchProps> {
               size === 'large' || size === 'xlarge' ? 'between' : undefined
             }
           >
-            {size !== 'large' && size !== 'xlarge' && (
-              <Box gap="xsmall" align="center">
-                <Text textAlign="center" weight="bold">
-                  Your Media Tags
-                </Text>
-                <Box direction="row" align="center">
-                  {this.props.mediaTags.map((tag) => this.renderTag(tag))}
-                </Box>
-              </Box>
-            )}
-            <Box direction="row" align="center" gap="medium">
-              {(size === 'large' || size === 'xlarge') && (
+            {size !== 'large' &&
+              size !== 'xlarge' &&
+              this.props.allowedFilters[0] && (
                 <Box gap="xsmall" align="center">
                   <Text textAlign="center" weight="bold">
                     Your Media Tags
@@ -132,34 +124,50 @@ export default class FilterSearch extends Component<FilterSearchProps> {
                   </Box>
                 </Box>
               )}
-              <Box gap="xsmall" align="center">
-                <Text textAlign="center" weight="bold">
-                  Genre
-                </Text>
-                <SelectSingular
-                  tags={this.props.genreTags}
-                  placeholder="Choose a genre"
-                  plain={false}
-                  selectedFilter={''}
-                  handleSelected={(selected) =>
-                    this.handleTagSelected(selected, 'genre')
-                  }
-                />
-              </Box>
-              <Box gap="xsmall" align="center">
-                <Text textAlign="center" weight="bold">
-                  Your Ratings
-                </Text>
-                <SelectSingular
-                  tags={this.props.ratings}
-                  placeholder="Choose a rating"
-                  plain={false}
-                  selectedFilter={''}
-                  handleSelected={(selected) =>
-                    this.handleTagSelected(selected, 'starCount')
-                  }
-                />
-              </Box>
+            <Box direction="row" align="center" gap="medium">
+              {(size === 'large' || size === 'xlarge') &&
+                this.props.allowedFilters[0] && (
+                  <Box gap="xsmall" align="center">
+                    <Text textAlign="center" weight="bold">
+                      Your Media Tags
+                    </Text>
+                    <Box direction="row" align="center">
+                      {this.props.mediaTags.map((tag) => this.renderTag(tag))}
+                    </Box>
+                  </Box>
+                )}
+              {this.props.allowedFilters[1] && (
+                <Box gap="xsmall" align="center">
+                  <Text textAlign="center" weight="bold">
+                    Genre
+                  </Text>
+                  <SelectSingular
+                    tags={this.props.genreTags}
+                    placeholder="Choose a genre"
+                    plain={false}
+                    selectedFilter={''}
+                    handleSelected={(selected) =>
+                      this.handleTagSelected(selected, 'genre')
+                    }
+                  />
+                </Box>
+              )}
+              {this.props.allowedFilters[2] && (
+                <Box gap="xsmall" align="center">
+                  <Text textAlign="center" weight="bold">
+                    Your Ratings
+                  </Text>
+                  <SelectSingular
+                    tags={this.props.ratings}
+                    placeholder="Choose a rating"
+                    plain={false}
+                    selectedFilter={''}
+                    handleSelected={(selected) =>
+                      this.handleTagSelected(selected, 'starCount')
+                    }
+                  />
+                </Box>
+              )}
             </Box>
             <Button
               margin="xsmall"

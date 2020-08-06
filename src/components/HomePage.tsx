@@ -27,7 +27,8 @@ import {
   Add,
   Checkmark,
   Filter,
-  SearchAdvanced
+  SearchAdvanced,
+  Configure
 } from 'grommet-icons';
 import firebase from 'firebase/app';
 import 'firebase/auth';
@@ -124,6 +125,8 @@ export default class HomePage extends Component {
     saveSortedOrder: boolean;
     showFilters: boolean;
     allGenres: string[];
+    allowedFilters: boolean[];
+    showPrefs: boolean;
   } = {
     uid: '',
     name: '',
@@ -158,7 +161,9 @@ export default class HomePage extends Component {
     showAdvancedSearch: false,
     saveSortedOrder: false,
     showFilters: false,
-    allGenres: ['']
+    allGenres: [''],
+    allowedFilters: [true, true, true],
+    showPrefs: false
   };
 
   constructor(props: any) {
@@ -197,7 +202,9 @@ export default class HomePage extends Component {
       showAdvancedSearch: false,
       saveSortedOrder: false,
       showFilters: false,
-      allGenres: ['']
+      allGenres: [''],
+      allowedFilters: [true, true, true],
+      showPrefs: false
     };
   }
 
@@ -277,7 +284,7 @@ export default class HomePage extends Component {
           greeting: showGreeting,
           uid: uid,
           allGenres: genres,
-          randAddFilmBackDrop: Math.floor(Math.random() * 20)
+          randAddFilmBackDrop: Math.floor(Math.random() * 60)
         });
         this.setState({ welcomeBack: showWelcome }, () =>
           setTimeout(() => this.setState({ welcomeBack: false }), 4000)
@@ -1101,6 +1108,7 @@ export default class HomePage extends Component {
                       {this.state.parsed && (
                         <Box>
                           <AddTitle
+                            width={this.state.width}
                             moviesAdded={(
                               lotMovies: movie[],
                               wishlistMovies: movie[]
@@ -1113,50 +1121,69 @@ export default class HomePage extends Component {
                       )}
                     </Box>
                   ) : (
-                    <Box
-                      direction="row"
-                      align="center"
-                      justify="evenly"
-                      gap="small"
-                    >
-                      <Box width="medium">
-                        <TextInput
-                          value={this.state.searchVal}
-                          focusIndicator={false}
-                          placeholder={
-                            this.state.showWishlist
-                              ? 'Your wishlist'
-                              : 'Your lot'
-                          }
-                          icon={<Search />}
-                          suggestions={[
-                            `Search ${this.state.movies.length} films...`
-                          ]}
-                          onChange={(event) => this.handleSearch(event)}
-                        />
-                      </Box>
-                      <Box align="center">
-                        <EditFilters
-                          wishlist={this.state.showWishlist}
-                          width={this.state.width}
-                          uid={this.state.uid}
-                          tags={this.state.tags}
-                          handleTagDelete={(tags) => this.handleTagDelete(tags)}
-                          handleUpdatedTags={(updatedTags) =>
-                            this.handleUpdatedTags(updatedTags)
-                          }
-                          handleTagAdded={(tag) => this.handleTagAdded(tag)}
-                          handleResetFilters={this.handleResetFilters}
-                        />
+                    <Box direction="row" align="center" gap="small" flex>
+                      <CheckBox
+                        checked={this.state.showWishlist}
+                        toggle
+                        reverse
+                        onChange={(event) =>
+                          this.handleWishlist(event.target.checked)
+                        }
+                        label={
+                          <Heading
+                            textAlign="center"
+                            level="3"
+                            margin="none"
+                            color="light-1"
+                          >
+                            {title}
+                          </Heading>
+                        }
+                      />
+                      <Box>
+                        <Form onSubmit={this.handleSearchToAdd}>
+                          <Box direction="row" gap="small" align="center">
+                            <TextInput
+                              value={this.state.addFilmSearchVal}
+                              placeholder="Search a film to add by title!"
+                              icon={<Add />}
+                              onChange={(event) =>
+                                this.setState({
+                                  addFilmSearchVal: event.target.value
+                                })
+                              }
+                            />
+                            <Box direction="row" align="center" gap="xsmall">
+                              <Button
+                                disabled={
+                                  this.state.addFilmSearchVal.length === 0
+                                }
+                                alignSelf="center"
+                                type="submit"
+                                primary
+                                style={{ borderRadius: 30 }}
+                                icon={<Checkmark size="small" />}
+                                reverse
+                              />
+                              <Anchor
+                                icon={<SearchAdvanced />}
+                                alignSelf="center"
+                                onClick={() =>
+                                  this.setState({ showAdvancedSearch: true })
+                                }
+                              />
+                            </Box>
+                          </Box>
+                        </Form>
                       </Box>
                     </Box>
                   )}
                   <DropButton
                     style={{ borderRadius: 25 }}
                     plain
-                    alignSelf="end"
+                    alignSelf={size !== 'small' ? 'end' : 'center'}
                     hoverIndicator="brand"
-                    margin={{ right: 'small' }}
+                    margin={{ right: size !== 'small' ? 'small' : 'none' }}
                     open={
                       this.state.userProfileClicked && !this.state.showSettings
                     }
@@ -1241,13 +1268,19 @@ export default class HomePage extends Component {
                   <Box align="center" direction="row" gap="small">
                     <TextInput
                       value={this.state.searchVal}
-                      placeholder={`Search your ${
-                        this.state.showWishlist
-                          ? this.state.wishlist.length
-                          : this.state.movies.length
-                      } ${
-                        this.state.movies.length === 1 ? 'film' : 'films'
-                      }...`}
+                      placeholder={
+                        size !== 'small'
+                          ? `Search your ${
+                              this.state.showWishlist
+                                ? this.state.wishlist.length
+                                : this.state.movies.length
+                            } ${
+                              this.state.movies.length === 1 ? 'film' : 'films'
+                            }...`
+                          : this.state.showWishlist
+                          ? 'Your Wishlist'
+                          : 'Your Lot'
+                      }
                       icon={<Search />}
                       onChange={(event) => this.handleSearch(event)}
                     />
@@ -1280,27 +1313,128 @@ export default class HomePage extends Component {
                     gap="medium"
                     border="between"
                   >
-                    <Box align="center" gap="small" direction="row">
-                      <CheckBox
-                        disabled={this.state.sortBy === ''}
-                        toggle
-                        checked={this.state.saveSortedOrder}
-                        label="Save sorted order"
-                        reverse
-                        onChange={(event) =>
-                          this.handleSaveOrderChange(event.target.checked)
-                        }
+                    <Box>
+                      <Button
+                        icon={<Configure />}
+                        label={size !== 'small' ? 'Preferences' : undefined}
+                        reverse={size !== 'small'}
+                        onClick={() => this.setState({ showPrefs: true })}
                       />
-                      <Box direction="row" gap="xsmall" align="center">
-                        <Text size="small" weight="bold">
-                          Default Sort:
-                        </Text>
-                        <Text size="small">
-                          {this.state.saveSortedOrder
-                            ? sortLabels[this.state.sortBy]
-                            : 'Original Order'}
-                        </Text>
-                      </Box>
+                      {this.state.showPrefs && (
+                        <Layer
+                          position="center"
+                          responsive={false}
+                          style={{ borderRadius: 30 }}
+                          onClickOutside={() =>
+                            this.setState({ showPrefs: false })
+                          }
+                        >
+                          <Box
+                            pad="large"
+                            align="center"
+                            justify="center"
+                            round
+                            gap="medium"
+                            background="light-2"
+                            border={{
+                              side: 'all',
+                              size: 'medium',
+                              color: 'accent-3',
+                              style: 'outset'
+                            }}
+                          >
+                            <Text size="large" weight="bold" textAlign="center">
+                              Filter/Sort Preferences
+                            </Text>
+                            <Box align="center" gap="small" border="between">
+                              <Text weight="bold" textAlign="center">
+                                Filter
+                              </Text>
+                              <Box align="center" gap="small" pad="small">
+                                <CheckBox
+                                  toggle
+                                  checked={this.state.allowedFilters[0]}
+                                  label="Filter by your media tags"
+                                  reverse
+                                  onChange={(event) => {
+                                    const allowed = this.state.allowedFilters;
+                                    allowed[0] = event.target.checked;
+                                    this.setState({
+                                      allowedFilters: allowed
+                                    });
+                                  }}
+                                />
+                                <CheckBox
+                                  toggle
+                                  checked={this.state.allowedFilters[1]}
+                                  label="Filter by genre"
+                                  reverse
+                                  onChange={(event) => {
+                                    const allowed = this.state.allowedFilters;
+                                    allowed[1] = event.target.checked;
+                                    this.setState({
+                                      allowedFilters: allowed
+                                    });
+                                  }}
+                                />
+                                <CheckBox
+                                  toggle
+                                  checked={this.state.allowedFilters[2]}
+                                  label="Filter by your ratings"
+                                  reverse
+                                  onChange={(event) => {
+                                    const allowed = this.state.allowedFilters;
+                                    allowed[2] = event.target.checked;
+                                    this.setState({
+                                      allowedFilters: allowed
+                                    });
+                                  }}
+                                />
+                              </Box>
+                            </Box>
+                            <Box align="center" gap="small" border="between">
+                              <Text weight="bold" textAlign="center">
+                                Sort
+                              </Text>
+                              <Box
+                                align="center"
+                                gap="small"
+                                direction="row"
+                                pad="small"
+                              >
+                                <CheckBox
+                                  disabled={this.state.sortBy === ''}
+                                  toggle
+                                  checked={this.state.saveSortedOrder}
+                                  label="Save sorted order"
+                                  reverse
+                                  onChange={(event) =>
+                                    this.handleSaveOrderChange(
+                                      event.target.checked
+                                    )
+                                  }
+                                />
+                                <Box
+                                  direction="row"
+                                  gap="xsmall"
+                                  align="center"
+                                >
+                                  <Text size="small" weight="bold">
+                                    Default Sort:
+                                  </Text>
+                                  <Text size="small">
+                                    {this.state.saveSortedOrder
+                                      ? sortLabels[this.state.sortBy]
+                                      : size !== 'small'
+                                      ? 'Original Order'
+                                      : 'Original'}
+                                  </Text>
+                                </Box>
+                              </Box>
+                            </Box>
+                          </Box>
+                        </Layer>
+                      )}
                     </Box>
                     <EditFilters
                       wishlist={this.state.showWishlist}
@@ -1327,6 +1461,7 @@ export default class HomePage extends Component {
                     style={{ zIndex: 10 }}
                   >
                     <FilterSearch
+                      allowedFilters={this.state.allowedFilters}
                       handleFilterByTag={(filters) =>
                         this.handleFilterByTag(filters)
                       }
@@ -1390,6 +1525,7 @@ export default class HomePage extends Component {
                 </Box>
                 {this.state.tmdbSearched && (
                   <AddTitle
+                    width={this.state.width}
                     title={this.state.addFilmSearchVal}
                     handleClose={() =>
                       this.setState({
@@ -1404,6 +1540,7 @@ export default class HomePage extends Component {
                 )}
                 {this.state.showAdvancedSearch && (
                   <AddTitle
+                    width={this.state.width}
                     handleClose={() =>
                       this.setState({
                         showAdvancedSearch: false
@@ -1497,7 +1634,7 @@ export default class HomePage extends Component {
                     <Layer
                       color="layer"
                       responsive={false}
-                      position="bottom-right"
+                      position={size !== 'small' ? 'bottom-right' : 'bottom'}
                       style={{ borderRadius: 30, zIndex: 1000 }}
                       modal={false}
                       margin={{ bottom: 'medium', right: 'medium' }}

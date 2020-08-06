@@ -27,6 +27,7 @@ interface AddTitleProps {
   handleFinishedImport?(): void;
   handleClose?(): void;
   title?: string;
+  width: number;
 }
 
 export default class AddTitle extends Component<AddTitleProps> {
@@ -142,7 +143,9 @@ export default class AddTitle extends Component<AddTitleProps> {
             {this.props.parsed ? (
               <Layer
                 position="center"
-                responsive={size === 'small' ? true : false}
+                responsive={
+                  size === 'small' && this.props.width < 700 ? true : false
+                }
                 onClickOutside={this.closeAddTitle}
               >
                 <MovieSearchResult
@@ -159,10 +162,15 @@ export default class AddTitle extends Component<AddTitleProps> {
               <Layer
                 style={{
                   borderRadius:
-                    size !== 'small' && !this.state.searched ? 30 : 0
+                    (size !== 'small' && !this.state.searched) ||
+                    (size === 'small' && this.props.width > 700)
+                      ? 30
+                      : 0
                 }}
                 position="center"
-                responsive={size === 'small' ? true : false}
+                responsive={
+                  size === 'small' && this.props.width < 700 ? true : false
+                }
                 onClickOutside={this.closeAddTitle}
               >
                 {this.state.searched || this.props.title?.length! > 0 ? (
@@ -188,7 +196,10 @@ export default class AddTitle extends Component<AddTitleProps> {
                     justify="center"
                     overflow="auto"
                     background="layer"
-                    round={size === 'small' ? false : true}
+                    round={
+                      size === 'small' && this.props.width < 700 ? false : true
+                    }
+                    border={{ size: 'small', side: 'all', color: 'accent-1' }}
                   >
                     <Heading textAlign="center" level="3">
                       Search a film to add!
@@ -261,6 +272,7 @@ export default class AddTitle extends Component<AddTitleProps> {
                             onClick={this.props.handleClose}
                           />
                           <TooltipButton
+                            width={this.props.width}
                             title=""
                             icon={<CircleQuestion />}
                             focus={true}
@@ -268,6 +280,7 @@ export default class AddTitle extends Component<AddTitleProps> {
                         </Box>
                       ) : (
                         <TooltipButton
+                          width={this.props.width}
                           title=""
                           icon={<CircleQuestion />}
                           focus={false}
