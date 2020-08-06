@@ -78,7 +78,7 @@ export default class AddMovieTemplate extends Component<AddMovieTemplateProps> {
           >
             <Drop
               align={{ bottom: 'bottom' }}
-              target={this.state.ref.current || undefined}
+              target={this.state.ref.current!}
               plain
               overflow="hidden"
               style={{ zIndex: 1 }}

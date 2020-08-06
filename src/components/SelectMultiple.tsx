@@ -125,7 +125,9 @@ export default class SelectMultiple extends Component<SelectMultipleProps> {
           >
             <Select
               dropAlign={
-                size !== 'small' ? { top: 'top', right: 'left' } : undefined
+                size === 'large' || size === 'xlarge'
+                  ? { top: 'top', right: 'left' }
+                  : undefined
               }
               focusIndicator={this.props.plain ? false : true}
               plain={this.props.plain}

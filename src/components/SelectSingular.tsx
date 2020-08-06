@@ -85,7 +85,7 @@ export default class SelectSingular extends Component<SelectSingularProps> {
         style={{ borderRadius: 5 }}
         title={this.props.title || undefined}
         border={{
-          color: this.props.placeholder.includes('star count')
+          color: this.props.placeholder.includes('rating')
             ? 'accent-4'
             : this.props.placeholder.includes('genre')
             ? 'accent-3'
@@ -94,7 +94,7 @@ export default class SelectSingular extends Component<SelectSingularProps> {
       >
         <Select
           icon={
-            this.props.placeholder.includes('star count') ? (
+            this.props.placeholder.includes('rating') ? (
               <Star color="plain" />
             ) : this.props.placeholder.includes('genre') ? (
               <Multimedia color="accent-3" />

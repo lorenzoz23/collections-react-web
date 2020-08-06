@@ -77,8 +77,10 @@ export default class FilterSearch extends Component<FilterSearchProps> {
             horizontal: 'medium'
           }}
           margin="xsmall"
-          background={same ? 'accent-1' : 'light-4'}
+          background={same ? 'accent-1' : 'light-6'}
           round="large"
+          onClick={() => {}}
+          hoverIndicator="light-1"
         >
           <Text weight="bold" textAlign="center">
             {tag}
@@ -101,27 +103,42 @@ export default class FilterSearch extends Component<FilterSearchProps> {
       <ResponsiveContext.Consumer>
         {(size) => (
           <Box
-            direction="row"
-            justify="between"
             align="center"
             pad={{ horizontal: 'medium', vertical: 'small' }}
+            gap="small"
+            direction={size !== 'large' && size !== 'xlarge' ? 'column' : 'row'}
+            justify={
+              size === 'large' || size === 'xlarge' ? 'between' : undefined
+            }
           >
-            <Box direction="row" align="center" gap="medium">
+            {size !== 'large' && size !== 'xlarge' && (
               <Box gap="xsmall" align="center">
-                <Text textAlign="center" color="light-4" weight="bold">
+                <Text textAlign="center" weight="bold">
                   Your Media Tags
                 </Text>
                 <Box direction="row" align="center">
                   {this.props.mediaTags.map((tag) => this.renderTag(tag))}
                 </Box>
               </Box>
+            )}
+            <Box direction="row" align="center" gap="medium">
+              {(size === 'large' || size === 'xlarge') && (
+                <Box gap="xsmall" align="center">
+                  <Text textAlign="center" weight="bold">
+                    Your Media Tags
+                  </Text>
+                  <Box direction="row" align="center">
+                    {this.props.mediaTags.map((tag) => this.renderTag(tag))}
+                  </Box>
+                </Box>
+              )}
               <Box gap="xsmall" align="center">
-                <Text textAlign="center" color="light-4" weight="bold">
+                <Text textAlign="center" weight="bold">
                   Genre
                 </Text>
                 <SelectSingular
                   tags={this.props.genreTags}
-                  placeholder="Filter by genre"
+                  placeholder="Choose a genre"
                   plain={false}
                   selectedFilter={''}
                   handleSelected={(selected) =>
@@ -130,12 +147,12 @@ export default class FilterSearch extends Component<FilterSearchProps> {
                 />
               </Box>
               <Box gap="xsmall" align="center">
-                <Text textAlign="center" color="light-4" weight="bold">
+                <Text textAlign="center" weight="bold">
                   Your Ratings
                 </Text>
                 <SelectSingular
                   tags={this.props.ratings}
-                  placeholder="Filter by star count"
+                  placeholder="Choose a rating"
                   plain={false}
                   selectedFilter={''}
                   handleSelected={(selected) =>
@@ -147,10 +164,13 @@ export default class FilterSearch extends Component<FilterSearchProps> {
             <Button
               margin="xsmall"
               disabled={this.state.selectedFilters.length === 0}
-              alignSelf="end"
+              alignSelf={
+                size !== 'large' && size !== 'xlarge' ? 'center' : 'end'
+              }
               onClick={this.handleResetFilters}
               label="Reset filters"
-              hoverIndicator="accent-1"
+              primary
+              hoverIndicator="transparent"
               icon={<PowerReset />}
               reverse
             />

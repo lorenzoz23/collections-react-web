@@ -9,7 +9,7 @@ import {
   Anchor,
   Text
 } from 'grommet';
-import { Trash, Refresh, Previous, FormClose, Tag, Like } from 'grommet-icons';
+import { Trash, Update, Previous, FormClose, Tag, Like } from 'grommet-icons';
 import firebase from 'firebase';
 import 'firebase/database';
 import FilterViewTags from './FilterViewTags';
@@ -215,7 +215,7 @@ export default class EditFilters extends Component<FiltersProps> {
                             onClick={() =>
                               this.setState({ showUpdateBox: true })
                             }
-                            icon={<Refresh />}
+                            icon={<Update />}
                             primary
                             color="accent-4"
                           />
@@ -240,7 +240,11 @@ export default class EditFilters extends Component<FiltersProps> {
                 </Box>
                 {this.state.showUpdateBox && (
                   <Layer
-                    position="bottom-right"
+                    position={
+                      size === 'large' || size === 'xlarge'
+                        ? 'bottom-right'
+                        : 'right'
+                    }
                     onClickOutside={() =>
                       this.setState({ showUpdateBox: false })
                     }

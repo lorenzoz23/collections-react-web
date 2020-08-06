@@ -12,7 +12,7 @@ import { filter } from './FilterSearch';
 
 const columns: Record<string, string[]> = {
   small: ['auto', 'auto', 'auto'],
-  medium: ['auto', 'auto', 'auto', 'auto', 'auto'],
+  medium: ['auto', 'auto', 'auto', 'auto'],
   large: ['auto', 'auto', 'auto', 'auto', 'auto', 'auto'],
   xlarge: ['auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto']
 };

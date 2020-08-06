@@ -33,6 +33,7 @@ export const Movie = (props: any) => {
               target={ref.current}
               plain
               overflow="hidden"
+              style={{ zIndex: 1 }}
             >
               <Box
                 margin="xsmall"

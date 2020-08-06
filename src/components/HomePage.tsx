@@ -1030,7 +1030,7 @@ export default class HomePage extends Component {
                   {size !== 'small' ? (
                     <Box
                       direction="row"
-                      gap="medium"
+                      gap={size === 'medium' ? 'small' : 'medium'}
                       align="center"
                       alignSelf="end"
                       justify="evenly"
@@ -1055,7 +1055,11 @@ export default class HomePage extends Component {
                       />
                       <Box>
                         <Form onSubmit={this.handleSearchToAdd}>
-                          <Box direction="row" gap="medium" width="large">
+                          <Box
+                            direction="row"
+                            gap={size === 'medium' ? 'small' : 'medium'}
+                            width={size === 'medium' ? undefined : 'large'}
+                          >
                             <TextInput
                               value={this.state.addFilmSearchVal}
                               placeholder="Search a film to add by title!"
@@ -1066,15 +1070,11 @@ export default class HomePage extends Component {
                                 })
                               }
                             />
-                            <Box direction="row" align="center" gap="medium">
-                              <Anchor
-                                icon={<SearchAdvanced />}
-                                label="Advanced Search"
-                                alignSelf="center"
-                                onClick={() =>
-                                  this.setState({ showAdvancedSearch: true })
-                                }
-                              />
+                            <Box
+                              direction="row"
+                              align="center"
+                              gap={size === 'medium' ? 'small' : 'medium'}
+                            >
                               <Button
                                 disabled={
                                   this.state.addFilmSearchVal.length === 0
@@ -1085,6 +1085,14 @@ export default class HomePage extends Component {
                                 type="submit"
                                 icon={<Checkmark />}
                                 reverse
+                              />
+                              <Anchor
+                                icon={<SearchAdvanced />}
+                                label="Advanced Search"
+                                alignSelf="center"
+                                onClick={() =>
+                                  this.setState({ showAdvancedSearch: true })
+                                }
                               />
                             </Box>
                           </Box>
@@ -1209,126 +1217,143 @@ export default class HomePage extends Component {
                   />
                 </AppBar>
                 <Box
+                  direction="row"
+                  justify="between"
+                  align="center"
+                  background="#314759"
+                  style={{ zIndex: 10 }}
+                  pad={{
+                    left: 'medium',
+                    right: 'medium',
+                    top: 'xsmall',
+                    bottom: 'xsmall'
+                  }}
+                  border={
+                    !this.state.showFilters
+                      ? {
+                          side: 'bottom',
+                          color: 'lotBorder',
+                          size: 'small'
+                        }
+                      : undefined
+                  }
+                >
+                  <Box align="center" direction="row" gap="small">
+                    <TextInput
+                      value={this.state.searchVal}
+                      placeholder={`Search your ${
+                        this.state.showWishlist
+                          ? this.state.wishlist.length
+                          : this.state.movies.length
+                      } ${
+                        this.state.movies.length === 1 ? 'film' : 'films'
+                      }...`}
+                      icon={<Search />}
+                      onChange={(event) => this.handleSearch(event)}
+                    />
+                    <Button
+                      alignSelf="center"
+                      icon={<Filter />}
+                      color={this.state.showFilters ? 'neutral-4' : undefined}
+                      label={this.state.showFilters ? 'Hide' : 'Filters'}
+                      reverse
+                      hoverIndicator={
+                        this.state.showFilters ? 'neutral-4' : 'layer'
+                      }
+                      primary={this.state.showFilters}
+                      focusIndicator={false}
+                      title="Filter your search"
+                      onClick={() =>
+                        this.setState({
+                          showFilters: !this.state.showFilters
+                        })
+                      }
+                    />
+                    <SortMoviesMenu
+                      sortBy={this.state.sortBy}
+                      handleSort={(sortBy) => this.handleSort(sortBy)}
+                    />
+                  </Box>
+                  <Box
+                    direction="row"
+                    align="center"
+                    gap="medium"
+                    border="between"
+                  >
+                    <Box align="center" gap="small" direction="row">
+                      <CheckBox
+                        disabled={this.state.sortBy === ''}
+                        toggle
+                        checked={this.state.saveSortedOrder}
+                        label="Save sorted order"
+                        reverse
+                        onChange={(event) =>
+                          this.handleSaveOrderChange(event.target.checked)
+                        }
+                      />
+                      <Box direction="row" gap="xsmall" align="center">
+                        <Text size="small" weight="bold">
+                          Default Sort:
+                        </Text>
+                        <Text size="small">
+                          {this.state.saveSortedOrder
+                            ? sortLabels[this.state.sortBy]
+                            : 'Original Order'}
+                        </Text>
+                      </Box>
+                    </Box>
+                    <EditFilters
+                      wishlist={this.state.showWishlist}
+                      width={this.state.width}
+                      uid={this.state.uid}
+                      tags={this.state.tags}
+                      handleTagDelete={(tags) => this.handleTagDelete(tags)}
+                      handleUpdatedTags={(updatedTags) =>
+                        this.handleUpdatedTags(updatedTags)
+                      }
+                      handleTagAdded={(tag) => this.handleTagAdded(tag)}
+                      handleResetFilters={this.handleResetFilters}
+                    />
+                  </Box>
+                </Box>
+                {this.state.showFilters && (
+                  <Box
+                    border={{
+                      side: 'bottom',
+                      color: 'lotBorder',
+                      size: 'small'
+                    }}
+                    background="#314759"
+                    style={{ zIndex: 10 }}
+                  >
+                    <FilterSearch
+                      handleFilterByTag={(filters) =>
+                        this.handleFilterByTag(filters)
+                      }
+                      mediaTags={this.state.tags}
+                      genreTags={this.state.allGenres}
+                      ratings={[
+                        '1',
+                        '2',
+                        '3',
+                        '4',
+                        '5',
+                        '6',
+                        '7',
+                        '8',
+                        '9',
+                        '10'
+                      ]}
+                      handleResetFilters={this.handleResetFilters}
+                    />
+                  </Box>
+                )}
+                <Box
                   overflow={{ horizontal: 'hidden' }}
                   background="home"
                   alignContent="center"
                   flex
                 >
-                  <Box
-                    direction="row"
-                    justify="between"
-                    align="center"
-                    pad={{ left: 'medium', right: 'medium', top: 'xsmall' }}
-                  >
-                    <Box align="center" direction="row" gap="small">
-                      <TextInput
-                        value={this.state.searchVal}
-                        placeholder={`Search your ${
-                          this.state.showWishlist
-                            ? this.state.wishlist.length
-                            : this.state.movies.length
-                        } ${
-                          this.state.movies.length === 1 ? 'film' : 'films'
-                        }...`}
-                        icon={<Search />}
-                        onChange={(event) => this.handleSearch(event)}
-                      />
-                      <Button
-                        alignSelf="center"
-                        icon={<Filter />}
-                        color={this.state.showFilters ? 'neutral-4' : undefined}
-                        label={this.state.showFilters ? 'Hide' : 'Filters'}
-                        reverse
-                        hoverIndicator={
-                          this.state.showFilters ? 'neutral-4' : 'layer'
-                        }
-                        focusIndicator={false}
-                        title="Filter your search"
-                        onClick={() =>
-                          this.setState({
-                            showFilters: !this.state.showFilters
-                          })
-                        }
-                      />
-                      <SortMoviesMenu
-                        sortBy={this.state.sortBy}
-                        handleSort={(sortBy) => this.handleSort(sortBy)}
-                      />
-                    </Box>
-                    <Box
-                      direction="row"
-                      align="center"
-                      gap="medium"
-                      border="between"
-                    >
-                      <Box align="center" gap="small" direction="row">
-                        <CheckBox
-                          disabled={this.state.sortBy === ''}
-                          toggle
-                          checked={this.state.saveSortedOrder}
-                          label="Save sorted order"
-                          reverse
-                          onChange={(event) =>
-                            this.handleSaveOrderChange(event.target.checked)
-                          }
-                        />
-                        <Box direction="row" gap="xsmall" align="center">
-                          <Text size="small" weight="bold">
-                            Default Sort:
-                          </Text>
-                          <Text size="small">
-                            {this.state.saveSortedOrder
-                              ? sortLabels[this.state.sortBy]
-                              : 'Original Order'}
-                          </Text>
-                        </Box>
-                      </Box>
-                      <EditFilters
-                        wishlist={this.state.showWishlist}
-                        width={this.state.width}
-                        uid={this.state.uid}
-                        tags={this.state.tags}
-                        handleTagDelete={(tags) => this.handleTagDelete(tags)}
-                        handleUpdatedTags={(updatedTags) =>
-                          this.handleUpdatedTags(updatedTags)
-                        }
-                        handleTagAdded={(tag) => this.handleTagAdded(tag)}
-                        handleResetFilters={this.handleResetFilters}
-                      />
-                    </Box>
-                  </Box>
-                  {this.state.showFilters && (
-                    <Box
-                    // border={{
-                    //   side: 'all',
-                    //   color: 'lotBorder',
-                    //   size: 'medium',
-                    //   style: 'inset'
-                    // }}
-                    // round
-                    >
-                      <FilterSearch
-                        handleFilterByTag={(filters) =>
-                          this.handleFilterByTag(filters)
-                        }
-                        mediaTags={this.state.tags}
-                        genreTags={this.state.allGenres}
-                        ratings={[
-                          '1',
-                          '2',
-                          '3',
-                          '4',
-                          '5',
-                          '6',
-                          '7',
-                          '8',
-                          '9',
-                          '10'
-                        ]}
-                        handleResetFilters={this.handleResetFilters}
-                      />
-                    </Box>
-                  )}
                   <Collection
                     handleTransfer={(movie) => this.handleTransfer(movie)}
                     wishlist={this.state.showWishlist}
@@ -1357,10 +1382,12 @@ export default class HomePage extends Component {
                     rand={this.state.randAddFilmBackDrop}
                   />
                 </Box>
-                <FooterComponent
-                  uid={this.state.uid}
-                  width={this.state.width}
-                />
+                <Box style={{ zIndex: 10 }}>
+                  <FooterComponent
+                    uid={this.state.uid}
+                    width={this.state.width}
+                  />
+                </Box>
                 {this.state.tmdbSearched && (
                   <AddTitle
                     title={this.state.addFilmSearchVal}
