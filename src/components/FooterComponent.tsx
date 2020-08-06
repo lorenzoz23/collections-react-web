@@ -9,14 +9,23 @@ import {
   Button,
   Layer,
   Heading,
-  Paragraph
+  Paragraph,
+  Nav
 } from 'grommet';
-import { Multimedia, FormClose, CircleInformation } from 'grommet-icons';
+import {
+  Multimedia,
+  FormClose,
+  CircleInformation,
+  UserSettings,
+  Search,
+  Filter
+} from 'grommet-icons';
 import ReportBug from './ReportBug';
 
 interface FooterComponentProps {
   uid: string;
   width: number;
+  wishlist: boolean;
 }
 
 export default class FooterComponent extends Component<FooterComponentProps> {
@@ -36,55 +45,87 @@ export default class FooterComponent extends Component<FooterComponentProps> {
             }}
             gap="medium"
             round={
-              mode === 'wedding' ? (size === 'small' ? 'large' : true) : false
+              mode === 'wedding' ? (size === 'small' ? 'xlarge' : true) : false
             }
             margin={
               mode === 'wedding'
                 ? {
-                    horizontal: 'small',
-                    bottom: size !== 'small' ? 'xsmall' : 'small'
+                    horizontal:
+                      size === 'small' && this.props.width < 700
+                        ? 'xlarge'
+                        : 'medium',
+                    bottom:
+                      size !== 'small'
+                        ? 'xsmall'
+                        : this.props.width < 700
+                        ? 'large'
+                        : 'small'
                   }
                 : 'none'
             }
-            background={{ color: 'footer' }}
-            justify="between"
+            justify={
+              size === 'small' && this.props.width < 700 ? 'center' : 'between'
+            }
+            background={{ color: 'footer', opacity: 0.9 }}
           >
-            <Box
-              direction="row"
-              align="center"
-              gap={size !== 'small' ? 'small' : 'xsmall'}
-            >
-              {size !== 'small' && (
+            {(size === 'small' && this.props.width > 700) ||
+              (size !== 'small' && (
+                <Box direction="row" align="center" gap="small">
+                  <Box
+                    onClick={() => {
+                      window.open(
+                        'https://www.youtube.com/watch?v=JwYX52BP2Sk',
+                        '_blank'
+                      );
+                    }}
+                  >
+                    <Clock
+                      type="digital"
+                      alignSelf="center"
+                      precision="minutes"
+                    />
+                  </Box>
+                  <Button
+                    style={{ borderRadius: 30 }}
+                    hoverIndicator={{ color: 'accent-3', opacity: 'strong' }}
+                    title="about"
+                    icon={<CircleInformation />}
+                    onClick={() => this.setState({ showAbout: true })}
+                  />
+                  <ReportBug {...this.props} />
+                </Box>
+              ))}
+            {(size === 'small' && this.props.width > 700) ||
+              (size !== 'small' && (
                 <Box
-                  onClick={() => {
-                    window.open(
-                      'https://www.youtube.com/watch?v=JwYX52BP2Sk',
-                      '_blank'
-                    );
-                  }}
+                  direction="row"
+                  align="center"
+                  alignContent="center"
+                  gap="small"
                 >
-                  <Clock
-                    type="digital"
+                  <Multimedia />
+                  <Text textAlign="center">Movie data provided by:</Text>
+                  <Anchor
                     alignSelf="center"
-                    precision="minutes"
+                    href="https://www.themoviedb.org/"
+                    target="_blank"
+                    label="The Movie Database (TMDB)"
                   />
                 </Box>
-              )}
-              <Button
-                style={{ borderRadius: 30 }}
-                hoverIndicator={{ color: 'accent-3', opacity: 'strong' }}
-                title="about"
-                size={size === 'small' ? 'small' : undefined}
-                icon={
-                  <CircleInformation
-                    size={this.props.width < 400 ? 'small' : undefined}
-                  />
-                }
-                onClick={() => this.setState({ showAbout: true })}
-              />
-              <ReportBug {...this.props} />
-            </Box>
-            {this.state.showAbout ? (
+              ))}
+            {size === 'small' && this.props.width < 700 && (
+              <Nav round direction="row" align="center" justify="center">
+                <Anchor icon={<Filter />} />
+                <Box align="center" pad="xsmall">
+                  <Anchor icon={<Search size="large" />} />
+                  <Text size="small" weight="bold">
+                    {this.props.wishlist ? 'Wishlist' : 'Lot'}
+                  </Text>
+                </Box>
+                <Anchor icon={<UserSettings />} />
+              </Nav>
+            )}
+            {this.state.showAbout && (
               <Layer
                 position="center"
                 onClickOutside={() => this.setState({ showAbout: false })}
@@ -121,7 +162,7 @@ export default class FooterComponent extends Component<FooterComponentProps> {
                     your wishlist!
                   </Paragraph>
 
-                  {size === 'small' ? (
+                  {size === 'small' && (
                     <Box round>
                       <Button
                         style={{ borderRadius: 30 }}
@@ -130,33 +171,10 @@ export default class FooterComponent extends Component<FooterComponentProps> {
                         onClick={() => this.setState({ showAbout: false })}
                       />
                     </Box>
-                  ) : null}
+                  )}
                 </Box>
               </Layer>
-            ) : null}
-            <Box
-              direction="row"
-              align="center"
-              alignContent="center"
-              gap={size !== 'small' ? 'small' : 'xsmall'}
-            >
-              <Multimedia size={this.props.width < 400 ? 'small' : undefined} />
-              <Text
-                size={size === 'small' ? 'size' : undefined}
-                textAlign="center"
-              >
-                {this.props.width < 400
-                  ? 'Movie data:'
-                  : 'Movie data provided by:'}
-              </Text>
-              <Anchor
-                alignSelf="center"
-                size={size !== 'small' ? 'medium' : 'xsmall'}
-                href="https://www.themoviedb.org/"
-                target="_blank"
-                label={size !== 'small' ? 'The Movie Database (TMDB)' : 'TMDB'}
-              />
-            </Box>
+            )}
           </Footer>
         )}
       </ResponsiveContext.Consumer>

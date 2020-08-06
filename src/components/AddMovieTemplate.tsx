@@ -110,6 +110,14 @@ export default class AddMovieTemplate extends Component<AddMovieTemplateProps> {
               size: 'cover',
               position: 'center'
             }}
+            fill={
+              size === 'small' && this.props.width < 700
+                ? 'horizontal'
+                : undefined
+            }
+            height={
+              size === 'small' && this.props.width < 700 ? 'small' : undefined
+            }
             border={{
               size: 'medium',
               color: 'accent-1',
@@ -152,7 +160,15 @@ export default class AddMovieTemplate extends Component<AddMovieTemplateProps> {
                   onClick={() => {
                     this.setState({ visible: true, rand: this.getRandom() });
                   }}
-                  icon={<Add size="large" />}
+                  icon={
+                    <Add
+                      size={
+                        size === 'small' && this.props.width < 700
+                          ? 'medium'
+                          : 'large'
+                      }
+                    />
+                  }
                   alignSelf="center"
                 />
               </Box>

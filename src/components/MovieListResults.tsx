@@ -113,28 +113,31 @@ export default class MovieListResults extends Component<MovieListResultsProps> {
                         />
                       </Box>
                     ) : (
-                      <Box direction="row" gap="small" alignSelf="start">
+                      <Box gap="small" alignSelf="start">
+                        <Box direction="row" gap="small">
+                          <Button
+                            hoverIndicator="accent-1"
+                            label={
+                              size === 'small' ? 'lot?' : 'add film to lot'
+                            }
+                            onClick={() => {
+                              this.props.checkedMovie(item, false);
+                            }}
+                          />
+                          <Button
+                            hoverIndicator="accent-1"
+                            label={
+                              size === 'small'
+                                ? 'wishlist?'
+                                : 'add film to wishlist'
+                            }
+                            onClick={() => {
+                              this.props.checkedMovie(item, true);
+                            }}
+                          />
+                        </Box>
                         <Button
-                          hoverIndicator="accent-1"
-                          label={
-                            size === 'small' ? 'add to lot' : 'add film to lot'
-                          }
-                          onClick={() => {
-                            this.props.checkedMovie(item, false);
-                          }}
-                        />
-                        <Button
-                          hoverIndicator="accent-1"
-                          label={
-                            size === 'small'
-                              ? 'add to wishlist'
-                              : 'add film to wishlist'
-                          }
-                          onClick={() => {
-                            this.props.checkedMovie(item, true);
-                          }}
-                        />
-                        <Button
+                          alignSelf="start"
                           icon={<Next />}
                           title="details"
                           onClick={() =>

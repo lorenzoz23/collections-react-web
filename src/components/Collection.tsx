@@ -248,16 +248,18 @@ export default class Collection extends Component<CollectionProps> {
     }
     let gridMovies = [];
 
-    gridMovies.push(
-      <AddMovieTemplate
-        width={this.props.width}
-        key={0}
-        moviesAdded={(lotMovies: movie[], wishlistMovies: movie[]) =>
-          this.props.moviesAdded(lotMovies, wishlistMovies)
-        }
-        rand={this.props.rand}
-      />
-    );
+    if (size !== 'small' || (size === 'small' && this.props.width > 700)) {
+      gridMovies.push(
+        <AddMovieTemplate
+          width={this.props.width}
+          key={0}
+          moviesAdded={(lotMovies: movie[], wishlistMovies: movie[]) =>
+            this.props.moviesAdded(lotMovies, wishlistMovies)
+          }
+          rand={this.props.rand}
+        />
+      );
+    }
     gridMovies.push(this.listMovieBoxes());
     return (
       <Grid
@@ -266,6 +268,7 @@ export default class Collection extends Component<CollectionProps> {
         rows={this.getRows(size)}
         areas={undefined}
         pad={{ horizontal: 'medium', top: 'small', bottom: 'medium' }}
+        margin={{ bottom: 'large' }}
       >
         {gridMovies}
       </Grid>
