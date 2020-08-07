@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { Nav, Anchor, Box, Text, Layer } from 'grommet';
-import { Filter, Search, UserSettings, Logout } from 'grommet-icons';
+import { Nav, Anchor, Box, Text, Layer, TextInput } from 'grommet';
+import { Filter, Search, UserSettings, Logout, Gremlin } from 'grommet-icons';
 import Settings from './Settings';
 import { searchResults } from './MovieSearchResult';
 import { movie } from './HomePage';
@@ -10,6 +10,7 @@ interface MobileNavProps {
   wishlist: boolean;
   uid: string;
   handleAccountDelete(): void;
+  handleSearch(event: any): void;
   lot: movie[];
   wishlistFilms: movie[];
   name: string;
@@ -21,9 +22,16 @@ export default class MobileNav extends Component<MobileNavProps> {
   state = {
     show: false,
     showSettings: false,
-    navClicked: ''
+    navClicked: '',
+    searchVal: ''
   };
   render() {
+    const headerText: string =
+      this.state.navClicked === 'Settings'
+        ? this.props.name
+        : this.state.navClicked === 'Search'
+        ? `Search Your ${this.props.wishlist ? 'Wishlist' : 'Lot'}`
+        : this.state.navClicked;
     return (
       <Box>
         <Nav round direction="row" align="center" justify="center">
@@ -71,7 +79,7 @@ export default class MobileNav extends Component<MobileNavProps> {
               width: '100%'
             }}
             onClickOutside={() =>
-              this.setState({ show: false, navClicked: '' })
+              this.setState({ show: false, navClicked: '', searchVal: '' })
             }
           >
             <Box
@@ -81,19 +89,20 @@ export default class MobileNav extends Component<MobileNavProps> {
               gap="small"
               border={{
                 color: 'accent-3',
-                side: 'top',
+                side: 'bottom',
                 size: 'xlarge',
                 style: 'groove'
               }}
               background="light-2"
             >
               <Text size="large" weight="bold">
-                {this.state.navClicked === 'Settings'
-                  ? this.props.name
-                  : this.state.navClicked}
+                {headerText}
               </Text>
               {this.state.navClicked === 'Settings' && (
                 <Box fill="horizontal" gap="small">
+                  <Box alignSelf="center" pad="small">
+                    <Gremlin size="large" />
+                  </Box>
                   <Box
                     direction="row"
                     justify="between"
@@ -108,7 +117,7 @@ export default class MobileNav extends Component<MobileNavProps> {
                     onClick={() => this.setState({ showSettings: true })}
                   >
                     <Text>Settings</Text>
-                    <UserSettings color="brand" />
+                    <UserSettings color="dark-2" />
                   </Box>
                   <Box
                     direction="row"
@@ -124,9 +133,24 @@ export default class MobileNav extends Component<MobileNavProps> {
                     onClick={this.props.logOut}
                   >
                     <Text>Sign out</Text>
-                    <Logout color="brand" />
+                    <Logout color="dark-2" />
                   </Box>
                 </Box>
+              )}
+              {this.state.navClicked === 'Search' && (
+                <TextInput
+                  value={this.state.searchVal}
+                  placeholder={`Search your ${
+                    this.props.wishlist
+                      ? this.props.wishlistFilms.length
+                      : this.props.lot.length
+                  } ${this.props.lot.length === 1 ? 'film' : 'films'}...`}
+                  icon={<Search />}
+                  onChange={(event) => {
+                    this.setState({ searchVal: event.target.value });
+                    this.props.handleSearch(event);
+                  }}
+                />
               )}
             </Box>
           </Layer>

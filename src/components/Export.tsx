@@ -113,7 +113,7 @@ export default class Export extends Component<ExportProps> {
     return (
       <Box align="center" justify="center">
         <Button
-          label="export"
+          label="Export"
           hoverIndicator="accent-1"
           onClick={async () => {
             await this.handleExport();

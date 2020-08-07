@@ -53,11 +53,16 @@ export const TooltipButton = (props: any) => {
               position="top"
               responsive={false}
               onClickOutside={() => setShow(false)}
-              style={{ width: '100%' }}
+              style={{
+                width: '100%',
+                borderBottomRightRadius: 30,
+                borderBottomLeftRadius: 30
+              }}
             >
               <Box
                 background="accent-1"
                 pad="medium"
+                round={{ corner: 'bottom' }}
                 align="center"
                 overflow={{ vertical: 'auto', horizontal: 'hidden' }}
               >

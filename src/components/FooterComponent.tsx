@@ -28,6 +28,7 @@ interface FooterComponentProps {
   name: string;
   fetchedWishlist: boolean;
   logOut(): void;
+  handleSearch(event: any): void;
 }
 
 export default class FooterComponent extends Component<FooterComponentProps> {
@@ -126,6 +127,7 @@ export default class FooterComponent extends Component<FooterComponentProps> {
               ))}
             {size === 'small' && this.props.width < 700 && (
               <MobileNav
+                handleSearch={(event) => this.props.handleSearch(event)}
                 logOut={this.props.logOut}
                 wishlist={this.props.wishlist}
                 uid={this.props.uid}

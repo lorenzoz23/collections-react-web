@@ -116,17 +116,24 @@ export default class RateFilm extends Component<RateFilmProps> {
               <Layer
                 responsive={false}
                 position={size === 'small' ? 'bottom' : 'top'}
-                style={{
-                  borderRadius: size !== 'small' ? 30 : 0,
-                  width: size === 'small' ? '100%' : undefined
-                }}
+                style={
+                  size !== 'small'
+                    ? {
+                        borderRadius: 30
+                      }
+                    : {
+                        width: '100%',
+                        borderTopLeftRadius: 30,
+                        borderTopRightRadius: 30
+                      }
+                }
                 onClickOutside={this.handleCancel}
                 margin={size !== 'small' ? { top: 'medium' } : undefined}
                 color="light-2"
               >
                 <Box
-                  round
-                  margin="xsmall"
+                  round={size === 'small' ? { corner: 'top' } : true}
+                  margin={{ top: 'small', horizontal: 'small' }}
                   background={{ color: 'neutral-3', opacity: 0.7 }}
                   // style={{
                   //   background:

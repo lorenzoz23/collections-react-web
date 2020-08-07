@@ -40,7 +40,7 @@ export default class Settings extends Component<SettingsProps> {
   };
 
   handleThemeChange = (mode: string) => {
-    const newMode = mode === 'wedding on a tuesday' ? 'wedding' : mode;
+    const newMode = mode === 'Wedding on a Tuesday' ? 'wedding' : mode;
     localStorage.setItem('visualModeValue', newMode);
     this.setState({
       theme: newMode
@@ -79,15 +79,15 @@ export default class Settings extends Component<SettingsProps> {
               >
                 <Box gap="small" pad="medium" round background="smallLayer">
                   <Text textAlign="center" weight="bold">
-                    please type in your auto-generated user-id to confirm
+                    Please type in your auto-generated user-id to confirm
                     account deletion
                   </Text>
                   <Text textAlign="center">
-                    <Text weight="bold">user-id: </Text>
+                    <Text weight="bold">User-ID: </Text>
                     {this.props.uid}
                   </Text>
                   <TextInput
-                    placeholder="user-id"
+                    placeholder="User-ID"
                     value={this.state.uid}
                     onChange={(event) =>
                       this.setState({ uid: event.target.value })
@@ -96,7 +96,7 @@ export default class Settings extends Component<SettingsProps> {
                   <Button
                     primary
                     color="status-error"
-                    label="delete account"
+                    label="Delete Account"
                     disabled={this.state.uid === this.props.uid ? false : true}
                     onClick={this.props.handleAccountDelete}
                   />
@@ -111,10 +111,10 @@ export default class Settings extends Component<SettingsProps> {
               round
               border={{ color: 'accent-1', side: 'all', size: 'medium' }}
             >
-              <Heading level="2">settings</Heading>
+              <Heading level="2">Settings</Heading>
               <Box gap="small" alignContent="center">
                 <Box align="center" gap="xsmall">
-                  <Text weight="bold">import/export data</Text>
+                  <Text weight="bold">Import/Export Data</Text>
                   <CSV
                     lot={this.props.lot}
                     wishlist={this.props.wishlistFilms}
@@ -129,7 +129,7 @@ export default class Settings extends Component<SettingsProps> {
                   />
                 </Box>
                 <Box gap="xsmall" align="center">
-                  <Text weight="bold">theme</Text>
+                  <Text weight="bold">Theme</Text>
                   <Select
                     // disabled={
                     //   this.state.theme === 'gradient'
@@ -142,29 +142,28 @@ export default class Settings extends Component<SettingsProps> {
                     icon={<Magic />}
                     value={
                       this.state.theme === 'wedding'
-                        ? 'wedding on a tuesday'
+                        ? 'Wedding on a Tuesday'
                         : this.state.theme
                     }
-                    placeholder="choose your visual style"
-                    options={['gradient', 'solid', 'wedding on a tuesday']}
+                    options={['Gradient', 'Solid', 'Wedding on a Tuesday']}
                     onChange={({ option }) => this.handleThemeChange(option)}
                   />
                 </Box>
                 <Box align="center" gap="xsmall" margin={{ bottom: 'small' }}>
-                  <Text weight="bold">clear cache</Text>
+                  <Text weight="bold">Clear Cache</Text>
                   <Button
                     hoverIndicator="accent-1"
                     icon={<Baby />}
-                    label="reset"
+                    label="Reset"
                     reverse
                     onClick={this.handleResetCache}
                   />
                 </Box>
                 <Box align="center" gap="xsmall">
-                  <Text weight="bold">danger zone!</Text>
+                  <Text weight="bold">Danger Zone!</Text>
                   <Button
                     primary={size !== 'small' ? false : true}
-                    label="delete account"
+                    label="Delete Account"
                     color="status-error"
                     hoverIndicator={size !== 'small' ? 'status-error' : false}
                     onClick={this.handleDeleteAccount}

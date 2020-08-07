@@ -257,7 +257,7 @@ export default class SignIn extends Component<SignInProps> {
                     size={size === 'small' ? 'small' : 'medium'}
                   />
                 </Box>
-                <Box align="center" gap="small">
+                <Box align="center" gap={size !== 'small' ? 'small' : 'medium'}>
                   <motion.div whileTap={{ scale: 0.9 }}>
                     <CheckBox
                       label="Remember me?"

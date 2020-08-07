@@ -1626,6 +1626,7 @@ export default class HomePage extends Component {
                   }}
                 >
                   <FooterComponent
+                    handleSearch={(event) => this.handleSearch(event)}
                     wishlist={this.state.showWishlist}
                     uid={this.state.uid}
                     handleAccountDelete={this.handleAccountDelete}

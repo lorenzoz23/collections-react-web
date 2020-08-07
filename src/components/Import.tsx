@@ -143,7 +143,7 @@ export default class Import extends Component<ImportProps> {
     return (
       <Box align="center" justify="center">
         <Button
-          label="import"
+          label="Import"
           onClick={this.handleImport}
           hoverIndicator="accent-1"
         />
