@@ -1426,6 +1426,7 @@ export default class HomePage extends Component {
                         style={{ zIndex: 10 }}
                       >
                         <FilterSearch
+                          width={this.state.width}
                           allowedFilters={this.state.allowedFilters}
                           handleFilterByTag={(filters) =>
                             this.handleFilterByTag(filters)
@@ -1520,6 +1521,25 @@ export default class HomePage extends Component {
                     logOut={this.logOut}
                     sortBy={this.state.sortBy}
                     handleSort={(sortBy) => this.handleSort(sortBy)}
+                    allowedFilters={this.state.allowedFilters}
+                    handleFilterByTag={(filters) =>
+                      this.handleFilterByTag(filters)
+                    }
+                    mediaTags={this.state.tags}
+                    genreTags={this.state.allGenres}
+                    ratings={[
+                      '1',
+                      '2',
+                      '3',
+                      '4',
+                      '5',
+                      '6',
+                      '7',
+                      '8',
+                      '9',
+                      '10'
+                    ]}
+                    handleResetFilters={this.handleResetFilters}
                   />
                 </Box>
                 {this.state.tmdbSearched && (

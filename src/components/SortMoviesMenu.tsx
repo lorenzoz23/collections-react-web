@@ -18,6 +18,7 @@ interface SortMoviesMenuProps {
   handleSort(sortBy: string): void;
   sortBy: string;
   width: number;
+  onOpen?(open: boolean): void;
 }
 
 export default class SortMoviesMenu extends Component<SortMoviesMenuProps> {
@@ -33,13 +34,21 @@ export default class SortMoviesMenu extends Component<SortMoviesMenuProps> {
     return (
       <ResponsiveContext.Consumer>
         {(size) => (
-          <Box>
+          <Box margin={{ left: 'small' }}>
             {size === 'small' && this.props.width < 700 ? (
               <Box background="light-2">
                 {this.state.showSortLayer && this.props.width < 700 ? (
-                  <Box gap="xsmall" border="between">
+                  <Box
+                    gap="xsmall"
+                    border="between"
+                    background={{ color: 'neutral-3', opacity: 'medium' }}
+                    round
+                    pad={{ bottom: 'medium', horizontal: 'medium' }}
+                    overflow={{ vertical: 'scroll' }}
+                  >
                     {sortlabels.map((item) => (
                       <Box
+                        margin={{ vertical: 'small', right: 'small' }}
                         pad={{
                           left: 'small',
                           top: 'medium',
@@ -50,6 +59,7 @@ export default class SortMoviesMenu extends Component<SortMoviesMenuProps> {
                           this.setState({ showSortLayer: false });
                           this.props.handleSort(item.sortBy);
                         }}
+                        key={item.label}
                       >
                         <Text>{item.label}</Text>
                       </Box>
@@ -60,7 +70,10 @@ export default class SortMoviesMenu extends Component<SortMoviesMenuProps> {
                       icon={<FormPrevious />}
                       primary
                       style={{ borderRadius: 30 }}
-                      onClick={() => this.setState({ showSortLayer: false })}
+                      onClick={() => {
+                        this.setState({ showSortLayer: false });
+                        this.props.onOpen!(false);
+                      }}
                     />
                   </Box>
                 ) : (
@@ -76,7 +89,10 @@ export default class SortMoviesMenu extends Component<SortMoviesMenuProps> {
                       bottom: 'medium',
                       right: 'medium'
                     }}
-                    onClick={() => this.setState({ showSortLayer: true })}
+                    onClick={() => {
+                      this.setState({ showSortLayer: true });
+                      this.props.onOpen!(true);
+                    }}
                   >
                     <Box direction="row" gap="small">
                       <Text weight="bold">Sort</Text>

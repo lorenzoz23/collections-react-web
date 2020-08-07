@@ -1,6 +1,13 @@
 import React, { Component } from 'react';
 import { ResponsiveContext, Button, Box, Text } from 'grommet';
-import { PowerReset } from 'grommet-icons';
+import {
+  PowerReset,
+  Tag,
+  FormNext,
+  Aed,
+  Star,
+  FormPrevious
+} from 'grommet-icons';
 import SelectSingular from './SelectSingular';
 
 export type filter = {
@@ -14,12 +21,22 @@ interface FilterSearchProps {
   ratings: string[];
   handleResetFilters(): void;
   handleFilterByTag(filters: filter[]): void;
+  onOpen?(open: boolean): void;
   allowedFilters: boolean[];
+  width: number;
 }
 
 export default class FilterSearch extends Component<FilterSearchProps> {
-  state: { selectedFilters: filter[] } = {
-    selectedFilters: []
+  state: {
+    selectedFilters: filter[];
+    showMediaLayer: boolean;
+    showGenreLayer: boolean;
+    showRatingsLayer: boolean;
+  } = {
+    selectedFilters: [],
+    showMediaLayer: false,
+    showGenreLayer: false,
+    showRatingsLayer: false
   };
 
   handleTagSelected = (tag: string, type: string) => {
@@ -103,85 +120,282 @@ export default class FilterSearch extends Component<FilterSearchProps> {
     return (
       <ResponsiveContext.Consumer>
         {(size) => (
-          <Box
-            align="center"
-            pad={{ horizontal: 'medium', vertical: 'small' }}
-            gap="small"
-            direction={size !== 'large' && size !== 'xlarge' ? 'column' : 'row'}
-            justify={
-              size === 'large' || size === 'xlarge' ? 'between' : undefined
-            }
-          >
-            {size !== 'large' &&
-              size !== 'xlarge' &&
-              this.props.allowedFilters[0] && (
-                <Box gap="xsmall" align="center">
-                  <Text textAlign="center" weight="bold">
-                    Your Media Tags
-                  </Text>
-                  <Box direction="row" align="center">
-                    {this.props.mediaTags.map((tag) => this.renderTag(tag))}
-                  </Box>
-                </Box>
-              )}
-            <Box direction="row" align="center" gap="medium">
-              {(size === 'large' || size === 'xlarge') &&
-                this.props.allowedFilters[0] && (
+          <Box>
+            {size === 'small' && this.props.width < 700 ? (
+              <Box>
+                {this.state.showMediaLayer && (
                   <Box gap="xsmall" align="center">
-                    <Text textAlign="center" weight="bold">
-                      Your Media Tags
-                    </Text>
-                    <Box direction="row" align="center">
+                    <Box
+                      direction="row"
+                      align="center"
+                      overflow={{ horizontal: 'auto' }}
+                    >
                       {this.props.mediaTags.map((tag) => this.renderTag(tag))}
                     </Box>
+                    <Button
+                      margin={{ top: 'medium' }}
+                      alignSelf="center"
+                      icon={<FormPrevious />}
+                      primary
+                      style={{ borderRadius: 30 }}
+                      onClick={() => {
+                        this.setState({ showMediaLayer: false });
+                        this.props.onOpen!(false);
+                      }}
+                    />
                   </Box>
                 )}
-              {this.props.allowedFilters[1] && (
-                <Box gap="xsmall" align="center">
-                  <Text textAlign="center" weight="bold">
-                    Genre
-                  </Text>
-                  <SelectSingular
-                    tags={this.props.genreTags}
-                    placeholder="Choose a genre"
-                    plain={false}
-                    selectedFilter={''}
-                    handleSelected={(selected) =>
-                      this.handleTagSelected(selected, 'genre')
-                    }
-                  />
+                {this.state.showGenreLayer && (
+                  <Box
+                    background={{ color: 'neutral-3', opacity: 'medium' }}
+                    round
+                    pad={{ bottom: 'medium', horizontal: 'medium' }}
+                    gap="xsmall"
+                    border="between"
+                    overflow={{ vertical: 'scroll' }}
+                  >
+                    {this.props.genreTags.map((genre) => (
+                      <Box
+                        margin={{ vertical: 'small', right: 'small' }}
+                        pad={{
+                          left: 'small',
+                          top: 'medium',
+                          bottom: 'medium',
+                          right: 'medium'
+                        }}
+                        key={genre}
+                      >
+                        <Text>{genre}</Text>
+                      </Box>
+                    ))}
+                    <Button
+                      margin={{ top: 'medium' }}
+                      alignSelf="center"
+                      icon={<FormPrevious />}
+                      primary
+                      style={{ borderRadius: 30 }}
+                      onClick={() => {
+                        this.setState({ showGenreLayer: false });
+                        this.props.onOpen!(false);
+                      }}
+                    />
+                  </Box>
+                )}
+                {this.state.showRatingsLayer && (
+                  <Box gap="xsmall">
+                    <Text size="small" textAlign="center">
+                      Note: This is based off of your own ratings!
+                    </Text>
+                    <Box
+                      background={{ color: 'accent-3', opacity: 'medium' }}
+                      round
+                      gap="xsmall"
+                      border="between"
+                      overflow={{ vertical: 'scroll' }}
+                      pad={{ bottom: 'medium', horizontal: 'medium' }}
+                    >
+                      {this.props.ratings.map((rating) => (
+                        <Box
+                          margin={{ vertical: 'small', right: 'small' }}
+                          pad={{
+                            left: 'small',
+                            top: 'medium',
+                            bottom: 'medium',
+                            right: 'medium'
+                          }}
+                          key={rating}
+                        >
+                          <Text>{rating}</Text>
+                        </Box>
+                      ))}
+                    </Box>
+                    <Button
+                      margin={{ top: 'small' }}
+                      alignSelf="center"
+                      icon={<FormPrevious />}
+                      primary
+                      style={{ borderRadius: 30 }}
+                      onClick={() => {
+                        this.setState({ showRatingsLayer: false });
+                        this.props.onOpen!(false);
+                      }}
+                    />
+                  </Box>
+                )}
+                {!this.state.showGenreLayer &&
+                  !this.state.showMediaLayer &&
+                  !this.state.showRatingsLayer && (
+                    <Box gap="small">
+                      <Box
+                        round
+                        background={{ color: 'brand', opacity: 'medium' }}
+                        direction="row"
+                        justify="between"
+                        border={{ color: 'brand', side: 'all', size: 'small' }}
+                        pad={{
+                          left: 'small',
+                          top: 'medium',
+                          bottom: 'medium',
+                          right: 'medium'
+                        }}
+                        onClick={() => {
+                          this.props.onOpen!(true);
+                          this.setState({
+                            showMediaLayer: true,
+                            showGenreLayer: false,
+                            showRatingsLayer: false
+                          });
+                        }}
+                      >
+                        <Box direction="row" gap="small">
+                          <Text weight="bold">Your Media Tags</Text>
+                          <Tag color="dark-2" />
+                        </Box>
+                        <FormNext color="dark-2" />
+                      </Box>
+                      <Box
+                        round
+                        background={{ color: 'brand', opacity: 'medium' }}
+                        direction="row"
+                        justify="between"
+                        border={{ color: 'brand', side: 'all', size: 'small' }}
+                        pad={{
+                          left: 'small',
+                          top: 'medium',
+                          bottom: 'medium',
+                          right: 'medium'
+                        }}
+                        onClick={() => {
+                          this.props.onOpen!(true);
+                          this.setState({
+                            showGenreLayer: true,
+                            showRatingsLayer: false,
+                            showMediaLayer: false
+                          });
+                        }}
+                      >
+                        <Box direction="row" gap="small">
+                          <Text weight="bold">Genre</Text>
+                          <Aed color="dark-2" />
+                        </Box>
+                        <FormNext color="dark-2" />
+                      </Box>
+                      <Box
+                        round
+                        background={{ color: 'brand', opacity: 'medium' }}
+                        direction="row"
+                        justify="between"
+                        border={{ color: 'brand', side: 'all', size: 'small' }}
+                        pad={{
+                          left: 'small',
+                          top: 'medium',
+                          bottom: 'medium',
+                          right: 'medium'
+                        }}
+                        onClick={() => {
+                          this.props.onOpen!(true);
+                          this.setState({
+                            showRatingsLayer: true,
+                            showGenreLayer: false,
+                            showMediaLayer: false
+                          });
+                        }}
+                      >
+                        <Box direction="row" gap="small">
+                          <Text weight="bold">Your Ratings</Text>
+                          <Star color="dark-2" />
+                        </Box>
+                        <FormNext color="dark-2" />
+                      </Box>
+                    </Box>
+                  )}
+              </Box>
+            ) : (
+              <Box
+                align="center"
+                pad={{ horizontal: 'medium', vertical: 'small' }}
+                gap="small"
+                direction={
+                  size !== 'large' && size !== 'xlarge' ? 'column' : 'row'
+                }
+                justify={
+                  size === 'large' || size === 'xlarge' ? 'between' : undefined
+                }
+              >
+                {size !== 'large' &&
+                  size !== 'xlarge' &&
+                  this.props.allowedFilters[0] && (
+                    <Box gap="xsmall" align="center">
+                      <Text textAlign="center" weight="bold">
+                        Your Media Tags
+                      </Text>
+                      <Box direction="row" align="center">
+                        {this.props.mediaTags.map((tag) => this.renderTag(tag))}
+                      </Box>
+                    </Box>
+                  )}
+                <Box direction="row" align="center" gap="medium">
+                  {(size === 'large' || size === 'xlarge') &&
+                    this.props.allowedFilters[0] && (
+                      <Box gap="xsmall" align="center">
+                        <Text textAlign="center" weight="bold">
+                          Your Media Tags
+                        </Text>
+                        <Box direction="row" align="center">
+                          {this.props.mediaTags.map((tag) =>
+                            this.renderTag(tag)
+                          )}
+                        </Box>
+                      </Box>
+                    )}
+                  {this.props.allowedFilters[1] && (
+                    <Box gap="xsmall" align="center">
+                      <Text textAlign="center" weight="bold">
+                        Genre
+                      </Text>
+                      <SelectSingular
+                        tags={this.props.genreTags}
+                        placeholder="Choose a genre"
+                        plain={false}
+                        selectedFilter={''}
+                        handleSelected={(selected) =>
+                          this.handleTagSelected(selected, 'genre')
+                        }
+                      />
+                    </Box>
+                  )}
+                  {this.props.allowedFilters[2] && (
+                    <Box gap="xsmall" align="center">
+                      <Text textAlign="center" weight="bold">
+                        Your Ratings
+                      </Text>
+                      <SelectSingular
+                        tags={this.props.ratings}
+                        placeholder="Choose a rating"
+                        plain={false}
+                        selectedFilter={''}
+                        handleSelected={(selected) =>
+                          this.handleTagSelected(selected, 'starCount')
+                        }
+                      />
+                    </Box>
+                  )}
                 </Box>
-              )}
-              {this.props.allowedFilters[2] && (
-                <Box gap="xsmall" align="center">
-                  <Text textAlign="center" weight="bold">
-                    Your Ratings
-                  </Text>
-                  <SelectSingular
-                    tags={this.props.ratings}
-                    placeholder="Choose a rating"
-                    plain={false}
-                    selectedFilter={''}
-                    handleSelected={(selected) =>
-                      this.handleTagSelected(selected, 'starCount')
-                    }
-                  />
-                </Box>
-              )}
-            </Box>
-            <Button
-              margin="xsmall"
-              disabled={this.state.selectedFilters.length === 0}
-              alignSelf={
-                size !== 'large' && size !== 'xlarge' ? 'center' : 'end'
-              }
-              onClick={this.handleResetFilters}
-              label="Reset filters"
-              primary
-              hoverIndicator="transparent"
-              icon={<PowerReset />}
-              reverse
-            />
+                <Button
+                  margin="xsmall"
+                  disabled={this.state.selectedFilters.length === 0}
+                  alignSelf={
+                    size !== 'large' && size !== 'xlarge' ? 'center' : 'end'
+                  }
+                  onClick={this.handleResetFilters}
+                  label="Reset filters"
+                  primary
+                  hoverIndicator="transparent"
+                  icon={<PowerReset />}
+                  reverse
+                />
+              </Box>
+            )}
           </Box>
         )}
       </ResponsiveContext.Consumer>

@@ -16,6 +16,7 @@ import ReportBug from './ReportBug';
 import MobileNav from './MobileNav';
 import { searchResults } from './MovieSearchResult';
 import { movie } from './HomePage';
+import { filter } from './FilterSearch';
 
 interface FooterComponentProps {
   width: number;
@@ -31,6 +32,12 @@ interface FooterComponentProps {
   handleSearch(searchVal: string): void;
   sortBy: string;
   handleSort(sortBy: string): void;
+  mediaTags: string[];
+  genreTags: string[];
+  ratings: string[];
+  handleResetFilters(): void;
+  handleFilterByTag(filters: filter[]): void;
+  allowedFilters: boolean[];
 }
 
 export default class FooterComponent extends Component<FooterComponentProps> {
@@ -142,6 +149,14 @@ export default class FooterComponent extends Component<FooterComponentProps> {
                 name={this.props.name}
                 fetchedWishlist={this.props.fetchedWishlist}
                 handleParsed={(movieList) => this.props.handleParsed(movieList)}
+                allowedFilters={this.props.allowedFilters}
+                handleFilterByTag={(filters) =>
+                  this.props.handleFilterByTag(filters)
+                }
+                mediaTags={this.props.mediaTags}
+                genreTags={this.props.genreTags}
+                ratings={['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']}
+                handleResetFilters={this.props.handleResetFilters}
               />
             )}
             {this.state.showAbout && (

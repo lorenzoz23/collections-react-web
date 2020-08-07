@@ -13,8 +13,9 @@ import { searchResults } from './MovieSearchResult';
 import { movie } from './HomePage';
 import Preferences from './Preferences';
 import EditFilters from './EditFilters';
-import FilterSearch from './FilterSearch';
+import FilterSearch, { filter } from './FilterSearch';
 import SortMoviesMenu from './SortMoviesMenu';
+import { timeStamp } from 'console';
 
 interface MobileNavProps {
   handleParsed(movieList: searchResults): void;
@@ -30,6 +31,12 @@ interface MobileNavProps {
   fetchedWishlist: boolean;
   logOut(): void;
   width: number;
+  mediaTags: string[];
+  genreTags: string[];
+  ratings: string[];
+  handleResetFilters(): void;
+  handleFilterByTag(filters: filter[]): void;
+  allowedFilters: boolean[];
 }
 
 export default class MobileNav extends Component<MobileNavProps> {
@@ -37,7 +44,9 @@ export default class MobileNav extends Component<MobileNavProps> {
     show: false,
     showSettings: false,
     navClicked: '',
-    searchVal: ''
+    searchVal: '',
+    sortOpen: false,
+    filterOpen: false
   };
   render() {
     const headerText: string =
@@ -107,6 +116,7 @@ export default class MobileNav extends Component<MobileNavProps> {
                 size: 'xlarge',
                 style: 'groove'
               }}
+              height={{ max: 'medium' }}
               background="light-2"
             >
               <Text size="large" weight="bold">
@@ -127,6 +137,7 @@ export default class MobileNav extends Component<MobileNavProps> {
                       right: 'medium'
                     }}
                     round
+                    border={{ color: 'accent-1', side: 'all', size: 'small' }}
                     background={{ color: 'accent-1', opacity: 'medium' }}
                     onClick={() => this.setState({ showSettings: true })}
                   >
@@ -143,6 +154,11 @@ export default class MobileNav extends Component<MobileNavProps> {
                       right: 'medium'
                     }}
                     round
+                    border={{
+                      color: 'status-error',
+                      side: 'all',
+                      size: 'small'
+                    }}
                     background={{ color: 'status-error', opacity: 'medium' }}
                     onClick={this.props.logOut}
                   >
@@ -173,6 +189,7 @@ export default class MobileNav extends Component<MobileNavProps> {
                     label="Clear Search"
                     icon={<ClearOption />}
                     reverse
+                    margin={{ top: 'xsmall' }}
                     alignSelf="center"
                     onClick={() => {
                       this.props.handleSearch('');
@@ -182,36 +199,43 @@ export default class MobileNav extends Component<MobileNavProps> {
                 </Box>
               )}
               {this.state.navClicked === 'Filters' && (
-                <Box gap="small" fill="horizontal">
-                  <SortMoviesMenu
-                    width={this.props.width}
-                    sortBy={this.props.sortBy}
-                    handleSort={(sortBy) => {
-                      this.setState({ show: false, navClicked: '' });
-                      this.props.handleSort(sortBy);
-                    }}
-                  />
-                  {/* <FilterSearch
-                    allowedFilters={this.props.allowedFilters}
-                    handleFilterByTag={(filters) =>
-                      this.props.handleFilterByTag(filters)
-                    }
-                    mediaTags={this.props.tags}
-                    genreTags={this.props.allGenres}
-                    ratings={[
-                      '1',
-                      '2',
-                      '3',
-                      '4',
-                      '5',
-                      '6',
-                      '7',
-                      '8',
-                      '9',
-                      '10'
-                    ]}
-                    handleResetFilters={this.props.handleResetFilters}
-                  /> */}
+                <Box gap="large" fill="horizontal">
+                  {!this.state.filterOpen && (
+                    <SortMoviesMenu
+                      width={this.props.width}
+                      sortBy={this.props.sortBy}
+                      handleSort={(sortBy) => {
+                        this.setState({ show: false, navClicked: '' });
+                        this.props.handleSort(sortBy);
+                      }}
+                      onOpen={(open) => this.setState({ sortOpen: open })}
+                    />
+                  )}
+                  {!this.state.sortOpen && (
+                    <FilterSearch
+                      onOpen={(open) => this.setState({ filterOpen: open })}
+                      width={this.props.width}
+                      allowedFilters={this.props.allowedFilters}
+                      handleFilterByTag={(filters) =>
+                        this.props.handleFilterByTag(filters)
+                      }
+                      mediaTags={this.props.mediaTags}
+                      genreTags={this.props.genreTags}
+                      ratings={[
+                        '1',
+                        '2',
+                        '3',
+                        '4',
+                        '5',
+                        '6',
+                        '7',
+                        '8',
+                        '9',
+                        '10'
+                      ]}
+                      handleResetFilters={this.props.handleResetFilters}
+                    />
+                  )}
                   {/* <Box
                     align="center"
                     gap="medium"
