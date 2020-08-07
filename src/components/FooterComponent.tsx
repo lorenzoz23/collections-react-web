@@ -9,23 +9,25 @@ import {
   Button,
   Layer,
   Heading,
-  Paragraph,
-  Nav
+  Paragraph
 } from 'grommet';
-import {
-  Multimedia,
-  FormClose,
-  CircleInformation,
-  UserSettings,
-  Search,
-  Filter
-} from 'grommet-icons';
+import { Multimedia, FormClose, CircleInformation } from 'grommet-icons';
 import ReportBug from './ReportBug';
+import MobileNav from './MobileNav';
+import { searchResults } from './MovieSearchResult';
+import { movie } from './HomePage';
 
 interface FooterComponentProps {
-  uid: string;
   width: number;
+  handleParsed(movieList: searchResults): void;
   wishlist: boolean;
+  uid: string;
+  handleAccountDelete(): void;
+  lot: movie[];
+  wishlistFilms: movie[];
+  name: string;
+  fetchedWishlist: boolean;
+  logOut(): void;
 }
 
 export default class FooterComponent extends Component<FooterComponentProps> {
@@ -66,7 +68,16 @@ export default class FooterComponent extends Component<FooterComponentProps> {
             justify={
               size === 'small' && this.props.width < 700 ? 'center' : 'between'
             }
-            background={{ color: 'footer', opacity: 0.9 }}
+            background={{
+              color:
+                size === 'small' && this.props.width < 700 ? 'home' : 'footer',
+              opacity: 0.9
+            }}
+            border={
+              size === 'small' && this.props.width < 700
+                ? { color: 'accent-1', size: 'small', side: 'all' }
+                : undefined
+            }
           >
             {(size === 'small' && this.props.width > 700) ||
               (size !== 'small' && (
@@ -114,16 +125,17 @@ export default class FooterComponent extends Component<FooterComponentProps> {
                 </Box>
               ))}
             {size === 'small' && this.props.width < 700 && (
-              <Nav round direction="row" align="center" justify="center">
-                <Anchor icon={<Filter />} />
-                <Box align="center" pad="xsmall">
-                  <Anchor icon={<Search size="large" />} />
-                  <Text size="small" weight="bold">
-                    {this.props.wishlist ? 'Wishlist' : 'Lot'}
-                  </Text>
-                </Box>
-                <Anchor icon={<UserSettings />} />
-              </Nav>
+              <MobileNav
+                logOut={this.props.logOut}
+                wishlist={this.props.wishlist}
+                uid={this.props.uid}
+                handleAccountDelete={this.props.handleAccountDelete}
+                lot={this.props.lot}
+                wishlistFilms={this.props.wishlistFilms}
+                name={this.props.name}
+                fetchedWishlist={this.props.fetchedWishlist}
+                handleParsed={(movieList) => this.props.handleParsed(movieList)}
+              />
             )}
             {this.state.showAbout && (
               <Layer

@@ -142,17 +142,15 @@ export default class Collection extends Component<CollectionProps> {
     let numRows: number = 0;
     if (size === 'medium' && this.props.width < 1000) {
       numRows = Math.ceil(numMovies / columns[size].length) + 1;
-    } else if (size === 'small' && this.props.width < 350) {
-      numRows = Math.ceil(numMovies / columns[size].length) + 2;
     } else {
-      if (numMovies % 6 === 0) {
+      if (numMovies % 6 === 0 && this.props.width > 700) {
         numRows = Math.ceil(numMovies / columns[size].length) + 1;
       } else numRows = Math.ceil(numMovies / columns[size].length);
     }
 
     let i: number = 0;
     for (i = 0; i < numRows; i++) {
-      if (size === 'small' && this.props.width < 500) {
+      if (size === 'small' && this.props.width < 700) {
         rows.push('small');
       } else rows.push('medium');
     }

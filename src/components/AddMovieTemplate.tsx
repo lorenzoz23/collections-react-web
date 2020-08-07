@@ -110,11 +110,6 @@ export default class AddMovieTemplate extends Component<AddMovieTemplateProps> {
               size: 'cover',
               position: 'center'
             }}
-            fill={
-              size === 'small' && this.props.width < 700
-                ? 'horizontal'
-                : undefined
-            }
             height={
               size === 'small' && this.props.width < 700 ? 'small' : undefined
             }
@@ -154,9 +149,8 @@ export default class AddMovieTemplate extends Component<AddMovieTemplateProps> {
                 </Text>
                 <Button
                   style={{ borderRadius: 50 }}
-                  focusIndicator={false}
-                  hoverIndicator="accent-1"
-                  primary={size !== 'small' ? false : true}
+                  hoverIndicator="transparent"
+                  primary
                   onClick={() => {
                     this.setState({ visible: true, rand: this.getRandom() });
                   }}
@@ -167,6 +161,7 @@ export default class AddMovieTemplate extends Component<AddMovieTemplateProps> {
                           ? 'medium'
                           : 'large'
                       }
+                      color="light-2"
                     />
                   }
                   alignSelf="center"

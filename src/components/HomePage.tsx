@@ -1266,7 +1266,7 @@ export default class HomePage extends Component {
                   )}
                 </AppBar>
                 {size === 'small' && this.state.width < 700 ? (
-                  <Box background="home" margin="small">
+                  <Box background="home" pad="small" style={{ zIndex: 10 }}>
                     <Form onSubmit={this.handleSearchToAdd}>
                       <Box
                         direction="row"
@@ -1628,7 +1628,14 @@ export default class HomePage extends Component {
                   <FooterComponent
                     wishlist={this.state.showWishlist}
                     uid={this.state.uid}
+                    handleAccountDelete={this.handleAccountDelete}
+                    lot={this.state.movies}
+                    wishlistFilms={this.state.wishlist}
+                    name={this.state.name}
+                    fetchedWishlist={this.state.fetchedWishlist}
+                    handleParsed={(movieList) => this.handleParsed(movieList)}
                     width={this.state.width}
+                    logOut={this.logOut}
                   />
                 </Box>
                 {this.state.tmdbSearched && (
