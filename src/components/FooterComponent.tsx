@@ -28,7 +28,9 @@ interface FooterComponentProps {
   name: string;
   fetchedWishlist: boolean;
   logOut(): void;
-  handleSearch(event: any): void;
+  handleSearch(searchVal: string): void;
+  sortBy: string;
+  handleSort(sortBy: string): void;
 }
 
 export default class FooterComponent extends Component<FooterComponentProps> {
@@ -127,7 +129,10 @@ export default class FooterComponent extends Component<FooterComponentProps> {
               ))}
             {size === 'small' && this.props.width < 700 && (
               <MobileNav
-                handleSearch={(event) => this.props.handleSearch(event)}
+                width={this.props.width}
+                handleSort={(sortBy) => this.props.handleSort(sortBy)}
+                sortBy={this.props.sortBy}
+                handleSearch={(searchVal) => this.props.handleSearch(searchVal)}
                 logOut={this.props.logOut}
                 wishlist={this.props.wishlist}
                 uid={this.props.uid}

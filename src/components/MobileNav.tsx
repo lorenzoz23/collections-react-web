@@ -1,21 +1,35 @@
 import React, { Component } from 'react';
-import { Nav, Anchor, Box, Text, Layer, TextInput } from 'grommet';
-import { Filter, Search, UserSettings, Logout, Gremlin } from 'grommet-icons';
+import { Nav, Anchor, Box, Text, Layer, TextInput, Button } from 'grommet';
+import {
+  Filter,
+  Search,
+  UserSettings,
+  Logout,
+  Gremlin,
+  ClearOption
+} from 'grommet-icons';
 import Settings from './Settings';
 import { searchResults } from './MovieSearchResult';
 import { movie } from './HomePage';
+import Preferences from './Preferences';
+import EditFilters from './EditFilters';
+import FilterSearch from './FilterSearch';
+import SortMoviesMenu from './SortMoviesMenu';
 
 interface MobileNavProps {
   handleParsed(movieList: searchResults): void;
   wishlist: boolean;
   uid: string;
   handleAccountDelete(): void;
-  handleSearch(event: any): void;
+  handleSort(sortBy: string): void;
+  handleSearch(searchVal: string): void;
   lot: movie[];
   wishlistFilms: movie[];
   name: string;
+  sortBy: string;
   fetchedWishlist: boolean;
   logOut(): void;
+  width: number;
 }
 
 export default class MobileNav extends Component<MobileNavProps> {
@@ -138,19 +152,97 @@ export default class MobileNav extends Component<MobileNavProps> {
                 </Box>
               )}
               {this.state.navClicked === 'Search' && (
-                <TextInput
-                  value={this.state.searchVal}
-                  placeholder={`Search your ${
-                    this.props.wishlist
-                      ? this.props.wishlistFilms.length
-                      : this.props.lot.length
-                  } ${this.props.lot.length === 1 ? 'film' : 'films'}...`}
-                  icon={<Search />}
-                  onChange={(event) => {
-                    this.setState({ searchVal: event.target.value });
-                    this.props.handleSearch(event);
-                  }}
-                />
+                <Box gap="medium" fill="horizontal">
+                  <TextInput
+                    value={this.state.searchVal}
+                    placeholder={`Search your ${
+                      this.props.wishlist
+                        ? this.props.wishlistFilms.length
+                        : this.props.lot.length
+                    } ${this.props.lot.length === 1 ? 'film' : 'films'}...`}
+                    icon={<Search />}
+                    onChange={(event) => {
+                      this.props.handleSearch(event.target.value);
+                      this.setState({ searchVal: event.target.value });
+                    }}
+                  />
+                  <Button
+                    disabled={this.state.searchVal.length === 0}
+                    primary
+                    size="small"
+                    label="Clear Search"
+                    icon={<ClearOption />}
+                    reverse
+                    alignSelf="center"
+                    onClick={() => {
+                      this.props.handleSearch('');
+                      this.setState({ searchVal: '' });
+                    }}
+                  />
+                </Box>
+              )}
+              {this.state.navClicked === 'Filters' && (
+                <Box gap="small" fill="horizontal">
+                  <SortMoviesMenu
+                    width={this.props.width}
+                    sortBy={this.props.sortBy}
+                    handleSort={(sortBy) => {
+                      this.setState({ show: false, navClicked: '' });
+                      this.props.handleSort(sortBy);
+                    }}
+                  />
+                  {/* <FilterSearch
+                    allowedFilters={this.props.allowedFilters}
+                    handleFilterByTag={(filters) =>
+                      this.props.handleFilterByTag(filters)
+                    }
+                    mediaTags={this.props.tags}
+                    genreTags={this.props.allGenres}
+                    ratings={[
+                      '1',
+                      '2',
+                      '3',
+                      '4',
+                      '5',
+                      '6',
+                      '7',
+                      '8',
+                      '9',
+                      '10'
+                    ]}
+                    handleResetFilters={this.props.handleResetFilters}
+                  /> */}
+                  {/* <Box
+                    align="center"
+                    gap="medium"
+                    direction="row"
+                    border="between"
+                  >
+                    <Preferences
+                      sortBy={this.state.sortBy}
+                      saveSortedOrder={this.state.saveSortedOrder}
+                      allowedFilters={this.state.allowedFilters}
+                      handleSaveOrderChange={(checked) =>
+                        this.handleSaveOrderChange(checked)
+                      }
+                      handlePrefChange={(index) =>
+                        this.handlePrefChanged(index)
+                      }
+                    />
+                    <EditFilters
+                      wishlist={this.state.showWishlist}
+                      width={this.state.width}
+                      uid={this.state.uid}
+                      tags={this.state.tags}
+                      handleTagDelete={(tags) => this.handleTagDelete(tags)}
+                      handleUpdatedTags={(updatedTags) =>
+                        this.handleUpdatedTags(updatedTags)
+                      }
+                      handleTagAdded={(tag) => this.handleTagAdded(tag)}
+                      handleResetFilters={this.handleResetFilters}
+                    />
+                  </Box> */}
+                </Box>
               )}
             </Box>
           </Layer>

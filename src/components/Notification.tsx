@@ -15,12 +15,12 @@ export default class Notification extends Component<NotificationProps> {
       <ResponsiveContext.Consumer>
         {(size) => (
           <Layer
-            position={this.props.top ? 'top' : 'bottom'}
+            position={this.props.top || size === 'small' ? 'top' : 'bottom'}
             modal={false}
             margin={
-              !this.props.top
-                ? { bottom: size !== 'small' ? 'medium' : 'xsmall' }
-                : { top: 'small' }
+              !this.props.top && size !== 'small'
+                ? { bottom: 'medium' }
+                : { top: 'medium' }
             }
             responsive={false}
             style={{ borderRadius: 30 }}
