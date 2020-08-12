@@ -38,6 +38,12 @@ interface FooterComponentProps {
   handleResetFilters(): void;
   handleFilterByTag(filters: filter[]): void;
   allowedFilters: boolean[];
+  handleTagDelete(tags: number[]): void;
+  handleUpdatedTags(tags: string[]): void;
+  handleTagAdded(tag: string): void;
+  handleSaveOrderChange(checked: boolean): void;
+  handlePrefChanged(index: number): void;
+  saveSortedOrder: boolean;
 }
 
 export default class FooterComponent extends Component<FooterComponentProps> {
@@ -157,6 +163,16 @@ export default class FooterComponent extends Component<FooterComponentProps> {
                 genreTags={this.props.genreTags}
                 ratings={['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']}
                 handleResetFilters={this.props.handleResetFilters}
+                handleTagDelete={(tags) => this.props.handleTagDelete(tags)}
+                handleUpdatedTags={(tags) => this.props.handleUpdatedTags(tags)}
+                handleTagAdded={(tag) => this.props.handleTagAdded(tag)}
+                handleSaveOrderChange={(checked) =>
+                  this.props.handleSaveOrderChange(checked)
+                }
+                handlePrefChanged={(index) =>
+                  this.props.handlePrefChanged(index)
+                }
+                saveSortedOrder={this.props.saveSortedOrder}
               />
             )}
             {this.state.showAbout && (

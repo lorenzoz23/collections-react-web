@@ -6,7 +6,6 @@ import {
   Box,
   Button,
   ResponsiveContext,
-  CheckBox,
   Anchor
 } from 'grommet';
 import { Next, Previous, Erase } from 'grommet-icons';
@@ -46,7 +45,6 @@ export default class SignIn extends Component<SignInProps> {
     password: this.props.password,
     errorMessage: [''],
     created: this.props.created,
-    rememberMe: this.props.rememberMe,
     notificationVisible: false
   };
 
@@ -103,13 +101,6 @@ export default class SignIn extends Component<SignInProps> {
           console.log(error);
         });
     }
-  };
-
-  handleRemember = (event: any) => {
-    this.setState({
-      rememberMe: event.target.checked
-    });
-    this.props.handleRememberMe(event.target.checked);
   };
 
   handleResetPassword = () => {
@@ -257,17 +248,8 @@ export default class SignIn extends Component<SignInProps> {
                     size={size === 'small' ? 'small' : 'medium'}
                   />
                 </Box>
-                <Box align="center" gap={size !== 'small' ? 'small' : 'medium'}>
-                  <motion.div whileTap={{ scale: 0.9 }}>
-                    <CheckBox
-                      label="Remember me?"
-                      checked={this.state.rememberMe}
-                      onChange={(event) => this.handleRemember(event)}
-                    />
-                  </motion.div>
+                <Box align="center">
                   <motion.div
-                    //animate={{ opacity: 0.5 }}
-                    //transition={{ flip: Infinity, duration: 0.5 }}
                     variants={container}
                     initial="hidden"
                     animate="show"
@@ -284,7 +266,7 @@ export default class SignIn extends Component<SignInProps> {
               {this.state.notificationVisible && (
                 <Notification
                   good={true}
-                  notificationText={'password reset email sent!'}
+                  notificationText={'Password reset email sent!'}
                   onNotificationClose={() =>
                     this.setState({ notificationVisible: false })
                   }

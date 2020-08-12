@@ -15,7 +15,6 @@ import Preferences from './Preferences';
 import EditFilters from './EditFilters';
 import FilterSearch, { filter } from './FilterSearch';
 import SortMoviesMenu from './SortMoviesMenu';
-import { timeStamp } from 'console';
 
 interface MobileNavProps {
   handleParsed(movieList: searchResults): void;
@@ -37,6 +36,12 @@ interface MobileNavProps {
   handleResetFilters(): void;
   handleFilterByTag(filters: filter[]): void;
   allowedFilters: boolean[];
+  handleTagDelete(tags: number[]): void;
+  handleUpdatedTags(tags: string[]): void;
+  handleTagAdded(tag: string): void;
+  handleSaveOrderChange(checked: boolean): void;
+  handlePrefChanged(index: number): void;
+  saveSortedOrder: boolean;
 }
 
 export default class MobileNav extends Component<MobileNavProps> {
@@ -48,6 +53,7 @@ export default class MobileNav extends Component<MobileNavProps> {
     sortOpen: false,
     filterOpen: false
   };
+
   render() {
     const headerText: string =
       this.state.navClicked === 'Settings'
@@ -116,7 +122,7 @@ export default class MobileNav extends Component<MobileNavProps> {
                 size: 'xlarge',
                 style: 'groove'
               }}
-              height={{ max: 'medium' }}
+              height={{ max: 'large' }}
               background="light-2"
             >
               <Text size="large" weight="bold">
@@ -139,7 +145,9 @@ export default class MobileNav extends Component<MobileNavProps> {
                     round
                     border={{ color: 'accent-1', side: 'all', size: 'small' }}
                     background={{ color: 'accent-1', opacity: 'medium' }}
-                    onClick={() => this.setState({ showSettings: true })}
+                    onClick={() =>
+                      this.setState({ showSettings: true, show: false })
+                    }
                   >
                     <Text>Settings</Text>
                     <UserSettings color="dark-2" />
@@ -236,36 +244,38 @@ export default class MobileNav extends Component<MobileNavProps> {
                       handleResetFilters={this.props.handleResetFilters}
                     />
                   )}
-                  {/* <Box
+                  <Box
                     align="center"
                     gap="medium"
                     direction="row"
                     border="between"
                   >
                     <Preferences
-                      sortBy={this.state.sortBy}
-                      saveSortedOrder={this.state.saveSortedOrder}
-                      allowedFilters={this.state.allowedFilters}
+                      sortBy={this.props.sortBy}
+                      saveSortedOrder={this.props.saveSortedOrder}
+                      allowedFilters={this.props.allowedFilters}
                       handleSaveOrderChange={(checked) =>
-                        this.handleSaveOrderChange(checked)
+                        this.props.handleSaveOrderChange(checked)
                       }
                       handlePrefChange={(index) =>
-                        this.handlePrefChanged(index)
+                        this.props.handlePrefChanged(index)
                       }
                     />
                     <EditFilters
-                      wishlist={this.state.showWishlist}
-                      width={this.state.width}
-                      uid={this.state.uid}
-                      tags={this.state.tags}
-                      handleTagDelete={(tags) => this.handleTagDelete(tags)}
-                      handleUpdatedTags={(updatedTags) =>
-                        this.handleUpdatedTags(updatedTags)
+                      wishlist={this.props.wishlist}
+                      width={this.props.width}
+                      uid={this.props.uid}
+                      tags={this.props.mediaTags}
+                      handleTagDelete={(tags) =>
+                        this.props.handleTagDelete(tags)
                       }
-                      handleTagAdded={(tag) => this.handleTagAdded(tag)}
-                      handleResetFilters={this.handleResetFilters}
+                      handleUpdatedTags={(updatedTags) =>
+                        this.props.handleUpdatedTags(updatedTags)
+                      }
+                      handleTagAdded={(tag) => this.props.handleTagAdded(tag)}
+                      handleResetFilters={this.props.handleResetFilters}
                     />
-                  </Box> */}
+                  </Box>
                 </Box>
               )}
             </Box>
@@ -273,7 +283,9 @@ export default class MobileNav extends Component<MobileNavProps> {
         )}
         {this.state.showSettings && (
           <Settings
-            toggleSettings={() => this.setState({ showSettings: false })}
+            toggleSettings={() =>
+              this.setState({ showSettings: false, show: true })
+            }
             wishlist={this.props.wishlist}
             uid={this.props.uid}
             handleAccountDelete={this.props.handleAccountDelete}

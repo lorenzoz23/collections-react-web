@@ -18,12 +18,15 @@ export default class Notification extends Component<NotificationProps> {
             position={this.props.top || size === 'small' ? 'top' : 'bottom'}
             modal={false}
             margin={
-              !this.props.top && size !== 'small'
+              !this.props.top
                 ? { bottom: 'medium' }
-                : { top: 'medium' }
+                : { top: size !== 'small' ? 'medium' : 'none' }
             }
             responsive={false}
-            style={{ borderRadius: 30 }}
+            style={{
+              borderRadius: 30,
+              width: size === 'small' ? '100%' : undefined
+            }}
           >
             <Box
               align="center"
@@ -31,8 +34,7 @@ export default class Notification extends Component<NotificationProps> {
               gap="small"
               justify="between"
               flex
-              width={size === 'small' ? 'medium' : undefined}
-              round={size === 'small' ? 'large' : true}
+              round={size === 'small' ? false : true}
               elevation="medium"
               pad={{ vertical: 'xsmall', horizontal: 'small' }}
               background={this.props.good ? 'accent-1' : 'status-error'}

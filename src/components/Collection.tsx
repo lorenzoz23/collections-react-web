@@ -6,7 +6,7 @@ import type { movie } from './HomePage';
 import SingleMovieView from './SingleMovieView';
 import { Movie } from './Movie';
 import { Sort } from './Sort';
-import { Dislike } from 'grommet-icons';
+import { Dislike, Aed, SearchAdvanced } from 'grommet-icons';
 import AddMovieTemplate from './AddMovieTemplate';
 import { filter } from './FilterSearch';
 
@@ -27,6 +27,7 @@ interface CollectionProps {
   handleSelectedTags(movie: movie, tags: number[]): void;
   handleTransfer(movie: movie): void;
   moviesAdded(lotMovies: movie[], wishlistMovies: movie[]): void;
+  showAdvSearch(): void;
   loading: boolean;
   width: number;
   sortBy: string;
@@ -40,8 +41,12 @@ const DeleteMovieConfirmation = (props: any) => {
     <Layer
       onClickOutside={() => props.closeModal(false)}
       position="bottom"
-      style={{ borderRadius: 30 }}
+      style={{
+        borderRadius: 30,
+        width: props.size === 'small' ? '100%' : undefined
+      }}
       margin="small"
+      responsive={false}
     >
       <Box
         align="center"
@@ -105,27 +110,59 @@ export default class Collection extends Component<CollectionProps> {
     //movies: []
   };
 
-  emptyState = () => {
+  emptyState = (size: string) => {
     return (
-      <Box align="center" justify="center" flex>
+      <Box align="center" justify={size === 'small' ? 'start' : 'center'} flex>
         {this.props.searchList.length === 0 &&
         this.props.searchVal.length > 0 ? (
-          <Box align="center" gap="small">
-            <Text>
+          <Box
+            align="center"
+            gap="small"
+            pad={size === 'small' ? 'small' : 'none'}
+          >
+            <Text textAlign="center">
               No such title present in your{' '}
               {this.props.wishlist ? 'wishlist' : 'lot'}
             </Text>
             <Dislike size="large" />
           </Box>
         ) : (
-          <Box align="center" gap="small">
-            <AddMovieTemplate
-              width={this.props.width}
-              moviesAdded={(lotMovies, wishlistMovies) =>
-                this.props.moviesAdded(lotMovies, wishlistMovies)
-              }
-              rand={this.props.rand}
-            />
+          <Box
+            align="center"
+            gap="small"
+            pad={size === 'small' ? 'small' : 'none'}
+          >
+            {size !== 'small' && this.props.width > 700 && (
+              <Box
+                pad="large"
+                background={{ color: 'brand', opacity: 'strong' }}
+                align="center"
+                gap="small"
+                round="large"
+                border={{ side: 'all', size: 'small', color: 'accent-1' }}
+              >
+                <Text textAlign="center" weight="bold" size="xlarge">
+                  Add a film!
+                </Text>
+                <Button
+                  hoverIndicator="accent-3"
+                  style={{ borderRadius: 30 }}
+                  icon={<SearchAdvanced size="large" />}
+                  color="accent-1"
+                  primary
+                  onClick={this.props.showAdvSearch}
+                />
+              </Box>
+            )}
+            <Text textAlign="center">
+              Looks like you have no films in your
+              {this.props.wishlist ? ' wishlist' : ' lot'}
+            </Text>
+            <Aed size="large" color="neutral-4" />
+            <Text textAlign="center">
+              Click the search button above or search bar at the top of the
+              screen to add one!
+            </Text>
           </Box>
         )}
       </Box>
@@ -284,7 +321,7 @@ export default class Collection extends Component<CollectionProps> {
           {(size) => (
             <Box align="center" justify="center" flex>
               <DotLoader
-                size={size !== 'small' ? 150 : 100}
+                size={size !== 'small' ? 150 : 75}
                 color={'#6FFFB0'}
                 loading={this.props.loading}
               />
@@ -298,7 +335,7 @@ export default class Collection extends Component<CollectionProps> {
           {(size) => (
             <Box justify="start" flex alignContent="center">
               {moviesToMap.length === 0
-                ? this.emptyState()
+                ? this.emptyState(size)
                 : this.movieCollection(size)}
               {this.state.movieDetailsVisible ? (
                 <Layer
@@ -344,6 +381,7 @@ export default class Collection extends Component<CollectionProps> {
                   />
                   {this.state.showConfirm && (
                     <DeleteMovieConfirmation
+                      size={size}
                       movie={this.state.movieToShow}
                       wishlist={this.props.wishlist}
                       closeModal={() => this.setState({ showConfirm: false })}

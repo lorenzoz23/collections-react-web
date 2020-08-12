@@ -33,7 +33,7 @@ export default class MovieListResults extends Component<MovieListResultsProps> {
           >
             {this.props.movieList.movies.length === 0 ? (
               <Text textAlign="center" margin="medium">
-                no film data
+                No film data
               </Text>
             ) : (
               this.props.movieList.movies.map((item) => (
@@ -88,7 +88,7 @@ export default class MovieListResults extends Component<MovieListResultsProps> {
                       <Box direction="row" gap="small" alignSelf="start">
                         <CheckBox
                           checked={item.checkedLot}
-                          label={size === 'small' ? 'lot?' : 'add film to lot?'}
+                          label={size === 'small' ? 'Lot?' : 'Add film to lot?'}
                           onChange={() => {
                             this.props.checkedMovie(item, false);
                           }}
@@ -97,8 +97,8 @@ export default class MovieListResults extends Component<MovieListResultsProps> {
                           checked={item.checkedWishlist}
                           label={
                             size === 'small'
-                              ? 'wishlist?'
-                              : 'add film to wishlist?'
+                              ? 'Wishlist?'
+                              : 'Add film to wishlist?'
                           }
                           onChange={() => {
                             this.props.checkedMovie(item, true);
@@ -106,20 +106,18 @@ export default class MovieListResults extends Component<MovieListResultsProps> {
                         />
                         <Button
                           icon={<Next />}
-                          title="details"
+                          title="Details"
                           onClick={() =>
                             this.props.showMovieDetails(item.movie)
                           }
                         />
                       </Box>
                     ) : (
-                      <Box gap="small" alignSelf="start">
-                        <Box direction="row" gap="small">
+                      <Box gap="medium" alignSelf="start" direction="row">
+                        <Box gap="small" align="start">
                           <Button
                             hoverIndicator="accent-1"
-                            label={
-                              size === 'small' ? 'lot?' : 'add film to lot'
-                            }
+                            label={size === 'small' ? 'Lot' : 'Add film to lot'}
                             onClick={() => {
                               this.props.checkedMovie(item, false);
                             }}
@@ -128,8 +126,8 @@ export default class MovieListResults extends Component<MovieListResultsProps> {
                             hoverIndicator="accent-1"
                             label={
                               size === 'small'
-                                ? 'wishlist?'
-                                : 'add film to wishlist'
+                                ? 'Wishlist'
+                                : 'Add film to wishlist'
                             }
                             onClick={() => {
                               this.props.checkedMovie(item, true);
@@ -137,9 +135,12 @@ export default class MovieListResults extends Component<MovieListResultsProps> {
                           />
                         </Box>
                         <Button
-                          alignSelf="start"
+                          style={{ borderRadius: 30 }}
+                          alignSelf="end"
+                          primary={size === 'small'}
                           icon={<Next />}
-                          title="details"
+                          hoverIndicator="accent-1"
+                          title="Details"
                           onClick={() =>
                             this.props.showMovieDetails(item.movie)
                           }

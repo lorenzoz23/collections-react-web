@@ -23,7 +23,7 @@ export default class Preferences extends Component<PreferencesProps> {
             <Button
               primary
               icon={<Configure />}
-              label={size !== 'small' ? 'Preferences' : undefined}
+              label="Preferences"
               reverse={size !== 'small'}
               onClick={() => this.setState({ showPrefs: true })}
             />
@@ -53,27 +53,27 @@ export default class Preferences extends Component<PreferencesProps> {
                   </Text>
                   <Box align="center" gap="small" border="between">
                     <Text weight="bold" textAlign="center">
-                      Filter
+                      Filter by...
                     </Text>
                     <Box align="center" gap="small" pad="small">
                       <CheckBox
                         toggle
                         checked={this.props.allowedFilters[0]}
-                        label="Filter by your media tags"
+                        label="Your media tags"
                         reverse
                         onChange={() => this.props.handlePrefChange(0)}
                       />
                       <CheckBox
                         toggle
                         checked={this.props.allowedFilters[1]}
-                        label="Filter by genre"
+                        label="Genre"
                         reverse
                         onChange={() => this.props.handlePrefChange(1)}
                       />
                       <CheckBox
                         toggle
                         checked={this.props.allowedFilters[2]}
-                        label="Filter by your ratings"
+                        label="Your ratings"
                         reverse
                         onChange={() => this.props.handlePrefChange(2)}
                       />
@@ -96,14 +96,12 @@ export default class Preferences extends Component<PreferencesProps> {
                       />
                       <Box direction="row" gap="xsmall" align="center">
                         <Text size="small" weight="bold">
-                          Default Sort:
+                          Default:
                         </Text>
                         <Text size="small">
                           {this.props.saveSortedOrder
                             ? sortLabels[this.props.sortBy]
-                            : size !== 'small'
-                            ? 'Original Order'
-                            : 'Original'}
+                            : 'Original Order'}
                         </Text>
                       </Box>
                     </Box>

@@ -132,13 +132,14 @@ export default class EditFilters extends Component<FiltersProps> {
                   align="center"
                   background="filters"
                   round="small"
+                  justify="between"
                 >
-                  <Heading textAlign="center">Media Tag Editor</Heading>
-                  <Box gap="medium">
+                  <Box>
+                    <Heading textAlign="center">Media Tag Editor</Heading>
                     <Box
                       pad="medium"
                       overflow="auto"
-                      gap="medium"
+                      gap="large"
                       justify="between"
                       align="center"
                       round
@@ -222,21 +223,21 @@ export default class EditFilters extends Component<FiltersProps> {
                         </Box>
                       </Box>
                     </Box>
-                    {size === 'small' && (
-                      <Button
-                        alignSelf="center"
-                        title="back"
-                        icon={<Previous />}
-                        onClick={() =>
-                          this.setState({
-                            showFilters: false,
-                            editMode: false,
-                            showUpdateBox: false
-                          })
-                        }
-                      />
-                    )}
                   </Box>
+                  {size === 'small' && (
+                    <Button
+                      alignSelf="center"
+                      title="back"
+                      icon={<Previous />}
+                      onClick={() =>
+                        this.setState({
+                          showFilters: false,
+                          editMode: false,
+                          showUpdateBox: false
+                        })
+                      }
+                    />
+                  )}
                 </Box>
                 {this.state.showUpdateBox && (
                   <Layer
@@ -250,6 +251,7 @@ export default class EditFilters extends Component<FiltersProps> {
                     }
                     style={{ borderRadius: 30 }}
                     margin="large"
+                    responsive={false}
                   >
                     <Box
                       pad="medium"

@@ -1,14 +1,10 @@
 import React, { Component } from 'react';
 import { ResponsiveContext, Button, Box, Text } from 'grommet';
-import {
-  PowerReset,
-  Tag,
-  FormNext,
-  Aed,
-  Star,
-  FormPrevious
-} from 'grommet-icons';
+import { PowerReset } from 'grommet-icons';
 import SelectSingular from './SelectSingular';
+import MobileMediaTags from './MobileMediaTags';
+import MobileRatingsTags from './MobileRatingsTags';
+import MobileGenreTags from './MobileGenreTags';
 
 export type filter = {
   name: string;
@@ -122,193 +118,28 @@ export default class FilterSearch extends Component<FilterSearchProps> {
         {(size) => (
           <Box>
             {size === 'small' && this.props.width < 700 ? (
-              <Box>
-                {this.state.showMediaLayer && (
-                  <Box gap="xsmall" align="center">
-                    <Box
-                      direction="row"
-                      align="center"
-                      overflow={{ horizontal: 'auto' }}
-                    >
-                      {this.props.mediaTags.map((tag) => this.renderTag(tag))}
-                    </Box>
-                    <Button
-                      margin={{ top: 'medium' }}
-                      alignSelf="center"
-                      icon={<FormPrevious />}
-                      primary
-                      style={{ borderRadius: 30 }}
-                      onClick={() => {
-                        this.setState({ showMediaLayer: false });
-                        this.props.onOpen!(false);
-                      }}
-                    />
-                  </Box>
-                )}
-                {this.state.showGenreLayer && (
-                  <Box
-                    background={{ color: 'neutral-3', opacity: 'medium' }}
-                    round
-                    pad={{ bottom: 'medium', horizontal: 'medium' }}
-                    gap="xsmall"
-                    border="between"
-                    overflow={{ vertical: 'scroll' }}
-                  >
-                    {this.props.genreTags.map((genre) => (
-                      <Box
-                        margin={{ vertical: 'small', right: 'small' }}
-                        pad={{
-                          left: 'small',
-                          top: 'medium',
-                          bottom: 'medium',
-                          right: 'medium'
-                        }}
-                        key={genre}
-                      >
-                        <Text>{genre}</Text>
-                      </Box>
-                    ))}
-                    <Button
-                      margin={{ top: 'medium' }}
-                      alignSelf="center"
-                      icon={<FormPrevious />}
-                      primary
-                      style={{ borderRadius: 30 }}
-                      onClick={() => {
-                        this.setState({ showGenreLayer: false });
-                        this.props.onOpen!(false);
-                      }}
-                    />
-                  </Box>
-                )}
-                {this.state.showRatingsLayer && (
-                  <Box gap="xsmall">
-                    <Text size="small" textAlign="center">
-                      Note: This is based off of your own ratings!
-                    </Text>
-                    <Box
-                      background={{ color: 'accent-3', opacity: 'medium' }}
-                      round
-                      gap="xsmall"
-                      border="between"
-                      overflow={{ vertical: 'scroll' }}
-                      pad={{ bottom: 'medium', horizontal: 'medium' }}
-                    >
-                      {this.props.ratings.map((rating) => (
-                        <Box
-                          margin={{ vertical: 'small', right: 'small' }}
-                          pad={{
-                            left: 'small',
-                            top: 'medium',
-                            bottom: 'medium',
-                            right: 'medium'
-                          }}
-                          key={rating}
-                        >
-                          <Text>{rating}</Text>
-                        </Box>
-                      ))}
-                    </Box>
-                    <Button
-                      margin={{ top: 'small' }}
-                      alignSelf="center"
-                      icon={<FormPrevious />}
-                      primary
-                      style={{ borderRadius: 30 }}
-                      onClick={() => {
-                        this.setState({ showRatingsLayer: false });
-                        this.props.onOpen!(false);
-                      }}
-                    />
-                  </Box>
-                )}
-                {!this.state.showGenreLayer &&
-                  !this.state.showMediaLayer &&
-                  !this.state.showRatingsLayer && (
-                    <Box gap="small">
-                      <Box
-                        round
-                        background={{ color: 'brand', opacity: 'medium' }}
-                        direction="row"
-                        justify="between"
-                        border={{ color: 'brand', side: 'all', size: 'small' }}
-                        pad={{
-                          left: 'small',
-                          top: 'medium',
-                          bottom: 'medium',
-                          right: 'medium'
-                        }}
-                        onClick={() => {
-                          this.props.onOpen!(true);
-                          this.setState({
-                            showMediaLayer: true,
-                            showGenreLayer: false,
-                            showRatingsLayer: false
-                          });
-                        }}
-                      >
-                        <Box direction="row" gap="small">
-                          <Text weight="bold">Your Media Tags</Text>
-                          <Tag color="dark-2" />
-                        </Box>
-                        <FormNext color="dark-2" />
-                      </Box>
-                      <Box
-                        round
-                        background={{ color: 'brand', opacity: 'medium' }}
-                        direction="row"
-                        justify="between"
-                        border={{ color: 'brand', side: 'all', size: 'small' }}
-                        pad={{
-                          left: 'small',
-                          top: 'medium',
-                          bottom: 'medium',
-                          right: 'medium'
-                        }}
-                        onClick={() => {
-                          this.props.onOpen!(true);
-                          this.setState({
-                            showGenreLayer: true,
-                            showRatingsLayer: false,
-                            showMediaLayer: false
-                          });
-                        }}
-                      >
-                        <Box direction="row" gap="small">
-                          <Text weight="bold">Genre</Text>
-                          <Aed color="dark-2" />
-                        </Box>
-                        <FormNext color="dark-2" />
-                      </Box>
-                      <Box
-                        round
-                        background={{ color: 'brand', opacity: 'medium' }}
-                        direction="row"
-                        justify="between"
-                        border={{ color: 'brand', side: 'all', size: 'small' }}
-                        pad={{
-                          left: 'small',
-                          top: 'medium',
-                          bottom: 'medium',
-                          right: 'medium'
-                        }}
-                        onClick={() => {
-                          this.props.onOpen!(true);
-                          this.setState({
-                            showRatingsLayer: true,
-                            showGenreLayer: false,
-                            showMediaLayer: false
-                          });
-                        }}
-                      >
-                        <Box direction="row" gap="small">
-                          <Text weight="bold">Your Ratings</Text>
-                          <Star color="dark-2" />
-                        </Box>
-                        <FormNext color="dark-2" />
-                      </Box>
-                    </Box>
-                  )}
+              <Box gap="small">
+                <MobileMediaTags
+                  mediaTags={this.props.mediaTags}
+                  onOpen={(checked) => this.props.onOpen!(checked)}
+                  handleFilterByTag={(filters) =>
+                    this.props.handleFilterByTag(filters)
+                  }
+                />
+                <MobileGenreTags
+                  genreTags={this.props.genreTags}
+                  onOpen={(checked) => this.props.onOpen!(checked)}
+                  handleFilterByTag={(filters) =>
+                    this.props.handleFilterByTag(filters)
+                  }
+                />
+                <MobileRatingsTags
+                  ratingsTags={this.props.ratings}
+                  onOpen={(checked) => this.props.onOpen!(checked)}
+                  handleFilterByTag={(filters) =>
+                    this.props.handleFilterByTag(filters)
+                  }
+                />
               </Box>
             ) : (
               <Box

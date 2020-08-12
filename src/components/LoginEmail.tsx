@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { ResponsiveContext, Box, Tabs, Tab } from 'grommet';
+import { ResponsiveContext, Box, Tabs, Tab, CheckBox } from 'grommet';
 
 import SignIn from './SignIn';
 import SignUp from './SignUp';
+import { motion } from 'framer-motion';
 
 interface LoginEmailProps {
   handleLogin(): void;
@@ -11,12 +12,23 @@ interface LoginEmailProps {
   rememberMe: boolean;
 }
 
+const container = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.5
+    }
+  }
+};
+
 export default class LoginEmail extends Component<LoginEmailProps> {
   state = {
     email: '',
     password: '',
     activeIndex: 0,
-    created: false
+    created: false,
+    rememberMe: this.props.rememberMe
   };
 
   handleUserSignUp = (email: string, password: string) => {
@@ -50,7 +62,7 @@ export default class LoginEmail extends Component<LoginEmailProps> {
                   password={this.state.password}
                   handleLogin={this.props.handleLogin}
                   created={this.state.created}
-                  rememberMe={this.props.rememberMe}
+                  rememberMe={this.state.rememberMe}
                 />
               </Tab>
               <Tab title="Sign Up">
@@ -58,10 +70,28 @@ export default class LoginEmail extends Component<LoginEmailProps> {
                   handleUserSignUp={(email: string, password: string) =>
                     this.handleUserSignUp(email, password)
                   }
-                  rememberMe={this.props.rememberMe}
+                  rememberMe={this.state.rememberMe}
                 />
               </Tab>
             </Tabs>
+            <Box align="center" pad="small">
+              <motion.div
+                whileTap={{ scale: 0.9 }}
+                variants={container}
+                initial="hidden"
+                animate="show"
+                transition={{ ease: 'easeOut', duration: 2 }}
+              >
+                <CheckBox
+                  label="Remember me?"
+                  checked={this.state.rememberMe}
+                  onChange={(event) => {
+                    this.setState({ rememberMe: event.target.checked });
+                    this.props.handleRememberMe(event.target.checked);
+                  }}
+                />
+              </motion.div>
+            </Box>
           </Box>
         )}
       </ResponsiveContext.Consumer>

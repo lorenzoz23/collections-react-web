@@ -2,7 +2,7 @@ import React, { RefObject, Component, createRef } from 'react';
 import { Box, Drop, Text, ResponsiveContext, Button } from 'grommet';
 import AddTitle from './AddTitle';
 import { movie } from './HomePage';
-import { Add } from 'grommet-icons';
+import { SearchAdvanced } from 'grommet-icons';
 
 const randomMovieBackDrops = [
   // new films
@@ -149,19 +149,18 @@ export default class AddMovieTemplate extends Component<AddMovieTemplateProps> {
                 </Text>
                 <Button
                   style={{ borderRadius: 50 }}
-                  hoverIndicator="transparent"
+                  hoverIndicator="accent-3"
                   primary
                   onClick={() => {
                     this.setState({ visible: true, rand: this.getRandom() });
                   }}
                   icon={
-                    <Add
+                    <SearchAdvanced
                       size={
                         size === 'small' && this.props.width < 700
                           ? 'medium'
                           : 'large'
                       }
-                      color="light-2"
                     />
                   }
                   alignSelf="center"

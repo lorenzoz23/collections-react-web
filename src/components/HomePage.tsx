@@ -11,8 +11,7 @@ import {
   Button,
   Text,
   DropButton,
-  Form,
-  Anchor
+  Form
 } from 'grommet';
 import {
   Search,
@@ -23,11 +22,9 @@ import {
   FormUp,
   UserSettings,
   Logout,
-  Down,
   Add,
   Checkmark,
-  Filter,
-  SearchAdvanced
+  Filter
 } from 'grommet-icons';
 import firebase from 'firebase/app';
 import 'firebase/auth';
@@ -118,16 +115,15 @@ export default class HomePage extends Component {
     imports: searchResults;
     goodNotification: boolean;
     userProfileClicked: boolean;
-    welcomeBack: boolean;
     randAddFilmBackDrop: number;
     addFilmSearchVal: string;
     tmdbSearched: boolean;
-    showAdvancedSearch: boolean;
     saveSortedOrder: boolean;
     showFilters: boolean;
     allGenres: string[];
     allowedFilters: boolean[];
     showPrefs: boolean;
+    showAdvSearch: boolean;
   } = {
     uid: '',
     name: '',
@@ -155,16 +151,15 @@ export default class HomePage extends Component {
     },
     goodNotification: false,
     userProfileClicked: false,
-    welcomeBack: false,
     randAddFilmBackDrop: 0,
     addFilmSearchVal: '',
     tmdbSearched: false,
-    showAdvancedSearch: false,
     saveSortedOrder: false,
     showFilters: false,
     allGenres: [''],
     allowedFilters: [true, true, true],
-    showPrefs: false
+    showPrefs: false,
+    showAdvSearch: false
   };
 
   constructor(props: any) {
@@ -196,22 +191,22 @@ export default class HomePage extends Component {
       },
       goodNotification: false,
       userProfileClicked: false,
-      welcomeBack: false,
       randAddFilmBackDrop: 0,
       addFilmSearchVal: '',
       tmdbSearched: false,
-      showAdvancedSearch: false,
       saveSortedOrder: false,
       showFilters: false,
       allGenres: [''],
       allowedFilters: [true, true, true],
-      showPrefs: false
+      showPrefs: false,
+      showAdvSearch: false
     };
   }
 
   componentDidMount = async () => {
     console.log('home mounted');
     const remember = localStorage.getItem('rememberMe');
+    console.log(remember, this.state.uid);
     if (this.state.uid === '' && !remember) {
       this.setState({ invalidRoute: true });
     } else {
@@ -228,10 +223,6 @@ export default class HomePage extends Component {
 
       const greeting = localStorage.getItem('greeting') || 'show';
       let showGreeting = greeting === 'show' ? true : false;
-
-      const welcome = localStorage.getItem('welcomeBack');
-      let showWelcome =
-        welcome === null ? false : welcome === 'show' ? true : false;
 
       const userRef = firebase.database().ref('users/' + uid);
       const sort = localStorage.getItem('sortBy') || '';
@@ -269,13 +260,7 @@ export default class HomePage extends Component {
 
         if (lot.length > 0 && showGreeting) {
           localStorage.setItem('greeting', 'noShow');
-          localStorage.setItem('welcomeBack', 'show');
           showGreeting = false;
-          showWelcome = true;
-        }
-        if (!showGreeting && lot.length > 0 && welcome === null) {
-          localStorage.setItem('welcomeBack', 'show');
-          showWelcome = true;
         }
         this.setState({
           movies: lot,
@@ -287,8 +272,13 @@ export default class HomePage extends Component {
           allGenres: genres,
           randAddFilmBackDrop: Math.floor(Math.random() * 60)
         });
-        this.setState({ welcomeBack: showWelcome }, () =>
-          setTimeout(() => this.setState({ welcomeBack: false }), 4000)
+        this.setState(
+          {
+            notification: true,
+            notificationText: 'Welcome, ' + this.state.name,
+            goodNotification: true
+          },
+          () => setTimeout(this.onNotificationClose, 2000)
         );
       });
     }
@@ -982,13 +972,6 @@ export default class HomePage extends Component {
     });
   };
 
-  dismissWelcomeBack = (checked: boolean) => {
-    localStorage.setItem('welcomeBack', checked ? 'noShow' : 'show');
-    this.setState({
-      welcomeBack: false
-    });
-  };
-
   handleParsed = (movieList: searchResults) => {
     console.log(movieList);
     this.setState({
@@ -1084,31 +1067,17 @@ export default class HomePage extends Component {
                                 })
                               }
                             />
-                            <Box
-                              direction="row"
-                              align="center"
-                              gap={size === 'medium' ? 'small' : 'medium'}
-                            >
-                              <Button
-                                disabled={
-                                  this.state.addFilmSearchVal.length === 0
-                                }
-                                hoverIndicator="accent-1"
-                                label="Done"
-                                alignSelf="center"
-                                type="submit"
-                                icon={<Checkmark />}
-                                reverse
-                              />
-                              <Anchor
-                                icon={<SearchAdvanced />}
-                                label="Advanced Search"
-                                alignSelf="center"
-                                onClick={() =>
-                                  this.setState({ showAdvancedSearch: true })
-                                }
-                              />
-                            </Box>
+                            <Button
+                              disabled={
+                                this.state.addFilmSearchVal.length === 0
+                              }
+                              hoverIndicator="accent-1"
+                              label="Done"
+                              alignSelf="center"
+                              type="submit"
+                              icon={<Checkmark />}
+                              reverse
+                            />
                           </Box>
                         </Form>
                       </Box>
@@ -1175,26 +1144,17 @@ export default class HomePage extends Component {
                                   })
                                 }
                               />
-                              <Box direction="row" align="center" gap="xsmall">
-                                <Button
-                                  disabled={
-                                    this.state.addFilmSearchVal.length === 0
-                                  }
-                                  alignSelf="center"
-                                  type="submit"
-                                  primary
-                                  style={{ borderRadius: 30 }}
-                                  icon={<Checkmark size="small" />}
-                                  reverse
-                                />
-                                <Anchor
-                                  icon={<SearchAdvanced />}
-                                  alignSelf="center"
-                                  onClick={() =>
-                                    this.setState({ showAdvancedSearch: true })
-                                  }
-                                />
-                              </Box>
+                              <Button
+                                disabled={
+                                  this.state.addFilmSearchVal.length === 0
+                                }
+                                alignSelf="center"
+                                type="submit"
+                                primary
+                                style={{ borderRadius: 30 }}
+                                icon={<Checkmark size="small" />}
+                                reverse
+                              />
                             </Box>
                           </Form>
                         </Box>
@@ -1290,24 +1250,15 @@ export default class HomePage extends Component {
                             })
                           }
                         />
-                        <Box direction="row" align="center" gap="xsmall">
-                          <Button
-                            disabled={this.state.addFilmSearchVal.length === 0}
-                            alignSelf="center"
-                            type="submit"
-                            primary
-                            style={{ borderRadius: 30, display: 'none' }}
-                            icon={<Checkmark size="small" />}
-                            reverse
-                          />
-                          <Anchor
-                            icon={<SearchAdvanced />}
-                            alignSelf="center"
-                            onClick={() =>
-                              this.setState({ showAdvancedSearch: true })
-                            }
-                          />
-                        </Box>
+                        <Button
+                          disabled={this.state.addFilmSearchVal.length === 0}
+                          alignSelf="center"
+                          type="submit"
+                          primary
+                          style={{ borderRadius: 30, display: 'none' }}
+                          icon={<Checkmark size="small" />}
+                          reverse
+                        />
                       </Box>
                     </Form>
                   </Box>
@@ -1490,6 +1441,7 @@ export default class HomePage extends Component {
                     moviesAdded={(lotMovies, wishlistMovies) =>
                       this.moviesAdded(lotMovies, wishlistMovies)
                     }
+                    showAdvSearch={() => this.setState({ showAdvSearch: true })}
                     loading={this.state.loading}
                     width={this.state.width}
                     sortBy={this.state.sortBy}
@@ -1540,6 +1492,14 @@ export default class HomePage extends Component {
                       '10'
                     ]}
                     handleResetFilters={this.handleResetFilters}
+                    handleTagDelete={(tags) => this.handleTagDelete(tags)}
+                    handleUpdatedTags={(tags) => this.handleUpdatedTags(tags)}
+                    handleTagAdded={(tag) => this.handleTagAdded(tag)}
+                    handleSaveOrderChange={(checked) =>
+                      this.handleSaveOrderChange(checked)
+                    }
+                    handlePrefChanged={(index) => this.handlePrefChanged(index)}
+                    saveSortedOrder={this.state.saveSortedOrder}
                   />
                 </Box>
                 {this.state.tmdbSearched && (
@@ -1557,12 +1517,12 @@ export default class HomePage extends Component {
                     }
                   />
                 )}
-                {this.state.showAdvancedSearch && (
+                {this.state.showAdvSearch && (
                   <AddTitle
                     width={this.state.width}
                     handleClose={() =>
                       this.setState({
-                        showAdvancedSearch: false
+                        showAdvSearch: false
                       })
                     }
                     moviesAdded={(lotMovies, wishlistMovies) =>
@@ -1583,7 +1543,7 @@ export default class HomePage extends Component {
                     handleParsed={(movieList) => this.handleParsed(movieList)}
                   />
                 ) : null}
-                {this.state.greeting ? (
+                {this.state.greeting && (
                   <Layer
                     position="center"
                     style={{ borderRadius: 30 }}
@@ -1648,70 +1608,6 @@ export default class HomePage extends Component {
                       </Box>
                     </Box>
                   </Layer>
-                ) : (
-                  this.state.welcomeBack && (
-                    <Layer
-                      color="layer"
-                      responsive={false}
-                      position={size !== 'small' ? 'bottom-right' : 'bottom'}
-                      style={{ borderRadius: 30, zIndex: 1000 }}
-                      modal={false}
-                      margin={{ bottom: 'medium', right: 'medium' }}
-                    >
-                      <Box
-                        flex
-                        direction="row"
-                        animation={{ duration: 500, type: 'pulse' }}
-                        justify="between"
-                        background="accent-1"
-                        align="center"
-                        pad={{ horizontal: 'medium', bottom: 'medium' }}
-                        round={size === 'small' ? 'large' : true}
-                      >
-                        <Box>
-                          <Heading
-                            level={4}
-                            textAlign={size !== 'small' ? 'start' : 'center'}
-                          >
-                            Welcome back to your{' '}
-                            <Text color="brand" size="large" weight="bold">
-                              {this.state.movies.length}
-                            </Text>
-                            {this.state.movies.length === 1
-                              ? ' film'
-                              : ' films'}
-                            , {this.state.name.split(' ', 1)}!
-                          </Heading>
-                          <Box
-                            direction={size !== 'small' ? 'row' : 'column'}
-                            gap="small"
-                            align="center"
-                          >
-                            <motion.div
-                              whileTap={{ scale: 0.9 }}
-                              style={{ flexDirection: 'row' }}
-                            >
-                              <CheckBox
-                                label="Stop welcoming me back"
-                                onChange={(event) =>
-                                  this.dismissWelcomeBack(event.target.checked)
-                                }
-                              />
-                            </motion.div>
-                            <Button
-                              hoverIndicator="accent-1"
-                              alignSelf="center"
-                              style={{ borderRadius: 30 }}
-                              icon={<Down />}
-                              onClick={() =>
-                                this.setState({ welcomeBack: false })
-                              }
-                            />
-                          </Box>
-                        </Box>
-                      </Box>
-                    </Layer>
-                  )
                 )}
                 {this.state.notification && (
                   <Notification

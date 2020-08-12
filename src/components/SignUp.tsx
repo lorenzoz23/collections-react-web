@@ -47,6 +47,8 @@ export default class SignUp extends Component<SignUpProps> {
           .auth()
           .createUserWithEmailAndPassword(this.state.email, this.state.password)
           .then((result) => {
+            if (this.props.rememberMe)
+              localStorage.setItem('rememberMe', 'remember');
             const user = firebase.auth().currentUser!;
             const isNew: boolean = result.additionalUserInfo!.isNewUser;
             if (isNew) {
