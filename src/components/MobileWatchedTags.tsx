@@ -3,13 +3,15 @@ import { Box, Button, Text } from 'grommet';
 import { FormPrevious } from 'grommet-icons';
 import { filter } from './FilterSearch';
 
-interface MobileGenreTagsProps {
-  genreTags: string[];
+interface MobileWatchedTagsProps {
+  watchedOptions: string[];
   onOpen(checked: boolean): void;
   handleFilterByTag(filters: filter[]): void;
 }
 
-export default class MobileGenreTags extends Component<MobileGenreTagsProps> {
+export default class MobileWatchedTags extends Component<
+  MobileWatchedTagsProps
+> {
   state: { selectedFilters: filter[] } = {
     selectedFilters: []
   };
@@ -52,7 +54,7 @@ export default class MobileGenreTags extends Component<MobileGenreTagsProps> {
   renderTag = (tag: string) => {
     let same: boolean = false;
     this.state.selectedFilters.forEach((filter) => {
-      if (filter.name === tag && filter.type === 'genre') {
+      if (filter.name === tag && filter.type === 'watched') {
         same = true;
       }
     });
@@ -60,7 +62,7 @@ export default class MobileGenreTags extends Component<MobileGenreTagsProps> {
     return (
       <Button
         key={tag}
-        onClick={() => this.handleTagSelected(tag, 'genre')}
+        onClick={() => this.handleTagSelected(tag, 'watched')}
         focusIndicator={false}
       >
         <Box
@@ -87,7 +89,7 @@ export default class MobileGenreTags extends Component<MobileGenreTagsProps> {
     return (
       <Box align="center">
         <Box direction="row" align="center" overflow={{ horizontal: 'auto' }}>
-          {this.props.genreTags.map((tag) => this.renderTag(tag))}
+          {this.props.watchedOptions.map((option) => this.renderTag(option))}
         </Box>
         <Button
           margin={{ top: 'small' }}

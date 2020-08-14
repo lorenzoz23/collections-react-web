@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Box, Heading, Button, Text, ResponsiveContext, Image } from 'grommet';
-import { Previous, Trash, Eject } from 'grommet-icons';
+import { Previous, Trash, Eject, View } from 'grommet-icons';
 import { movie } from './HomePage';
 import RateFilm from './RateFilm';
 import SelectMultiple from './SelectMultiple';
@@ -12,6 +12,7 @@ interface SingleMovieViewProps {
   handleRate?(updatedMovie: movie): void;
   handleSelectedTags?(tags: number[]): void;
   handleTransfer?(): void;
+  handleWatched?(): void;
   rand?: number;
   width?: number;
   movie: movie;
@@ -21,9 +22,16 @@ interface SingleMovieViewProps {
 }
 
 export default class SingleMovieView extends Component<SingleMovieViewProps> {
+  state = {
+    watched: this.props.movie.watched
+  };
   render() {
     const numGenre = this.props.movie.genre.length;
     const mode = localStorage.getItem('visualModeValue') || 'wedding';
+    const images: string[] = [
+      ...this.props.movie.backDrop,
+      this.props.movie.poster
+    ];
 
     return (
       <ResponsiveContext.Consumer>
@@ -63,7 +71,7 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                 >
                   <Image
                     fit="cover"
-                    src={this.props.movie.poster}
+                    src={this.props.add ? images[0] : images[this.props.rand!]}
                     opacity={mode === 'solid' ? '0.2' : '0.3'}
                   />
                   {/* <Box
@@ -96,13 +104,13 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                   <SelectMultiple
                     placeholder={
                       this.props.wishlist
-                        ? 'how would you like to own this?'
-                        : 'how do you own this?'
+                        ? 'How would you like to own this?'
+                        : 'How do you own this?'
                     }
                     title={
                       this.props.wishlist
-                        ? 'how would you like to own this title?'
-                        : 'how do you own this title?'
+                        ? 'How would you like to own this title?'
+                        : 'How do you own this title?'
                     }
                     movieTags={this.props.movie.tags!}
                     tags={this.props.tags!}
@@ -115,7 +123,7 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                   />
                 </Box>
               )}
-              <Box align="center" alignSelf="center">
+              <Box align="center" alignSelf="center" overflow="hidden">
                 <Heading
                   color={
                     size === 'small' && mode === 'solid' ? 'black' : undefined
@@ -332,13 +340,13 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                   <SelectMultiple
                     placeholder={
                       this.props.wishlist
-                        ? 'how would you like to own this?'
-                        : 'how do you own this?'
+                        ? 'How would you like to own this?'
+                        : 'How do you own this?'
                     }
                     title={
                       this.props.wishlist
-                        ? 'how would you like to own this title?'
-                        : 'how do you own this title?'
+                        ? 'How would you like to own this title?'
+                        : 'How do you own this title?'
                     }
                     movieTags={this.props.movie.tags!}
                     tags={this.props.tags!}
@@ -369,20 +377,42 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                     {this.props.wishlist ? (
                       <Button
                         alignSelf="center"
-                        title="transfer film to lot"
-                        label={size !== 'small' ? 'transfer to lot' : undefined}
+                        title="Transfer film to Lot"
+                        label="Transfer to Lot"
                         icon={<Eject />}
                         onClick={() => {
                           this.props.handleTransfer!();
                         }}
                       />
                     ) : (
-                      <RateFilm
-                        movie={this.props.movie}
-                        handleRate={(updatedMovie: movie) =>
-                          this.props.handleRate!(updatedMovie)
-                        }
-                      />
+                      <Box direction="row" gap="small" align="center">
+                        <Button
+                          icon={
+                            <View
+                              color={
+                                this.props.movie.starCount !== -1 ||
+                                this.state.watched === 1
+                                  ? 'accent-1'
+                                  : undefined
+                              }
+                            />
+                          }
+                          focusIndicator={false}
+                          onClick={() => {
+                            this.setState({
+                              watched: this.state.watched === 1 ? 0 : 1
+                            });
+                            this.props.handleWatched!();
+                          }}
+                          disabled={this.props.movie.starCount !== -1}
+                        />
+                        <RateFilm
+                          movie={this.props.movie}
+                          handleRate={(updatedMovie: movie) =>
+                            this.props.handleRate!(updatedMovie)
+                          }
+                        />
+                      </Box>
                     )}
                     <Button
                       icon={<Trash color="deleteMovie" />}

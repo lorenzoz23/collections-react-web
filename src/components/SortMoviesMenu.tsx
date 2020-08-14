@@ -11,6 +11,8 @@ const sortlabels = [
   { label: 'MPAA Rating (Desc)', sortBy: 'mpaaDesc' },
   { label: 'Star Count (Asc)', sortBy: 'starCountAsc' },
   { label: 'Star Count (Desc)', sortBy: 'starCountDesc' },
+  { label: 'Year Released (Asc)', sortBy: 'yearAsc' },
+  { label: 'Year Released (Desc)', sortBy: 'yearDesc' },
   { label: 'Reset (Original Order)', sortBy: '' }
 ];
 
@@ -34,26 +36,23 @@ export default class SortMoviesMenu extends Component<SortMoviesMenuProps> {
     return (
       <ResponsiveContext.Consumer>
         {(size) => (
-          <Box margin={{ left: 'small' }}>
+          <Box margin={{ left: this.props.width > 700 ? 'small' : 'none' }}>
             {size === 'small' && this.props.width < 700 ? (
               <Box background="light-2">
                 {this.state.showSortLayer && this.props.width < 700 ? (
                   <Box
                     gap="xsmall"
                     border="between"
-                    background={{ color: 'neutral-3', opacity: 'medium' }}
-                    round
-                    pad={{ bottom: 'medium', horizontal: 'medium' }}
                     overflow={{ vertical: 'scroll' }}
                   >
                     {sortlabels.map((item) => (
                       <Box
-                        margin={{ vertical: 'small', right: 'small' }}
+                        //margin={{ vertical: 'small', right: 'small' }}
                         pad={{
-                          left: 'small',
-                          top: 'medium',
-                          bottom: 'medium',
-                          right: 'medium'
+                          left: 'xsmall',
+                          top: 'small',
+                          bottom: 'small',
+                          right: 'small'
                         }}
                         onClick={() => {
                           this.setState({ showSortLayer: false });
@@ -158,6 +157,16 @@ export default class SortMoviesMenu extends Component<SortMoviesMenuProps> {
                   {
                     label: 'Star Count (Desc)',
                     onClick: () => this.handleSort('starCountDesc'),
+                    hoverIndicator: 'accent-1'
+                  },
+                  {
+                    label: 'Year Released (Asc)',
+                    onClick: () => this.handleSort('yearAsc'),
+                    hoverIndicator: 'accent-1'
+                  },
+                  {
+                    label: 'Year Released (Desc)',
+                    onClick: () => this.handleSort('yearDesc'),
                     hoverIndicator: 'accent-1'
                   },
                   {

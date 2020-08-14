@@ -152,7 +152,7 @@ export default class AddMovieTemplate extends Component<AddMovieTemplateProps> {
                   hoverIndicator="accent-3"
                   primary
                   onClick={() => {
-                    this.setState({ visible: true, rand: this.getRandom() });
+                    this.setState({ visible: true });
                   }}
                   icon={
                     <SearchAdvanced
@@ -170,7 +170,9 @@ export default class AddMovieTemplate extends Component<AddMovieTemplateProps> {
             {this.state.visible && (
               <AddTitle
                 width={this.props.width}
-                handleClose={() => this.setState({ visible: false })}
+                handleClose={() =>
+                  this.setState({ visible: false, rand: this.getRandom() })
+                }
                 moviesAdded={(lotMovies, wishlistMovies) =>
                   this.props.moviesAdded(lotMovies, wishlistMovies)
                 }

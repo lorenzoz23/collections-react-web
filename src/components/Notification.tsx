@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Layer, Box, Button, Text, ResponsiveContext } from 'grommet';
-import { StatusGood, FormClose, StatusCritical } from 'grommet-icons';
+import { StatusGood, FormClose, StatusCritical, Emoji } from 'grommet-icons';
 
 interface NotificationProps {
   notificationText: string;
@@ -41,7 +41,11 @@ export default class Notification extends Component<NotificationProps> {
             >
               <Box align="center" direction="row" gap="xsmall">
                 {this.props.good ? (
-                  <StatusGood size="medium" />
+                  this.props.notificationText.includes('Welcome') ? (
+                    <Emoji />
+                  ) : (
+                    <StatusGood size="medium" />
+                  )
                 ) : (
                   <StatusCritical size="medium" />
                 )}

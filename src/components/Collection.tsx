@@ -34,6 +34,7 @@ interface CollectionProps {
   filterBy: filter[];
   tags: string[];
   rand: number;
+  handleWatched(movie: movie): void;
 }
 
 const DeleteMovieConfirmation = (props: any) => {
@@ -103,7 +104,8 @@ export default class Collection extends Component<CollectionProps> {
       key: '',
       id: '',
       starCount: -1,
-      backDrop: []
+      backDrop: [],
+      watched: 0
     },
     randBackDrop: 0,
     showConfirm: false
@@ -224,7 +226,8 @@ export default class Collection extends Component<CollectionProps> {
       movieDetailsVisible: true,
       movieToShow: movie,
       randBackDrop: Math.floor(
-        Math.random() * Math.floor(movie.backDrop?.length || 0)
+        Math.random() *
+          Math.floor(movie.backDrop?.length > 0 ? movie.backDrop.length + 1 : 1)
       )
     });
   };
@@ -250,21 +253,52 @@ export default class Collection extends Component<CollectionProps> {
     if (this.props.filterBy.length !== 0) {
       this.props.filterBy.forEach((filter) => {
         if (filter.type === 'starCount') {
-          filteredMovies = moviesToMap.filter(
-            (child) => child.starCount === +filter.name
-          );
+          if (filteredMovies.length > 0) {
+            filteredMovies = filteredMovies.filter(
+              (child) => child.starCount === +filter.name
+            );
+          } else {
+            filteredMovies = moviesToMap.filter(
+              (child) => child.starCount === +filter.name
+            );
+          }
         } else if (filter.type === 'genre') {
-          filteredMovies = moviesToMap.filter((child) =>
-            child.genre.includes(filter.name, 0)
-          );
+          if (filteredMovies.length > 0) {
+            filteredMovies = filteredMovies.filter((child) =>
+              child.genre.includes(filter.name, 0)
+            );
+          } else {
+            filteredMovies = moviesToMap.filter((child) =>
+              child.genre.includes(filter.name, 0)
+            );
+          }
+        } else if (filter.type === 'watched') {
+          if (filteredMovies.length > 0) {
+            filteredMovies = filteredMovies.filter((child) =>
+              filter.name === 'Watched'
+                ? child.watched === 1
+                : child.watched === 0
+            );
+          } else {
+            filteredMovies = moviesToMap.filter((child) =>
+              filter.name === 'Watched'
+                ? child.watched === 1
+                : child.watched === 0
+            );
+          }
         } else {
           const filterIndex = this.props.tags.indexOf(filter.name);
-          filteredMovies = moviesToMap.filter((child) =>
-            child.tags.includes(filterIndex, 0)
-          );
+          if (filteredMovies.length > 0) {
+            filteredMovies = filteredMovies.filter((child) =>
+              child.tags.includes(filterIndex, 0)
+            );
+          } else {
+            filteredMovies = moviesToMap.filter((child) =>
+              child.tags.includes(filterIndex, 0)
+            );
+          }
         }
       });
-      //this.setState({ filteredMovies: filteredMovies });
     } else {
       filteredMovies = moviesToMap;
     }
@@ -351,6 +385,9 @@ export default class Collection extends Component<CollectionProps> {
                   }}
                 >
                   <SingleMovieView
+                    handleWatched={() =>
+                      this.props.handleWatched(this.state.movieToShow)
+                    }
                     handleTransfer={() => {
                       this.setState({ movieDetailsVisible: false });
                       this.props.handleTransfer(this.state.movieToShow);

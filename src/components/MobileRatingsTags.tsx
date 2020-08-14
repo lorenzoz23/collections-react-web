@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Box, Button, Text } from 'grommet';
-import { FormPrevious, Star, FormNext } from 'grommet-icons';
+import { FormPrevious } from 'grommet-icons';
 import { filter } from './FilterSearch';
 
 interface MobileRatingsTagsProps {
@@ -12,8 +12,7 @@ interface MobileRatingsTagsProps {
 export default class MobileRatingsTags extends Component<
   MobileRatingsTagsProps
 > {
-  state: { visible: boolean; selectedFilters: filter[] } = {
-    visible: false,
+  state: { selectedFilters: filter[] } = {
     selectedFilters: []
   };
 
@@ -88,57 +87,20 @@ export default class MobileRatingsTags extends Component<
 
   render() {
     return (
-      <Box>
-        {this.state.visible ? (
-          <Box gap="xsmall" align="center">
-            <Box
-              direction="row"
-              align="center"
-              overflow={{ horizontal: 'auto' }}
-            >
-              {this.props.ratingsTags.map((tag) => this.renderTag(tag))}
-            </Box>
-            <Button
-              margin={{ top: 'medium' }}
-              alignSelf="center"
-              icon={<FormPrevious />}
-              primary
-              style={{ borderRadius: 30 }}
-              onClick={() => {
-                this.setState({ visible: false });
-                this.props.onOpen!(false);
-              }}
-            />
-          </Box>
-        ) : (
-          <Box
-            round
-            background={{ color: 'brand', opacity: 'medium' }}
-            direction="row"
-            justify="between"
-            border={{ color: 'brand', side: 'all', size: 'small' }}
-            pad={{
-              left: 'small',
-              top: 'medium',
-              bottom: 'medium',
-              right: 'medium'
-            }}
-            onClick={() => {
-              this.props.onOpen!(true);
-              this.setState({
-                showRatingsLayer: true,
-                showGenreLayer: false,
-                showMediaLayer: false
-              });
-            }}
-          >
-            <Box direction="row" gap="small">
-              <Text weight="bold">Your Ratings</Text>
-              <Star color="dark-2" />
-            </Box>
-            <FormNext color="dark-2" />
-          </Box>
-        )}
+      <Box align="center">
+        <Box direction="row" align="center" overflow={{ horizontal: 'auto' }}>
+          {this.props.ratingsTags.map((tag) => this.renderTag(tag))}
+        </Box>
+        <Button
+          margin={{ top: 'small' }}
+          alignSelf="center"
+          icon={<FormPrevious />}
+          primary
+          style={{ borderRadius: 30 }}
+          onClick={() => {
+            this.props.onOpen!(false);
+          }}
+        />
       </Box>
     );
   }

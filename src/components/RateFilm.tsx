@@ -20,7 +20,7 @@ export default class RateFilm extends Component<RateFilmProps> {
     rateLabel:
       this.props.movie.starCount !== -1
         ? this.props.movie.starCount + '/10'
-        : 'rate',
+        : 'Rate',
     starCount:
       this.props.movie.starCount === -1 ? 0 : this.props.movie.starCount
   };
@@ -88,13 +88,24 @@ export default class RateFilm extends Component<RateFilmProps> {
 
   handleCancel = () => {
     this.setState({
-      starCount: 0
+      starCount:
+        this.props.movie.starCount === -1 ? 0 : this.props.movie.starCount
     });
     this.getStars();
   };
 
+  handleClearRating = () => {
+    const updatedMovie: movie = this.props.movie;
+    updatedMovie.starCount = -1;
+    this.setState({
+      showRate: false,
+      rateLabel: 'Rate'
+    });
+    this.props.handleRate(updatedMovie);
+  };
+
   render() {
-    const mode = localStorage.getItem('visualModeValue') || 'gradient';
+    const mode = localStorage.getItem('visualModeValue') || 'wedding';
     return (
       <ResponsiveContext.Consumer>
         {(size) => (
@@ -107,7 +118,7 @@ export default class RateFilm extends Component<RateFilmProps> {
                   }
                 />
               }
-              title="rate film"
+              title="Rate film"
               label={this.state.rateLabel}
               hoverIndicator={mode === 'solid' ? 'accent-1' : 'neutral-3'}
               onClick={this.rateFilm}
@@ -147,8 +158,8 @@ export default class RateFilm extends Component<RateFilmProps> {
                   align="center"
                 >
                   <Box align="center" pad="small">
-                    <Text size="large">how would you rate</Text>
-                    <Text weight="bold" size="large">
+                    <Text size="large">How would you rate</Text>
+                    <Text weight="bold" size="large" textAlign="center">
                       {this.props.movie.name}?
                     </Text>
                   </Box>
@@ -169,20 +180,33 @@ export default class RateFilm extends Component<RateFilmProps> {
                     {this.state.stars}
                   </Box>
                   <Box align="center">
-                    <Button
-                      label={
-                        this.state.starCount === 0
-                          ? 'rate'
-                          : 'rate ' + this.state.starCount + '/10'
-                      }
-                      onClick={this.handleRate}
-                      color="#228BE6"
-                      primary
-                      disabled={this.state.starCount > 0 ? false : true}
-                    />
+                    {this.state.starCount === 0 ||
+                    this.state.starCount !== this.props.movie.starCount ? (
+                      <Button
+                        label={
+                          this.state.starCount === 0
+                            ? 'Rate'
+                            : 'Rate ' + this.state.starCount + '/10'
+                        }
+                        onClick={this.handleRate}
+                        color="#228BE6"
+                        primary
+                        disabled={this.state.starCount > 0 ? false : true}
+                      />
+                    ) : (
+                      <Button
+                        label={
+                          'Clear ' + this.props.movie.starCount + '/10 rating'
+                        }
+                        onClick={this.handleClearRating}
+                        color="#228BE6"
+                        primary
+                        disabled={this.state.starCount > 0 ? false : true}
+                      />
+                    )}
                     <Button
                       icon={<FormClose />}
-                      title="cancel"
+                      title="Cancel"
                       focusIndicator={false}
                       onClick={this.handleCancel}
                     />

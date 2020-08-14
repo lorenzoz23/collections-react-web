@@ -64,6 +64,13 @@ export const Sort = ({ children, by }: { children: any; by: string }) => {
         if ((movieA.starCount || 0) > (movieB.starCount || 0)) return 1;
         if ((movieA.starCount || 0) === (movieB.starCount || 0)) return 0;
         break;
+      case 'yearAsc':
+        const yearA1: number = +movieA.date.substring(0, 4);
+        const yearB1: number = +movieB.date.substring(0, 4);
+        if (yearA1 < yearB1) return -1;
+        if (yearA1 > yearB1) return 1;
+        if (yearA1 === yearB1) return 0;
+        break;
       case 'nameDesc':
         if (movieA.name < movieB.name) return 1;
         if (movieA.name > movieB.name) return -1;
@@ -80,6 +87,13 @@ export const Sort = ({ children, by }: { children: any; by: string }) => {
         if ((movieA.starCount || 0) < (movieB.starCount || 0)) return 1;
         if ((movieA.starCount || 0) > (movieB.starCount || 0)) return -1;
         if ((movieA.starCount || 0) === (movieB.starCount || 0)) return 0;
+        break;
+      case 'yearDesc':
+        const yearA2: number = +movieA.date.substring(0, 4);
+        const yearB2: number = +movieB.date.substring(0, 4);
+        if (yearA2 < yearB2) return 1;
+        if (yearA2 > yearB2) return -1;
+        if (yearA2 === yearB2) return 0;
         break;
       default:
         if (movieA.name < movieB.name) return -1;

@@ -24,7 +24,8 @@ import {
   Logout,
   Add,
   Checkmark,
-  Filter
+  Filter,
+  Configure
 } from 'grommet-icons';
 import firebase from 'firebase/app';
 import 'firebase/auth';
@@ -72,9 +73,10 @@ export type movie = {
   runtime: number;
   genre: string[];
   id: string;
-  key?: string;
   starCount: number;
   tags: number[];
+  watched: number;
+  key?: string;
 };
 
 export const sortLabels: Record<string, string> = {
@@ -210,7 +212,7 @@ export default class HomePage extends Component {
     if (this.state.uid === '' && !remember) {
       this.setState({ invalidRoute: true });
     } else {
-      document.title = 'Cinelot | Your film lot on the go';
+      document.title = 'Your Lot | Cinelot';
       this.updateWindowDimensions();
       window.addEventListener('resize', this.updateWindowDimensions);
 
@@ -253,7 +255,8 @@ export default class HomePage extends Component {
             id: movie.id,
             key: childKey,
             starCount: movie.starCount || -1,
-            tags: movie.tags || []
+            tags: movie.tags || [],
+            watched: movie.watched
           };
           lot.push(entry);
         });
@@ -275,7 +278,7 @@ export default class HomePage extends Component {
         this.setState(
           {
             notification: true,
-            notificationText: 'Welcome, ' + this.state.name,
+            notificationText: 'Welcome, ' + this.state.name.split(' ', 1) + '!',
             goodNotification: true
           },
           () => setTimeout(this.onNotificationClose, 2000)
@@ -474,7 +477,7 @@ export default class HomePage extends Component {
 
   handleWishlist = (checked: boolean) => {
     if (checked && !this.state.fetchedWishlist) {
-      document.title = 'Cinelot | Your wishlist on the go';
+      document.title = 'Your Wishlist | Cinelot';
       const wishlistMovies: movie[] = [];
       const userRef = firebase.database().ref('users/' + this.state.uid);
       const wishlistRef = userRef.child('wishlist');
@@ -494,7 +497,8 @@ export default class HomePage extends Component {
             id: movie.id,
             starCount: movie.starCount || undefined,
             key: childKey,
-            tags: movie.tags || []
+            tags: movie.tags || [],
+            watched: movie.watched
           };
           wishlistMovies.push(entry);
         });
@@ -514,9 +518,9 @@ export default class HomePage extends Component {
       });
     } else {
       if (checked) {
-        document.title = 'Cinelot | Your film wishlist on the go';
+        document.title = 'Your Wishlist | Cinelot';
       } else {
-        document.title = 'Cinelot | Your film lot on the go';
+        document.title = 'Your Lot | Cinelot';
       }
       this.setState(
         {
@@ -626,6 +630,8 @@ export default class HomePage extends Component {
         const movie = childSnapshot.val().movie;
 
         if (movie.id === updatedMovie.id) {
+          updatedMovie.watched =
+            updatedMovie.starCount > 0 ? 1 : updatedMovie.watched;
           movieRef.child(childKey).update({ movie: updatedMovie });
           return true;
         }
@@ -644,7 +650,10 @@ export default class HomePage extends Component {
         {
           wishlist: newMovies,
           notification: true,
-          notificationText: 'Wishlist film successfully rated',
+          notificationText:
+            updatedMovie.starCount === -1
+              ? 'Rating has been cleared'
+              : `You just rated ${updatedMovie.name} ${updatedMovie.starCount}/10`,
           goodNotification: true
         },
         () => {
@@ -656,7 +665,10 @@ export default class HomePage extends Component {
         {
           movies: newMovies,
           notification: true,
-          notificationText: 'Lot film successfully rated',
+          notificationText:
+            updatedMovie.starCount === -1
+              ? 'Rating has been cleared'
+              : `You just rated ${updatedMovie.name} ${updatedMovie.starCount}/10`,
           goodNotification: true
         },
         () => {
@@ -960,6 +972,48 @@ export default class HomePage extends Component {
     }
 
     return genres;
+  };
+
+  handleWatched = (watchedMovie: movie) => {
+    const m: movie = watchedMovie;
+    let newMovies: movie[] = [];
+    const moviesToUpdate: movie[] = this.state.showWishlist
+      ? this.state.wishlist
+      : this.state.movies;
+
+    const userRef = firebase.database().ref('users/' + this.state.uid);
+    const movieRef = this.state.showWishlist
+      ? userRef.child('wishlist')
+      : userRef.child('collection');
+    movieRef.once('value', (snapshot) => {
+      snapshot.forEach((childSnapshot) => {
+        const childKey = childSnapshot.key!;
+        const movie = childSnapshot.val().movie;
+
+        if (movie.id === m.id) {
+          m.watched = m.watched === 1 ? 0 : 1;
+          movieRef.child(childKey).update({ movie: m });
+          return true;
+        }
+      });
+    });
+    for (let i = 0; i < moviesToUpdate.length; i++) {
+      if (moviesToUpdate[i].id !== watchedMovie.id) {
+        newMovies.push(moviesToUpdate[i]);
+      } else {
+        newMovies.push(m);
+      }
+    }
+
+    if (this.state.showWishlist) {
+      this.setState({
+        wishlist: newMovies
+      });
+    } else {
+      this.setState({
+        movies: newMovies
+      });
+    }
   };
 
   dismissGreeting = () => {
@@ -1341,16 +1395,14 @@ export default class HomePage extends Component {
                         gap="medium"
                         border="between"
                       >
-                        <Preferences
-                          sortBy={this.state.sortBy}
-                          saveSortedOrder={this.state.saveSortedOrder}
-                          allowedFilters={this.state.allowedFilters}
-                          handleSaveOrderChange={(checked) =>
-                            this.handleSaveOrderChange(checked)
-                          }
-                          handlePrefChange={(index) =>
-                            this.handlePrefChanged(index)
-                          }
+                        <Button
+                          primary
+                          icon={<Configure />}
+                          label="Preferences"
+                          reverse={size !== 'small'}
+                          onClick={() => {
+                            this.setState({ showPrefs: true });
+                          }}
                         />
                         <EditFilters
                           wishlist={this.state.showWishlist}
@@ -1422,6 +1474,7 @@ export default class HomePage extends Component {
                     </Box>
                   )}
                   <Collection
+                    handleWatched={(movie) => this.handleWatched(movie)}
                     handleTransfer={(movie) => this.handleTransfer(movie)}
                     wishlist={this.state.showWishlist}
                     movies={
@@ -1530,7 +1583,7 @@ export default class HomePage extends Component {
                     }
                   />
                 )}
-                {this.state.showSettings ? (
+                {this.state.showSettings && (
                   <Settings
                     toggleSettings={this.toggleSettings}
                     wishlist={this.state.showWishlist}
@@ -1542,7 +1595,19 @@ export default class HomePage extends Component {
                     fetchedWishlist={this.state.fetchedWishlist}
                     handleParsed={(movieList) => this.handleParsed(movieList)}
                   />
-                ) : null}
+                )}
+                {this.state.showPrefs && (
+                  <Preferences
+                    sortBy={this.state.sortBy}
+                    saveSortedOrder={this.state.saveSortedOrder}
+                    allowedFilters={this.state.allowedFilters}
+                    handleSaveOrderChange={(checked) =>
+                      this.handleSaveOrderChange(checked)
+                    }
+                    handlePrefChange={(index) => this.handlePrefChanged(index)}
+                    onClose={() => this.setState({ showPrefs: false })}
+                  />
+                )}
                 {this.state.greeting && (
                   <Layer
                     position="center"

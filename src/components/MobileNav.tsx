@@ -6,15 +6,24 @@ import {
   UserSettings,
   Logout,
   Gremlin,
-  ClearOption
+  ClearOption,
+  Tag,
+  FormNext,
+  Configure,
+  View,
+  PowerReset
 } from 'grommet-icons';
 import Settings from './Settings';
 import { searchResults } from './MovieSearchResult';
 import { movie } from './HomePage';
 import Preferences from './Preferences';
 import EditFilters from './EditFilters';
-import FilterSearch, { filter } from './FilterSearch';
+import { filter } from './FilterSearch';
 import SortMoviesMenu from './SortMoviesMenu';
+import MobileMediaTags from './MobileMediaTags';
+import MobileGenreTags from './MobileGenreTags';
+import MobileRatingsTags from './MobileRatingsTags';
+import MobileWatchedTags from './MobileWatchedTags';
 
 interface MobileNavProps {
   handleParsed(movieList: searchResults): void;
@@ -51,7 +60,11 @@ export default class MobileNav extends Component<MobileNavProps> {
     navClicked: '',
     searchVal: '',
     sortOpen: false,
-    filterOpen: false
+    mediaOpen: false,
+    genreOpen: false,
+    ratingsOpen: false,
+    showPrefs: false,
+    watchedOpen: false
   };
 
   render() {
@@ -108,7 +121,7 @@ export default class MobileNav extends Component<MobileNavProps> {
               width: '100%'
             }}
             onClickOutside={() =>
-              this.setState({ show: false, navClicked: '', searchVal: '' })
+              this.setState({ show: false, navClicked: '' })
             }
           >
             <Box
@@ -206,9 +219,13 @@ export default class MobileNav extends Component<MobileNavProps> {
                   />
                 </Box>
               )}
-              {this.state.navClicked === 'Filters' && (
-                <Box gap="large" fill="horizontal">
-                  {!this.state.filterOpen && (
+              {this.state.navClicked === 'Filters' &&
+                (!this.state.genreOpen &&
+                !this.state.mediaOpen &&
+                !this.state.ratingsOpen &&
+                !this.state.watchedOpen &&
+                !this.state.sortOpen ? (
+                  <Box gap="large" fill="horizontal">
                     <SortMoviesMenu
                       width={this.props.width}
                       sortBy={this.props.sortBy}
@@ -216,68 +233,237 @@ export default class MobileNav extends Component<MobileNavProps> {
                         this.setState({ show: false, navClicked: '' });
                         this.props.handleSort(sortBy);
                       }}
-                      onOpen={(open) => this.setState({ sortOpen: open })}
-                    />
-                  )}
-                  {!this.state.sortOpen && (
-                    <FilterSearch
-                      onOpen={(open) => this.setState({ filterOpen: open })}
-                      width={this.props.width}
-                      allowedFilters={this.props.allowedFilters}
-                      handleFilterByTag={(filters) =>
-                        this.props.handleFilterByTag(filters)
-                      }
-                      mediaTags={this.props.mediaTags}
-                      genreTags={this.props.genreTags}
-                      ratings={[
-                        '1',
-                        '2',
-                        '3',
-                        '4',
-                        '5',
-                        '6',
-                        '7',
-                        '8',
-                        '9',
-                        '10'
-                      ]}
-                      handleResetFilters={this.props.handleResetFilters}
-                    />
-                  )}
-                  <Box
-                    align="center"
-                    gap="medium"
-                    direction="row"
-                    border="between"
-                  >
-                    <Preferences
-                      sortBy={this.props.sortBy}
-                      saveSortedOrder={this.props.saveSortedOrder}
-                      allowedFilters={this.props.allowedFilters}
-                      handleSaveOrderChange={(checked) =>
-                        this.props.handleSaveOrderChange(checked)
-                      }
-                      handlePrefChange={(index) =>
-                        this.props.handlePrefChanged(index)
+                      onOpen={(open) =>
+                        this.setState({
+                          sortOpen: open,
+                          mediaOpen: false,
+                          genreOpen: false,
+                          ratingsOpen: false
+                        })
                       }
                     />
-                    <EditFilters
-                      wishlist={this.props.wishlist}
-                      width={this.props.width}
-                      uid={this.props.uid}
-                      tags={this.props.mediaTags}
-                      handleTagDelete={(tags) =>
-                        this.props.handleTagDelete(tags)
-                      }
-                      handleUpdatedTags={(updatedTags) =>
-                        this.props.handleUpdatedTags(updatedTags)
-                      }
-                      handleTagAdded={(tag) => this.props.handleTagAdded(tag)}
-                      handleResetFilters={this.props.handleResetFilters}
-                    />
+                    <Box gap="small">
+                      <Box
+                        round
+                        background={{ color: 'accent-3', opacity: 'medium' }}
+                        direction="row"
+                        justify="between"
+                        border={{
+                          color: 'accent-3',
+                          side: 'all',
+                          size: 'small'
+                        }}
+                        pad={{
+                          left: 'small',
+                          top: 'medium',
+                          bottom: 'medium',
+                          right: 'medium'
+                        }}
+                        onClick={() => {
+                          this.setState({
+                            mediaOpen: true,
+                            genreOpen: false,
+                            ratingsOpen: false,
+                            sortOpen: false
+                          });
+                        }}
+                      >
+                        <Box direction="row" gap="small">
+                          <Text weight="bold">Your Media Tags</Text>
+                          <Tag color="dark-2" />
+                        </Box>
+                        <FormNext color="dark-2" />
+                      </Box>
+                      <Box
+                        round
+                        background={{ color: 'accent-3', opacity: 'medium' }}
+                        direction="row"
+                        justify="between"
+                        border={{
+                          color: 'accent-3',
+                          side: 'all',
+                          size: 'small'
+                        }}
+                        pad={{
+                          left: 'small',
+                          top: 'medium',
+                          bottom: 'medium',
+                          right: 'medium'
+                        }}
+                        onClick={() => {
+                          this.setState({
+                            mediaOpen: false,
+                            genreOpen: true,
+                            ratingsOpen: false,
+                            sortOpen: false
+                          });
+                        }}
+                      >
+                        <Box direction="row" gap="small">
+                          <Text weight="bold">Genre</Text>
+                          <Tag color="dark-2" />
+                        </Box>
+                        <FormNext color="dark-2" />
+                      </Box>
+                      <Box
+                        round
+                        background={{ color: 'accent-3', opacity: 'medium' }}
+                        direction="row"
+                        justify="between"
+                        border={{
+                          color: 'accent-3',
+                          side: 'all',
+                          size: 'small'
+                        }}
+                        pad={{
+                          left: 'small',
+                          top: 'medium',
+                          bottom: 'medium',
+                          right: 'medium'
+                        }}
+                        onClick={() => {
+                          this.setState({
+                            mediaOpen: false,
+                            genreOpen: false,
+                            ratingsOpen: true,
+                            sortOpen: false
+                          });
+                        }}
+                      >
+                        <Box direction="row" gap="small">
+                          <Text weight="bold">Your Ratings</Text>
+                          <Tag color="dark-2" />
+                        </Box>
+                        <FormNext color="dark-2" />
+                      </Box>
+                      <Box
+                        round
+                        background={{ color: 'accent-3', opacity: 'medium' }}
+                        direction="row"
+                        justify="between"
+                        border={{
+                          color: 'accent-3',
+                          side: 'all',
+                          size: 'small'
+                        }}
+                        pad={{
+                          left: 'small',
+                          top: 'medium',
+                          bottom: 'medium',
+                          right: 'medium'
+                        }}
+                        onClick={() => {
+                          this.setState({
+                            mediaOpen: false,
+                            genreOpen: false,
+                            ratingsOpen: false,
+                            sortOpen: false,
+                            watchedOpen: true
+                          });
+                        }}
+                      >
+                        <Box direction="row" gap="small">
+                          <Text weight="bold">Watched</Text>
+                          <View color="dark-2" />
+                        </Box>
+                        <FormNext color="dark-2" />
+                      </Box>
+                      <Button
+                        margin="xsmall"
+                        alignSelf="center"
+                        onClick={() => {
+                          this.setState({ show: false });
+                          this.props.handleResetFilters();
+                        }}
+                        label="Reset filters/sort"
+                        primary
+                        color="neutral-3"
+                        icon={<PowerReset />}
+                        reverse
+                      />
+                    </Box>
+                    <Box
+                      align="center"
+                      gap="medium"
+                      direction="row"
+                      border="between"
+                    >
+                      <Button
+                        primary
+                        icon={<Configure />}
+                        label="Preferences"
+                        reverse
+                        onClick={() => {
+                          this.setState({ showPrefs: true, show: false });
+                        }}
+                      />
+                      <EditFilters
+                        wishlist={this.props.wishlist}
+                        width={this.props.width}
+                        uid={this.props.uid}
+                        tags={this.props.mediaTags}
+                        handleTagDelete={(tags) =>
+                          this.props.handleTagDelete(tags)
+                        }
+                        handleUpdatedTags={(updatedTags) =>
+                          this.props.handleUpdatedTags(updatedTags)
+                        }
+                        handleTagAdded={(tag) => this.props.handleTagAdded(tag)}
+                        handleResetFilters={this.props.handleResetFilters}
+                      />
+                    </Box>
                   </Box>
-                </Box>
-              )}
+                ) : (
+                  <Box fill="horizontal">
+                    {this.state.sortOpen && (
+                      <SortMoviesMenu
+                        width={this.props.width}
+                        sortBy={this.props.sortBy}
+                        handleSort={(sortBy) => {
+                          this.setState({ show: false, navClicked: '' });
+                          this.props.handleSort(sortBy);
+                        }}
+                        onOpen={(open) => this.setState({ sortOpen: open })}
+                      />
+                    )}
+                    {this.state.mediaOpen && (
+                      <MobileMediaTags
+                        mediaTags={this.props.mediaTags}
+                        onOpen={(open) => this.setState({ mediaOpen: open })}
+                        handleFilterByTag={(filters) =>
+                          this.props.handleFilterByTag(filters)
+                        }
+                      />
+                    )}
+                    {this.state.genreOpen && (
+                      <MobileGenreTags
+                        genreTags={this.props.genreTags}
+                        onOpen={(open) => this.setState({ genreOpen: open })}
+                        handleFilterByTag={(filters) =>
+                          this.props.handleFilterByTag(filters)
+                        }
+                      />
+                    )}
+                    {this.state.ratingsOpen && (
+                      <MobileRatingsTags
+                        ratingsTags={this.props.ratings}
+                        onOpen={(open) => this.setState({ ratingsOpen: open })}
+                        handleFilterByTag={(filters) =>
+                          this.props.handleFilterByTag(filters)
+                        }
+                      />
+                    )}
+                    {this.state.watchedOpen && (
+                      <MobileWatchedTags
+                        watchedOptions={['Watched', 'Unwatched']}
+                        onOpen={(open) => this.setState({ watchedOpen: open })}
+                        handleFilterByTag={(filters) =>
+                          this.props.handleFilterByTag(filters)
+                        }
+                      />
+                    )}
+                  </Box>
+                ))}
             </Box>
           </Layer>
         )}
@@ -294,6 +480,23 @@ export default class MobileNav extends Component<MobileNavProps> {
             name={this.props.name}
             fetchedWishlist={this.props.fetchedWishlist}
             handleParsed={(movieList) => this.props.handleParsed(movieList)}
+          />
+        )}
+        {this.state.showPrefs && (
+          <Preferences
+            sortBy={this.props.sortBy}
+            saveSortedOrder={this.props.saveSortedOrder}
+            allowedFilters={this.props.allowedFilters}
+            handleSaveOrderChange={(checked) =>
+              this.props.handleSaveOrderChange(checked)
+            }
+            handlePrefChange={(index) => this.props.handlePrefChanged(index)}
+            onClose={() =>
+              this.setState({
+                show: true,
+                showPrefs: false
+              })
+            }
           />
         )}
       </Box>
