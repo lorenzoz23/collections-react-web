@@ -9,10 +9,13 @@ import {
   Select,
   TextInput
 } from 'grommet';
-import { Magic, Baby } from 'grommet-icons';
+import { Magic, Baby, Google, Facebook, MailOption } from 'grommet-icons';
+import firebase from 'firebase/app';
+
 import CSV from './CSV';
 import { movie } from './HomePage';
 import { searchResults } from './MovieSearchResult';
+import MultipleAuthProviders from './MultipleAuthProviders';
 
 interface SettingsProps {
   toggleSettings(): void;
@@ -31,7 +34,8 @@ export default class Settings extends Component<SettingsProps> {
     wishlistChecked: this.props.wishlist,
     theme: '',
     showDeleteAccountLayer: false,
-    uid: ''
+    uid: '',
+    showAuthProviders: false
   };
 
   componentDidMount = () => {
@@ -67,7 +71,7 @@ export default class Settings extends Component<SettingsProps> {
             onClickOutside={this.props.toggleSettings}
             style={{ borderRadius: 30 }}
           >
-            {this.state.showDeleteAccountLayer ? (
+            {this.state.showDeleteAccountLayer && (
               <Layer
                 responsive={false}
                 position="bottom"
@@ -102,7 +106,13 @@ export default class Settings extends Component<SettingsProps> {
                   />
                 </Box>
               </Layer>
-            ) : null}
+            )}
+            {this.state.showAuthProviders && (
+              <MultipleAuthProviders
+                user={firebase.auth().currentUser!}
+                close={() => this.setState({ showAuthProviders: false })}
+              />
+            )}
             <Box
               background="layer"
               justify="center"
@@ -113,6 +123,19 @@ export default class Settings extends Component<SettingsProps> {
             >
               <Heading level="2">Settings</Heading>
               <Box gap="small" alignContent="center">
+                <Box align="center" gap="xsmall">
+                  <Text weight="bold">Sign-in Methods</Text>
+                  <Button
+                    label={
+                      <Box direction="row" gap="small">
+                        <MailOption />
+                        <Google />
+                        <Facebook />
+                      </Box>
+                    }
+                    onClick={() => this.setState({ showAuthProviders: true })}
+                  />
+                </Box>
                 <Box align="center" gap="xsmall">
                   <Text weight="bold">Import/Export Data</Text>
                   <CSV

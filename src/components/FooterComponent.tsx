@@ -1,22 +1,12 @@
 import React, { Component } from 'react';
-import {
-  Footer,
-  Box,
-  Clock,
-  Text,
-  Anchor,
-  ResponsiveContext,
-  Button,
-  Layer,
-  Heading,
-  Paragraph
-} from 'grommet';
-import { Multimedia, FormClose, CircleInformation } from 'grommet-icons';
+import { Footer, Box, Clock, Text, Anchor, ResponsiveContext } from 'grommet';
+import { Multimedia } from 'grommet-icons';
 import ReportBug from './ReportBug';
 import MobileNav from './MobileNav';
 import { searchResults } from './MovieSearchResult';
 import { movie } from './HomePage';
 import { filter } from './FilterSearch';
+import About from './About';
 
 interface FooterComponentProps {
   width: number;
@@ -112,14 +102,8 @@ export default class FooterComponent extends Component<FooterComponentProps> {
                       precision="minutes"
                     />
                   </Box>
-                  <Button
-                    style={{ borderRadius: 30 }}
-                    hoverIndicator={{ color: 'accent-3', opacity: 'strong' }}
-                    title="about"
-                    icon={<CircleInformation />}
-                    onClick={() => this.setState({ showAbout: true })}
-                  />
-                  <ReportBug {...this.props} />
+                  <About width={this.props.width} />
+                  <ReportBug uid={this.props.uid} width={this.props.width} />
                 </Box>
               ))}
             {(size === 'small' && this.props.width > 700) ||
@@ -174,56 +158,6 @@ export default class FooterComponent extends Component<FooterComponentProps> {
                 }
                 saveSortedOrder={this.props.saveSortedOrder}
               />
-            )}
-            {this.state.showAbout && (
-              <Layer
-                position="center"
-                onClickOutside={() => this.setState({ showAbout: false })}
-                style={{ borderRadius: 30 }}
-              >
-                <Box
-                  align="center"
-                  flex
-                  pad="small"
-                  background="layer"
-                  justify="center"
-                  round={size !== 'small' ? true : false}
-                  overflow="auto"
-                  border={{ size: 'medium', side: 'all', color: 'accent-1' }}
-                >
-                  <Heading textAlign="center">About Cinelot</Heading>
-                  <Paragraph textAlign="center">
-                    Cinelot allows you to browse, search, and maintain your
-                    physical film collection on the go. gone are the days of
-                    double purchasing blu-rays due to unforseen lapses in
-                    memory.
-                  </Paragraph>
-                  <Text textAlign="center" weight="bold">
-                    How to Use:
-                  </Text>
-                  <Paragraph textAlign="center">
-                    Looking to add a film to your lot or wishlist? Click on the
-                    + button at the top of the app and search by film title and
-                    year (year is an optional field but is highly recommended
-                    for better, more concise results.) Once you've added so many
-                    movies that lazily scrolling through them becomes a hassle,
-                    query the search bar with a film title to quickly see
-                    whether you own it; if you don't, make sure to add it to
-                    your wishlist!
-                  </Paragraph>
-
-                  {size === 'small' && (
-                    <Box round>
-                      <Button
-                        style={{ borderRadius: 30 }}
-                        primary
-                        icon={<FormClose />}
-                        onClick={() => this.setState({ showAbout: false })}
-                      />
-                    </Box>
-                  )}
-                </Box>
-              </Layer>
             )}
           </Footer>
         )}

@@ -24,6 +24,8 @@ import MobileMediaTags from './MobileMediaTags';
 import MobileGenreTags from './MobileGenreTags';
 import MobileRatingsTags from './MobileRatingsTags';
 import MobileWatchedTags from './MobileWatchedTags';
+import ReportBug from './ReportBug';
+import About from './About';
 
 interface MobileNavProps {
   handleParsed(movieList: searchResults): void;
@@ -64,7 +66,9 @@ export default class MobileNav extends Component<MobileNavProps> {
     genreOpen: false,
     ratingsOpen: false,
     showPrefs: false,
-    watchedOpen: false
+    watchedOpen: false,
+    showBug: false,
+    showAbout: false
   };
 
   render() {
@@ -75,7 +79,7 @@ export default class MobileNav extends Component<MobileNavProps> {
         ? `Search Your ${this.props.wishlist ? 'Wishlist' : 'Lot'}`
         : this.state.navClicked;
     return (
-      <Box>
+      <Box fill>
         <Nav round direction="row" align="center" justify="center">
           <Box align="center" pad="xsmall">
             <Anchor
@@ -107,7 +111,7 @@ export default class MobileNav extends Component<MobileNavProps> {
               }
             />
             <Text weight="normal" size="small" textAlign="center">
-              Settings
+              Account
             </Text>
           </Box>
         </Nav>
@@ -146,45 +150,68 @@ export default class MobileNav extends Component<MobileNavProps> {
                   <Box alignSelf="center" pad="small">
                     <Gremlin size="large" />
                   </Box>
-                  <Box
-                    direction="row"
-                    justify="between"
-                    pad={{
-                      left: 'small',
-                      top: 'medium',
-                      bottom: 'medium',
-                      right: 'medium'
-                    }}
-                    round
-                    border={{ color: 'accent-1', side: 'all', size: 'small' }}
-                    background={{ color: 'accent-1', opacity: 'medium' }}
-                    onClick={() =>
-                      this.setState({ showSettings: true, show: false })
-                    }
-                  >
-                    <Text>Settings</Text>
-                    <UserSettings color="dark-2" />
-                  </Box>
-                  <Box
-                    direction="row"
-                    justify="between"
-                    pad={{
-                      left: 'small',
-                      top: 'medium',
-                      bottom: 'medium',
-                      right: 'medium'
-                    }}
-                    round
-                    border={{
-                      color: 'status-error',
-                      side: 'all',
-                      size: 'small'
-                    }}
-                    background={{ color: 'status-error', opacity: 'medium' }}
-                    onClick={this.props.logOut}
-                  >
-                    <Text>Sign out</Text>
-                    <Logout color="dark-2" />
+                  <Box gap="large" border="between">
+                    <Box gap="small">
+                      <Box
+                        direction="row"
+                        justify="between"
+                        pad={{
+                          left: 'small',
+                          top: 'medium',
+                          bottom: 'medium',
+                          right: 'medium'
+                        }}
+                        round
+                        border={{
+                          color: 'accent-1',
+                          side: 'all',
+                          size: 'small'
+                        }}
+                        background={{ color: 'accent-1', opacity: 'medium' }}
+                        onClick={() =>
+                          this.setState({ showSettings: true, show: false })
+                        }
+                      >
+                        <Text>Settings</Text>
+                        <UserSettings color="dark-2" />
+                      </Box>
+                      <Box
+                        direction="row"
+                        justify="between"
+                        pad={{
+                          left: 'small',
+                          top: 'medium',
+                          bottom: 'medium',
+                          right: 'medium'
+                        }}
+                        round
+                        border={{
+                          color: 'status-error',
+                          side: 'all',
+                          size: 'small'
+                        }}
+                        background={{
+                          color: 'status-error',
+                          opacity: 'medium'
+                        }}
+                        onClick={this.props.logOut}
+                      >
+                        <Text>Sign out</Text>
+                        <Logout color="dark-2" />
+                      </Box>
+                    </Box>
+                    <Box
+                      direction="row"
+                      gap="medium"
+                      alignSelf="center"
+                      margin={{ top: 'large' }}
+                    >
+                      <ReportBug
+                        uid={this.props.uid}
+                        width={this.props.width}
+                      />
+                      <About width={this.props.width} />
+                    </Box>
                   </Box>
                 </Box>
               )}

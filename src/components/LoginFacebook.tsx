@@ -16,28 +16,23 @@ export default class LoginFacebook extends Component<LoginFacebookProps> {
       ? firebase.auth.Auth.Persistence.LOCAL
       : firebase.auth.Auth.Persistence.SESSION;
     await firebase.auth().setPersistence(type);
-    let result: any;
-    result = await firebase.auth().signInWithPopup(providerFb);
-    // This gives you a Google Access Token. You can use it to access the Google API.
-    const token = result.credential.accessToken;
+    const result = await firebase.auth().signInWithPopup(providerFb);
     const isNew: boolean = result.additionalUserInfo!.isNewUser;
     if (isNew) {
-      const userRef = firebase.database().ref('users/' + result.user.uid);
+      const userRef = firebase.database().ref('users/' + result.user!.uid);
       const tagRef = userRef.child('tags');
 
       const bluRayTagRef = tagRef.push();
       bluRayTagRef.set({ title: 'blu-ray' });
 
+      const digitalTagRef = tagRef.push();
+      digitalTagRef.set({ title: 'digital' });
+
       const dvdTagRef = tagRef.push();
       dvdTagRef.set({ title: 'dvd' });
 
-      const uhdTagRef = tagRef.push();
-      uhdTagRef.set({ title: '4k-uhd' });
+      localStorage.setItem('isNew', 'facebook.com');
     }
-    console.log(token);
-    // The signed-in user info.
-    const user = result.user;
-    console.log(user);
     if (this.props.rememberMe) localStorage.setItem('rememberMe', 'remember');
     this.props.handleLogin();
   };

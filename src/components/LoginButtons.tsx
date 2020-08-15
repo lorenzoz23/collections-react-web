@@ -14,7 +14,9 @@ interface LoginButtonProps {
 export default class LoginButtons extends Component<LoginButtonProps> {
   state = {
     show: false,
-    rememberMe: false
+    rememberMe: false,
+    newUser: false,
+    signInType: ''
   };
 
   componentDidMount = () => {

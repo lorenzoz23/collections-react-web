@@ -66,6 +66,8 @@ export default class SignUp extends Component<SignUpProps> {
 
               const dvdTagRef = tagRef.push();
               dvdTagRef.set({ title: 'dvd' });
+
+              localStorage.setItem('isNew', 'password');
             }
             this.props.handleUserSignUp(this.state.email, this.state.password);
           })

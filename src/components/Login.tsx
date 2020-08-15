@@ -35,7 +35,9 @@ export default class Login extends Component {
     height: 0,
     uid: '',
     loading: false,
-    fullName: ''
+    fullName: '',
+    newUser: false,
+    signInType: ''
   };
 
   updateWindowDimensions = () => {

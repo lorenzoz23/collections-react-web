@@ -67,7 +67,7 @@ export default class LoginEmail extends Component<LoginEmailProps> {
               </Tab>
               <Tab title="Sign Up">
                 <SignUp
-                  handleUserSignUp={(email: string, password: string) =>
+                  handleUserSignUp={(email, password) =>
                     this.handleUserSignUp(email, password)
                   }
                   rememberMe={this.state.rememberMe}

@@ -80,11 +80,13 @@ export default class ReportBug extends Component<ReportBugProps> {
         {(size) => (
           <Box direction="row">
             <Button
-              size={size === 'small' ? 'small' : undefined}
+              primary={this.props.width < 700 && size === 'small'}
               hoverIndicator={{ color: 'accent-1', opacity: 'strong' }}
               style={{ borderRadius: 30 }}
-              title="report a bug"
-              icon={<Bug size={this.props.width < 400 ? 'small' : undefined} />}
+              color="neutral-4"
+              title="Report a Bug"
+              label={this.props.width < 700 ? 'Report a Bug' : undefined}
+              icon={<Bug />}
               onClick={() => this.setState({ showLayer: true })}
             />
             {this.state.showLayer && (

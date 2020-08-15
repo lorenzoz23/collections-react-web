@@ -5,9 +5,7 @@ import {
   TextInput,
   ResponsiveContext,
   Avatar,
-  Layer,
   CheckBox,
-  Paragraph,
   Button,
   Text,
   DropButton,
@@ -16,8 +14,6 @@ import {
 import {
   Search,
   User,
-  Next,
-  CircleInformation,
   FormDown,
   FormUp,
   UserSettings,
@@ -46,11 +42,11 @@ import FooterComponent from './FooterComponent';
 import EditFilters from './EditFilters';
 import { searchResults } from './MovieSearchResult';
 import Notification from './Notification';
-import { motion } from 'framer-motion';
 import SortMoviesMenu from './SortMoviesMenu';
 import FilterSearch, { filter } from './FilterSearch';
 import AddMovieTemplate from './AddMovieTemplate';
 import Preferences from './Preferences';
+import MultipleAuthProviders from './MultipleAuthProviders';
 
 export const AppBar = (props: any) => (
   <Box
@@ -105,8 +101,6 @@ export default class HomePage extends Component {
     searchVal: string;
     searchList: movie[];
     loading: boolean;
-    greeting: boolean;
-    greetingChecked: boolean;
     notification: boolean;
     notificationText: string;
     width: number;
@@ -126,6 +120,7 @@ export default class HomePage extends Component {
     allowedFilters: boolean[];
     showPrefs: boolean;
     showAdvSearch: boolean;
+    showAuthProviders: boolean;
   } = {
     uid: '',
     name: '',
@@ -139,8 +134,6 @@ export default class HomePage extends Component {
     searchVal: '',
     searchList: [],
     loading: true,
-    greeting: false,
-    greetingChecked: false,
     notification: false,
     notificationText: '',
     width: 0,
@@ -161,7 +154,8 @@ export default class HomePage extends Component {
     allGenres: [''],
     allowedFilters: [true, true, true],
     showPrefs: false,
-    showAdvSearch: false
+    showAdvSearch: false,
+    showAuthProviders: false
   };
 
   constructor(props: any) {
@@ -179,8 +173,6 @@ export default class HomePage extends Component {
       searchVal: '',
       searchList: [],
       loading: true,
-      greeting: false,
-      greetingChecked: false,
       notification: false,
       notificationText: '',
       width: 0,
@@ -201,7 +193,8 @@ export default class HomePage extends Component {
       allGenres: [''],
       allowedFilters: [true, true, true],
       showPrefs: false,
-      showAdvSearch: false
+      showAdvSearch: false,
+      showAuthProviders: false
     };
   }
 
@@ -223,9 +216,7 @@ export default class HomePage extends Component {
           ? firebase.auth().currentUser!.uid
           : this.state.uid;
 
-      const greeting = localStorage.getItem('greeting') || 'show';
-      let showGreeting = greeting === 'show' ? true : false;
-
+      const showAuthProviders = localStorage.getItem('isNew') || 'password-old';
       const userRef = firebase.database().ref('users/' + uid);
       const sort = localStorage.getItem('sortBy') || '';
 
@@ -261,16 +252,12 @@ export default class HomePage extends Component {
           lot.push(entry);
         });
 
-        if (lot.length > 0 && showGreeting) {
-          localStorage.setItem('greeting', 'noShow');
-          showGreeting = false;
-        }
         this.setState({
           movies: lot,
           sortBy: sort,
           tags: tags,
           loading: false,
-          greeting: showGreeting,
+          showAuthProviders: !showAuthProviders.includes('old') ? true : false,
           uid: uid,
           allGenres: genres,
           randAddFilmBackDrop: Math.floor(Math.random() * 60)
@@ -1016,16 +1003,6 @@ export default class HomePage extends Component {
     }
   };
 
-  dismissGreeting = () => {
-    localStorage.setItem(
-      'greeting',
-      this.state.greetingChecked ? 'noShow' : 'show'
-    );
-    this.setState({
-      greeting: false
-    });
-  };
-
   handleParsed = (movieList: searchResults) => {
     console.log(movieList);
     this.setState({
@@ -1050,7 +1027,6 @@ export default class HomePage extends Component {
 
   render() {
     const title = this.state.showWishlist ? 'Your Wishlist' : 'Your Lot';
-    const welcome = 'Welcome, ' + this.state.name.split(' ', 1) + '!';
     const mode = localStorage.getItem('visualModeValue') || 'wedding';
     return (
       <Router>
@@ -1608,71 +1584,11 @@ export default class HomePage extends Component {
                     onClose={() => this.setState({ showPrefs: false })}
                   />
                 )}
-                {this.state.greeting && (
-                  <Layer
-                    position="center"
-                    style={{ borderRadius: 30 }}
-                    onClickOutside={this.dismissGreeting}
-                  >
-                    <Box
-                      flex
-                      background="layer"
-                      overflow="auto"
-                      justify="center"
-                      align="center"
-                      pad="small"
-                      round={size !== 'small' ? true : false}
-                      border={{
-                        color: 'accent-1',
-                        side: 'all',
-                        size: 'medium'
-                      }}
-                    >
-                      <Heading textAlign="center">{welcome}</Heading>
-                      <Paragraph textAlign="center">
-                        We at Cinelot (it's just one person, actually), couldn't
-                        be happier that you chose us to help keep track of the
-                        one thing that's most important to you: your film
-                        collection!
-                      </Paragraph>
-                      <Paragraph
-                        textAlign="center"
-                        size="large"
-                        color="accent-3"
-                      >
-                        Getting started is as easy as clicking the + button next
-                        to the search bar to add a film to your lot/wishlist, or
-                        trekking over to settings to import a csv file of your
-                        film data!
-                      </Paragraph>
-                      <Paragraph textAlign="center">
-                        If you ever have any questions, or are confused on what
-                        to do/where to start, just click the{' '}
-                        <CircleInformation /> at the bottom of the page for some
-                        useful info!
-                      </Paragraph>
-                      <Box gap="small">
-                        <motion.div whileTap={{ scale: 0.9 }}>
-                          <CheckBox
-                            checked={this.state.greetingChecked}
-                            label="Never show this message again"
-                            onChange={(event) =>
-                              this.setState({
-                                greetingChecked: event.target.checked
-                              })
-                            }
-                          />
-                        </motion.div>
-                        <Button
-                          hoverIndicator="accent-1"
-                          alignSelf="center"
-                          style={{ borderRadius: 30 }}
-                          icon={<Next />}
-                          onClick={this.dismissGreeting}
-                        />
-                      </Box>
-                    </Box>
-                  </Layer>
+                {this.state.showAuthProviders && (
+                  <MultipleAuthProviders
+                    user={firebase.auth().currentUser!}
+                    close={() => this.setState({ showAuthProviders: false })}
+                  />
                 )}
                 {this.state.notification && (
                   <Notification

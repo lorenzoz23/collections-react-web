@@ -11,87 +11,78 @@ interface LoginGoogleProps {
 
 export default class LoginGoogle extends Component<LoginGoogleProps> {
   signInWithGoogle = (size: string) => {
-    if (size === 'small') this.redirect();
+    if (size === 'small') this.popup();
     else this.popup();
   };
 
-  redirect = () => {
+  // redirect = async () => {
+  //   const providerGoogle = new firebase.auth.GoogleAuthProvider();
+  //   const type: string = this.props.rememberMe
+  //     ? firebase.auth.Auth.Persistence.LOCAL
+  //     : firebase.auth.Auth.Persistence.SESSION;
+  //   await firebase.auth().setPersistence(type);
+  //   await firebase.auth().signInWithRedirect(providerGoogle);
+  //   const result = await firebase.auth().getRedirectResult();
+
+  //   // The signed-in user info.
+  //   const user = result.user!;
+  //   const isNew: boolean = result.additionalUserInfo!.isNewUser;
+  //   console.log(isNew);
+  //   if (isNew) {
+  //     console.log('new');
+  //     const userRef = firebase.database().ref('users/' + user.uid);
+  //     const tagRef = userRef.child('tags');
+
+  //     const bluRayTagRef = tagRef.push();
+  //     bluRayTagRef.set({ title: 'blu-ray' });
+
+  //     const digitalTagRef = tagRef.push();
+  //     digitalTagRef.set({ title: 'digital' });
+
+  //     const dvdTagRef = tagRef.push();
+  //     dvdTagRef.set({ title: 'dvd' });
+
+  //     //const providerFb = new firebase.auth.FacebookAuthProvider();
+  //     //await user.linkWithPopup(providerFb);
+  //     if (user.email) {
+  //       console.log('email exists');
+  //       user.linkWithCredential(
+  //         firebase.auth.EmailAuthProvider.credential(user.email, 'test123')
+  //       );
+  //     }
+  //   }
+  //   if (this.props.rememberMe) localStorage.setItem('rememberMe', 'remember');
+  //   this.props.handleLogin();
+  // };
+
+  popup = async () => {
     const providerGoogle = new firebase.auth.GoogleAuthProvider();
     const type: string = this.props.rememberMe
       ? firebase.auth.Auth.Persistence.LOCAL
       : firebase.auth.Auth.Persistence.SESSION;
-    firebase.auth().setPersistence(type);
-    firebase.auth().signInWithRedirect(providerGoogle);
-    firebase
-      .auth()
-      .getRedirectResult()
-      .then((result: any) => {
-        const token = result.credential.accessToken || undefined;
-        console.log(token);
-        // The signed-in user info.
-        const user = result.user;
-        const isNew: boolean = result.additionalUserInfo!.isNewUser;
-        if (isNew) {
-          const userRef = firebase.database().ref('users/' + result.user.uid);
-          const tagRef = userRef.child('tags');
+    await firebase.auth().setPersistence(type);
+    const result = await firebase.auth().signInWithPopup(providerGoogle);
 
-          const bluRayTagRef = tagRef.push();
-          bluRayTagRef.set({ title: 'blu-ray' });
+    // The signed-in user info.
+    const user = result.user!;
+    const isNew: boolean = result.additionalUserInfo!.isNewUser;
+    if (isNew) {
+      const userRef = firebase.database().ref('users/' + user.uid);
+      const tagRef = userRef.child('tags');
 
-          const dvdTagRef = tagRef.push();
-          dvdTagRef.set({ title: 'dvd' });
+      const bluRayTagRef = tagRef.push();
+      bluRayTagRef.set({ title: 'blu-ray' });
 
-          const uhdTagRef = tagRef.push();
-          uhdTagRef.set({ title: '4k-uhd' });
-        }
-        console.log(user);
-        if (this.props.rememberMe)
-          localStorage.setItem('rememberMe', 'remember');
-        this.props.handleLogin();
-      })
-      .catch((error) => {
-        var errorMessage = error.message;
-        console.log(errorMessage);
-      });
-  };
+      const digitalTagRef = tagRef.push();
+      digitalTagRef.set({ title: 'digital' });
 
-  popup = () => {
-    const providerGoogle = new firebase.auth.GoogleAuthProvider();
-    const type: string = this.props.rememberMe
-      ? firebase.auth.Auth.Persistence.LOCAL
-      : firebase.auth.Auth.Persistence.SESSION;
-    firebase.auth().setPersistence(type);
-    firebase
-      .auth()
-      .signInWithPopup(providerGoogle)
-      .then((result: any) => {
-        const token = result.credential.accessToken || undefined;
-        console.log(token);
-        // The signed-in user info.
-        const user = result.user;
-        const isNew: boolean = result.additionalUserInfo!.isNewUser;
-        if (isNew) {
-          const userRef = firebase.database().ref('users/' + result.user.uid);
-          const tagRef = userRef.child('tags');
+      const dvdTagRef = tagRef.push();
+      dvdTagRef.set({ title: 'dvd' });
 
-          const bluRayTagRef = tagRef.push();
-          bluRayTagRef.set({ title: 'blu-ray' });
-
-          const dvdTagRef = tagRef.push();
-          dvdTagRef.set({ title: 'dvd' });
-
-          const uhdTagRef = tagRef.push();
-          uhdTagRef.set({ title: '4k-uhd' });
-        }
-        console.log(user);
-        if (this.props.rememberMe)
-          localStorage.setItem('rememberMe', 'remember');
-        this.props.handleLogin();
-      })
-      .catch((error) => {
-        var errorMessage = error.message;
-        console.log(errorMessage);
-      });
+      localStorage.setItem('isNew', 'google.com');
+    }
+    if (this.props.rememberMe) localStorage.setItem('rememberMe', 'remember');
+    this.props.handleLogin();
   };
 
   render() {
