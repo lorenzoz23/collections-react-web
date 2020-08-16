@@ -84,6 +84,8 @@ export const sortLabels: Record<string, string> = {
   mpaaDesc: 'MPAA Rating (NC17 - G)',
   starCountAsc: 'Star Count (Asc)',
   starCountDesc: 'Star Count (Desc)',
+  yearAsc: 'Year Released (Asc)',
+  yearDesc: 'Year Released (Desc)',
   reset: 'Original Order'
 };
 
@@ -329,31 +331,31 @@ export default class HomePage extends Component {
       const wishlistLen = wishlistMovies.length - wishlistRepeats;
       notificationText =
         lotLen +
-        ` ${lotLen === 1 ? 'movie' : 'movies'} added to your lot and ` +
+        ` ${lotLen === 1 ? 'movie' : 'movies'} added to your Lot and ` +
         wishlistLen +
-        ` ${wishlistLen === 1 ? 'movie' : 'movies'} added to your wishlist!`;
+        ` ${wishlistLen === 1 ? 'movie' : 'movies'} added to your Wishlist!`;
     } else {
       if (lotRepeats === 0 && lotMovies.length === 1) {
         notificationText = `${
-          lotMovies[0].name + ' has been added to your lot!'
+          lotMovies[0].name + ' has been added to your Lot!'
         } `;
         notificationType = true;
       }
       if (lotRepeats) {
         notificationText = `${
-          lotMovies[0].name + ' already exists in your lot'
+          lotMovies[0].name + ' already exists in your Lot'
         } `;
         notificationType = false;
       }
       if (wishlistRepeats === 0 && wishlistMovies.length === 1) {
         notificationText = `${
-          wishlistMovies[0].name + ' has been added to your wishlist!'
+          wishlistMovies[0].name + ' has been added to your Wishlist!'
         } `;
         notificationType = true;
       }
       if (wishlistRepeats) {
         notificationText = `${
-          wishlistMovies[0].name + ' already exists in your wishlist'
+          wishlistMovies[0].name + ' already exists in your Wishlist'
         } `;
         notificationType = false;
       }
@@ -579,7 +581,7 @@ export default class HomePage extends Component {
         {
           wishlist: newMovies,
           notification: true,
-          notificationText: 'Film successfully deleted from wishlist',
+          notificationText: 'Film successfully deleted from Wishlist',
           goodNotification: true
         },
         () => {
@@ -591,7 +593,7 @@ export default class HomePage extends Component {
         {
           movies: newMovies,
           notification: true,
-          notificationText: 'Film successfully deleted from lot',
+          notificationText: 'Film successfully deleted from Lot',
           goodNotification: true
         },
         () => {
@@ -764,7 +766,7 @@ export default class HomePage extends Component {
     this.setState(
       {
         notification: true,
-        notificationText: `${movie.name} has been transferred to your lot!`,
+        notificationText: `${movie.name} has been transferred to your Lot!`,
         goodNotification: true,
         showWishlist: false
       },

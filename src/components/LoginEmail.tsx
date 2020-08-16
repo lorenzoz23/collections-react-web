@@ -77,10 +77,10 @@ export default class LoginEmail extends Component<LoginEmailProps> {
             <Box align="center" pad="small">
               <motion.div
                 whileTap={{ scale: 0.9 }}
-                variants={container}
-                initial="hidden"
-                animate="show"
-                transition={{ ease: 'easeOut', duration: 2 }}
+                // variants={container}
+                // initial="hidden"
+                // animate="show"
+                // transition={{ ease: 'easeOut', duration: 2 }}
               >
                 <CheckBox
                   label="Remember me?"

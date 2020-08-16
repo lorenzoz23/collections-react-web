@@ -57,7 +57,11 @@ export default class Settings extends Component<SettingsProps> {
   };
 
   handleResetCache = () => {
-    localStorage.clear();
+    for (let i = 0; i < localStorage.length; i++) {
+      if (localStorage.key(i) !== 'isNew') {
+        localStorage.removeItem(localStorage.key(i)!);
+      }
+    }
     window.location.reload();
   };
 
@@ -126,6 +130,7 @@ export default class Settings extends Component<SettingsProps> {
                 <Box align="center" gap="xsmall">
                   <Text weight="bold">Sign-in Methods</Text>
                   <Button
+                    hoverIndicator="accent-1"
                     label={
                       <Box direction="row" gap="small">
                         <MailOption />

@@ -36,7 +36,7 @@ export default class SortMoviesMenu extends Component<SortMoviesMenuProps> {
     return (
       <ResponsiveContext.Consumer>
         {(size) => (
-          <Box margin={{ left: this.props.width > 700 ? 'small' : 'none' }}>
+          <Box margin={{ left: this.props.width > 700 ? 'medium' : 'none' }}>
             {size === 'small' && this.props.width < 700 ? (
               <Box background="light-2">
                 {this.state.showSortLayer && this.props.width < 700 ? (
@@ -104,8 +104,9 @@ export default class SortMoviesMenu extends Component<SortMoviesMenuProps> {
             ) : (
               <Menu
                 color={this.props.sortBy.length > 0 ? 'accent-1' : undefined}
-                label="Sort"
+                label={this.props.sortBy === '' ? 'Sort' : 'Active Sort'}
                 style={{ borderRadius: 10 }}
+                primary={this.props.sortBy !== ''}
                 alignSelf="center"
                 justifyContent="center"
                 hoverIndicator="accent-1"

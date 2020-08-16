@@ -97,6 +97,8 @@ export default class EditFilters extends Component<FiltersProps> {
     const tagsRef = userRef.child('tags');
     const newTagRef = tagsRef.push();
     newTagRef.set({ title: tag });
+
+    this.setState({ createText: '' });
     this.props.handleTagAdded(tag);
   };
 
@@ -200,7 +202,7 @@ export default class EditFilters extends Component<FiltersProps> {
                             }
                             style={{ borderRadius: 30 }}
                             primary
-                            title="delete selected tag(s)"
+                            title="Delete selected tag(s)"
                             color="neutral-4"
                             onClick={this.handleDeleteTags}
                             icon={<Trash />}
@@ -212,7 +214,7 @@ export default class EditFilters extends Component<FiltersProps> {
                                 : true
                             }
                             style={{ borderRadius: 30 }}
-                            title="update selected tag"
+                            title="Update selected tag"
                             onClick={() =>
                               this.setState({ showUpdateBox: true })
                             }
@@ -227,7 +229,7 @@ export default class EditFilters extends Component<FiltersProps> {
                   {size === 'small' && (
                     <Button
                       alignSelf="center"
-                      title="back"
+                      title="Back"
                       icon={<Previous />}
                       onClick={() =>
                         this.setState({
@@ -288,11 +290,11 @@ export default class EditFilters extends Component<FiltersProps> {
                           primary
                           label="Done"
                           onClick={this.handleUpdateTag}
-                          title="finish tag update"
+                          title="Finish tag update"
                         />
                         <Button
                           icon={<FormClose />}
-                          title="cancel update"
+                          title="Cancel update"
                           onClick={() =>
                             this.setState({ showUpdateBox: false })
                           }

@@ -8,7 +8,7 @@ import {
   ResponsiveContext,
   Anchor
 } from 'grommet';
-import { Next, Previous, Erase } from 'grommet-icons';
+import { Next, Previous, Erase, Login } from 'grommet-icons';
 import firebase from 'firebase/app';
 import 'firebase/auth';
 import { motion } from 'framer-motion';
@@ -224,7 +224,7 @@ export default class SignIn extends Component<SignInProps> {
                     alignSelf="center"
                     onClick={() => this.props.goBack()}
                     icon={<Previous />}
-                    title="back"
+                    title="Back"
                     style={{ borderRadius: 30 }}
                     hoverIndicator="accent-1"
                     size={size === 'small' ? 'small' : 'medium'}
@@ -232,7 +232,7 @@ export default class SignIn extends Component<SignInProps> {
                   <Button
                     alignSelf="center"
                     icon={<Erase />}
-                    title="reset"
+                    title="Reset"
                     hoverIndicator="brand"
                     size={size === 'small' ? 'small' : 'medium'}
                     style={{ borderRadius: 30 }}
@@ -240,10 +240,10 @@ export default class SignIn extends Component<SignInProps> {
                   />
                   <Button
                     alignSelf="center"
-                    icon={<Next />}
+                    icon={<Login />}
                     type="submit"
                     style={{ borderRadius: 30 }}
-                    title="continue"
+                    title="Continue"
                     hoverIndicator="accent-1"
                     size={size === 'small' ? 'small' : 'medium'}
                   />

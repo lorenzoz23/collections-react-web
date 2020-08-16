@@ -10,7 +10,7 @@ import {
   Layer,
   Heading
 } from 'grommet';
-import { FormClose, Mail, Refresh, Bug } from 'grommet-icons';
+import { FormClose, Refresh, Bug, Send } from 'grommet-icons';
 import firebase from 'firebase';
 import 'firebase/database';
 import Notification from './Notification';
@@ -53,7 +53,7 @@ export default class ReportBug extends Component<ReportBugProps> {
     const bugReportRef = userRef.child('bugReports');
     const newBugReportRef = bugReportRef.push();
     newBugReportRef.set({
-      title: this.state.formValue.title || 'insert clever bug title here',
+      title: this.state.formValue.title || 'Insert clever bug title here',
       desc: this.state.formValue.desc,
       stepsToFind: this.state.formValue.stepsToFind,
       bugKey: newBugReportRef.key
@@ -129,7 +129,7 @@ export default class ReportBug extends Component<ReportBugProps> {
                     >
                       <TextInput
                         id="title-input-id"
-                        title="c'mon, get clever"
+                        title="C'mon, get clever"
                         name="title"
                         size="large"
                         placeholder="Title (optional)"
@@ -171,28 +171,31 @@ export default class ReportBug extends Component<ReportBugProps> {
                     >
                       <Button
                         primary
-                        title="send"
+                        title="Send email"
                         type="submit"
                         color="status-ok"
                         size="small"
-                        icon={<Mail />}
+                        icon={<Send />}
+                        label={size !== 'small' ? 'Send' : undefined}
                         reverse
                       />
                       <Button
                         primary
-                        title="reset fields"
+                        title="Reset fields"
                         type="reset"
                         color="status-warning"
                         size="small"
                         icon={<Refresh />}
+                        label={size !== 'small' ? 'Reset' : undefined}
                         reverse
                       />
                       <Button
                         primary
-                        title="cancel"
+                        title="Cancel"
                         color="status-critical"
                         size="small"
                         icon={<FormClose />}
+                        label={size !== 'small' ? 'Cancel' : undefined}
                         reverse
                         onClick={() => this.setState({ showLayer: false })}
                       />
@@ -203,7 +206,7 @@ export default class ReportBug extends Component<ReportBugProps> {
             )}
             {this.state.showNotification && (
               <Notification
-                notificationText="bug report sent - thank you!"
+                notificationText="Bug report sent - thank you!"
                 onNotificationClose={() =>
                   this.setState({ showNotification: false })
                 }

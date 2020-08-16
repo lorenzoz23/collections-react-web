@@ -225,7 +225,7 @@ export default class AddTitle extends Component<AddTitleProps> {
                         </FormField>
                         <FormField label="Year">
                           <TextInput
-                            title="recommended for better results"
+                            title="Recommended for better results"
                             placeholder="2019"
                             value={this.state.searchYear}
                             onChange={(e) => {
@@ -236,17 +236,6 @@ export default class AddTitle extends Component<AddTitleProps> {
                           />
                         </FormField>
                         <Box direction="row" justify="between">
-                          <Button
-                            style={{ borderRadius: 100 }}
-                            size="small"
-                            type="submit"
-                            hoverIndicator="accent-1"
-                            primary
-                            disabled={
-                              this.state.searchTitle.length === 0 ? true : false
-                            }
-                            icon={<FormNextLink />}
-                          />
                           <Button
                             icon={<Refresh />}
                             type="reset"
@@ -260,6 +249,17 @@ export default class AddTitle extends Component<AddTitleProps> {
                                 ? true
                                 : false
                             }
+                          />
+                          <Button
+                            style={{ borderRadius: 100 }}
+                            size="small"
+                            type="submit"
+                            hoverIndicator="accent-1"
+                            primary
+                            disabled={
+                              this.state.searchTitle.length === 0 ? true : false
+                            }
+                            icon={<FormNextLink />}
                           />
                         </Box>
                       </Form>

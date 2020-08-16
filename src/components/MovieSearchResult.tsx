@@ -284,7 +284,7 @@ export default class MovieSearchResult extends Component<
                   >
                     {this.props.back && (
                       <Button
-                        title="back"
+                        title="Back"
                         icon={<Previous />}
                         onClick={() => this.props.closeResult!()}
                       />
@@ -325,7 +325,7 @@ export default class MovieSearchResult extends Component<
                       </Box>
                     )}
                     <Button
-                      title="cancel"
+                      title="Cancel"
                       icon={<Close />}
                       onClick={() => this.props.closeAdd()}
                     />

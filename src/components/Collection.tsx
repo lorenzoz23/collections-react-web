@@ -58,7 +58,7 @@ const DeleteMovieConfirmation = (props: any) => {
         border={{ side: 'all', size: 'small', color: 'light-2' }}
       >
         <Text weight="bold" textAlign="center">
-          Are you sure you want to delete this movie from your
+          Are you sure you want to delete {props.movie.name} from your
           {props.wishlist ? ' wishlist' : ' lot'}?
         </Text>
         <Box align="center" gap="small">

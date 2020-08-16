@@ -16,6 +16,7 @@ import { FormClose, CloudUpload, Inspect } from 'grommet-icons'; // or Save
 
 interface SelectMultipleProps {
   movieTags?: number[];
+  movieName?: string;
   title: string;
   placeholder: string;
   tags: string[];
@@ -97,7 +98,7 @@ export default class SelectMultiple extends Component<SelectMultipleProps> {
           background="white"
           round="full"
           margin={{ left: 'xsmall' }}
-          title="clear selected tag"
+          title="Clear selected tag"
         >
           <FormClose
             color="accent-1"
@@ -132,7 +133,7 @@ export default class SelectMultiple extends Component<SelectMultipleProps> {
               focusIndicator={this.props.plain ? false : true}
               plain={this.props.plain}
               closeOnChange={false}
-              emptySearchMessage="no tags found :("
+              emptySearchMessage="No tags found :("
               multiple
               valueLabel={
                 <Box wrap direction="row" width="small">
@@ -175,7 +176,7 @@ export default class SelectMultiple extends Component<SelectMultipleProps> {
                   label={
                     size === 'small' && this.props.width! < 400
                       ? undefined
-                      : 'view selected tags'
+                      : 'View selected tags'
                   }
                   alignSelf="center"
                   hoverIndicator="accent-1"
@@ -199,7 +200,7 @@ export default class SelectMultiple extends Component<SelectMultipleProps> {
                 label={
                   size === 'small' && this.props.width! < 400
                     ? undefined
-                    : 'save tags'
+                    : 'Save tags'
                 }
                 onClick={() => {
                   this.setState({ tagsChanged: false });
@@ -228,7 +229,9 @@ export default class SelectMultiple extends Component<SelectMultipleProps> {
                   }}
                 >
                   <Box align="center">
-                    <Text textAlign="center">You own this title</Text>
+                    <Text textAlign="center">
+                      You own {this.props.movieName || 'this title'}
+                    </Text>
                     <Text textAlign="center">on</Text>
                   </Box>
                   <Table alignSelf="center">

@@ -28,8 +28,8 @@ export default class FilterViewTags extends Component<FilterViewTagsProps> {
       >
         {this.props.createTagSearch ? (
           <SelectSingular
-            placeholder="select media tags"
-            title="filter your films with a tag or start typing to create one!"
+            placeholder="Select media tags"
+            title="Filter your films with a tag or start typing to create one!"
             selectedFilter={this.props.selectedFilter!}
             plain={true}
             tags={this.props.tags}
@@ -39,9 +39,9 @@ export default class FilterViewTags extends Component<FilterViewTagsProps> {
           />
         ) : (
           <SelectMultiple
-            placeholder="select tags to edit"
+            placeholder="Select tags to edit"
             selectedFilters={this.props.selectedFilters!}
-            title="select a tag to delete or update!"
+            title="Select a tag to delete or update!"
             save={false}
             plain={true}
             tags={this.props.tags}

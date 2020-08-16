@@ -113,6 +113,7 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                         : 'How do you own this title?'
                     }
                     movieTags={this.props.movie.tags!}
+                    movieName={this.props.movie.name}
                     tags={this.props.tags!}
                     plain={false}
                     save={true}
@@ -202,7 +203,7 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                         </Text>
                         <Text
                           weight="bold"
-                          title="rating"
+                          title="Rating"
                           size={size === 'small' ? 'small' : 'medium'}
                           color={
                             size === 'small' && mode === 'solid'
@@ -300,7 +301,7 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                 pad={size === 'small' ? 'medium' : 'small'}
               >
                 <Button
-                  title="back"
+                  title="Back"
                   icon={<Previous />}
                   onClick={() => this.props.closeDetailView!()}
                 />
@@ -331,7 +332,7 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
               >
                 {size === 'small' && (
                   <Button
-                    title="back"
+                    title="Back"
                     icon={<Previous />}
                     onClick={() => this.props.closeDetailView!()}
                   />
@@ -349,6 +350,7 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                         : 'How do you own this title?'
                     }
                     movieTags={this.props.movie.tags!}
+                    movieName={this.props.movie.name}
                     tags={this.props.tags!}
                     plain={false}
                     save={true}
@@ -405,6 +407,13 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                             this.props.handleWatched!();
                           }}
                           disabled={this.props.movie.starCount !== -1}
+                          label={
+                            this.props.width! > 700 &&
+                            (this.props.movie.starCount !== -1 ||
+                              this.state.watched === 1)
+                              ? 'Watched'
+                              : 'Unwatched'
+                          }
                         />
                         <RateFilm
                           movie={this.props.movie}
@@ -417,7 +426,7 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                     <Button
                       icon={<Trash color="deleteMovie" />}
                       alignSelf="end"
-                      title="remove film"
+                      title="Remove film"
                       onClick={() =>
                         this.props.handleDelete!(this.props.movie.id)
                       }
