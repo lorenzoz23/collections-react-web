@@ -42,15 +42,7 @@ export default class EditFilters extends Component<FiltersProps> {
     showUpdateBox: false
   };
 
-  handleUpdateTag = () => {
-    const empty: number[] = [];
-    this.setState({
-      showFilters: false,
-      showUpdateBox: false,
-      editMode: false,
-      selectedTagsToUpdate: empty,
-      updatedText: ''
-    });
+  handleUpdateTag = async () => {
     if (this.state.selectedTagsToUpdate.length === 1) {
       let newTags: string[] = [];
       for (let i = 0; i < this.props.tags.length; i++) {
@@ -65,7 +57,7 @@ export default class EditFilters extends Component<FiltersProps> {
       }
       const userRef = firebase.database().ref('users/' + this.props.uid);
       const tagsRef = userRef.child('tags');
-      tagsRef.once('value', (snapshot) => {
+      await tagsRef.once('value', (snapshot) => {
         snapshot.forEach((childSnapshot) => {
           const childKey = childSnapshot.key!;
           const title = childSnapshot.val().title;
@@ -75,6 +67,14 @@ export default class EditFilters extends Component<FiltersProps> {
             return true;
           }
         });
+      });
+      const empty: number[] = [];
+      this.setState({
+        showFilters: false,
+        showUpdateBox: false,
+        editMode: false,
+        selectedTagsToUpdate: empty,
+        updatedText: ''
       });
       this.props.handleUpdatedTags(newTags);
     }
@@ -93,12 +93,14 @@ export default class EditFilters extends Component<FiltersProps> {
   };
 
   handleCreatedTag = (tag: string) => {
-    const userRef = firebase.database().ref('users/' + this.props.uid);
-    const tagsRef = userRef.child('tags');
-    const newTagRef = tagsRef.push();
-    newTagRef.set({ title: tag });
+    if (!this.props.tags.includes(tag, 0)) {
+      const userRef = firebase.database().ref('users/' + this.props.uid);
+      const tagsRef = userRef.child('tags');
+      const newTagRef = tagsRef.push();
+      newTagRef.set({ title: tag });
 
-    this.setState({ createText: '' });
+      this.setState({ createText: '' });
+    }
     this.props.handleTagAdded(tag);
   };
 
@@ -288,7 +290,7 @@ export default class EditFilters extends Component<FiltersProps> {
                             this.state.updatedText.length < 1 ? true : false
                           }
                           primary
-                          label="Done"
+                          label="Save"
                           onClick={this.handleUpdateTag}
                           title="Finish tag update"
                         />

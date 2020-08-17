@@ -154,7 +154,7 @@ export default class HomePage extends Component {
     saveSortedOrder: false,
     showFilters: false,
     allGenres: [''],
-    allowedFilters: [true, true, true],
+    allowedFilters: [true, true, true, true],
     showPrefs: false,
     showAdvSearch: false,
     showAuthProviders: false
@@ -193,7 +193,7 @@ export default class HomePage extends Component {
       saveSortedOrder: false,
       showFilters: false,
       allGenres: [''],
-      allowedFilters: [true, true, true],
+      allowedFilters: [true, true, true, true],
       showPrefs: false,
       showAdvSearch: false,
       showAuthProviders: false
@@ -221,6 +221,21 @@ export default class HomePage extends Component {
       const showAuthProviders = localStorage.getItem('isNew') || 'password-old';
       const userRef = firebase.database().ref('users/' + uid);
       const sort = localStorage.getItem('sortBy') || '';
+
+      const showMedia =
+        (localStorage.getItem('showMediaTags') || 'show') === 'show';
+      const showGenre =
+        (localStorage.getItem('showGenreTags') || 'show') === 'show';
+      const showRatings =
+        (localStorage.getItem('showRatingsTags') || 'show') === 'show';
+      const showWatched =
+        (localStorage.getItem('showWatchedTags') || 'show') === 'show';
+      const allowed: boolean[] = [
+        showMedia,
+        showGenre,
+        showRatings,
+        showWatched
+      ];
 
       const genres = await this.getAllGenres();
 
@@ -257,6 +272,8 @@ export default class HomePage extends Component {
         this.setState({
           movies: lot,
           sortBy: sort,
+          saveSortedOrder: sort !== '',
+          allowedFilters: allowed,
           tags: tags,
           loading: false,
           showAuthProviders: !showAuthProviders.includes('old') ? true : false,
@@ -425,7 +442,7 @@ export default class HomePage extends Component {
   };
 
   handleTagAdded = (tag: string) => {
-    if (tag.length > 0) {
+    if (!this.state.tags.includes(tag, 0)) {
       let newTags: string[] = this.state.tags;
       newTags.push(tag);
       this.setState(
@@ -439,6 +456,17 @@ export default class HomePage extends Component {
           setTimeout(this.onNotificationClose, 4000);
         }
       );
+    } else {
+      this.setState(
+        {
+          notification: true,
+          notificationText: 'A tag with that name already exists',
+          goodNotification: false
+        },
+        () => {
+          setTimeout(this.onNotificationClose, 4000);
+        }
+      );
     }
   };
 
@@ -447,7 +475,9 @@ export default class HomePage extends Component {
       localStorage.setItem('sortBy', sortBy);
     }
     const text: string = this.state.saveSortedOrder
-      ? `Your films will now be default sorted by ${sortLabels[sortBy]}`
+      ? `Your films will now be default sorted by ${
+          sortLabels[sortBy || 'reset']
+        }`
       : `Your films have been successfully sorted by ${
           sortLabels[sortBy || 'reset']
         }`;
@@ -899,6 +929,7 @@ export default class HomePage extends Component {
     this.setState(
       {
         filterBy: empty,
+        showFilters: false,
         notification: true,
         notificationText: 'Filters have been reset',
         goodNotification: true
@@ -911,6 +942,34 @@ export default class HomePage extends Component {
 
   handlePrefChanged = (index: number) => {
     const allowed = this.state.allowedFilters;
+    switch (index) {
+      case 0:
+        localStorage.setItem(
+          'showMediaTags',
+          !allowed[index] === false ? 'noShow' : 'show'
+        );
+        break;
+      case 1:
+        localStorage.setItem(
+          'showGenreTags',
+          !allowed[index] === false ? 'noShow' : 'show'
+        );
+        break;
+      case 2:
+        localStorage.setItem(
+          'showRatingsTags',
+          !allowed[index] === false ? 'noShow' : 'show'
+        );
+        break;
+      case 3:
+        localStorage.setItem(
+          'showWatchedTags',
+          !allowed[index] === false ? 'noShow' : 'show'
+        );
+        break;
+      default:
+        break;
+    }
     allowed[index] = !allowed[index];
     this.setState({
       allowedFilters: allowed
@@ -921,9 +980,8 @@ export default class HomePage extends Component {
     if (!checked) {
       localStorage.removeItem('sortBy');
       this.setState({
-        checked: checked,
-        sort: '',
-        sortLabel: 'Time added'
+        saveSortedOrder: checked,
+        sortBy: ''
       });
       this.handleSort('');
     } else {
@@ -931,7 +989,7 @@ export default class HomePage extends Component {
         localStorage.setItem('sortBy', this.state.sortBy);
       }
       this.setState({
-        checked: checked
+        saveSortedOrder: checked
       });
     }
   };
@@ -1006,7 +1064,6 @@ export default class HomePage extends Component {
   };
 
   handleParsed = (movieList: searchResults) => {
-    console.log(movieList);
     this.setState({
       parsed: true,
       imports: movieList
@@ -1039,11 +1096,13 @@ export default class HomePage extends Component {
             {(size) => (
               <Box
                 fill
-                pad={{ horizontal: size === 'small' ? 'medium' : undefined }}
+                pad={{
+                  horizontal: this.state.width < 950 ? 'medium' : undefined
+                }}
               >
                 <AppBar
                   pad={
-                    size !== 'small'
+                    size !== 'small' && this.state.width > 950
                       ? {
                           bottom: mode === 'wedding' ? 'xsmall' : 'none',
                           left: 'small'
@@ -1056,7 +1115,7 @@ export default class HomePage extends Component {
                     size: 'small'
                   }}
                 >
-                  {size !== 'small' ? (
+                  {size !== 'small' && this.state.width > 950 ? (
                     <Box
                       direction="row"
                       gap={size === 'medium' ? 'small' : 'medium'}
@@ -1087,7 +1146,11 @@ export default class HomePage extends Component {
                           <Box
                             direction="row"
                             gap={size === 'medium' ? 'small' : 'medium'}
-                            width={size === 'medium' ? undefined : 'large'}
+                            width={
+                              size === 'medium' && this.state.width < 1200
+                                ? 'medium'
+                                : 'large'
+                            }
                           >
                             <TextInput
                               value={this.state.addFilmSearchVal}
@@ -1134,7 +1197,7 @@ export default class HomePage extends Component {
                       align="center"
                       gap="small"
                       flex
-                      justify={this.state.width < 700 ? 'between' : undefined}
+                      justify="between"
                     >
                       <CheckBox
                         checked={this.state.showWishlist}
@@ -1146,7 +1209,7 @@ export default class HomePage extends Component {
                         label={
                           <Heading
                             textAlign="center"
-                            level={this.state.width > 700 ? 3 : 2}
+                            level={3}
                             margin="none"
                             color="light-1"
                           >
@@ -1154,46 +1217,29 @@ export default class HomePage extends Component {
                           </Heading>
                         }
                       />
-                      {this.state.width < 700 && (
-                        <Text weight="bold">
-                          {this.state.showWishlist
-                            ? this.state.wishlist.length
-                            : this.state.movies.length}{' '}
-                          films
-                        </Text>
-                      )}
-                      {this.state.width > 700 && (
+                      <Text weight="bold">
+                        {this.state.showWishlist
+                          ? this.state.wishlist.length
+                          : this.state.movies.length}{' '}
+                        films
+                      </Text>
+                      {this.state.parsed && (
                         <Box>
-                          <Form onSubmit={this.handleSearchToAdd}>
-                            <Box direction="row" gap="small" align="center">
-                              <TextInput
-                                value={this.state.addFilmSearchVal}
-                                placeholder="Search a film to add by title!"
-                                icon={<Add />}
-                                onChange={(event) =>
-                                  this.setState({
-                                    addFilmSearchVal: event.target.value
-                                  })
-                                }
-                              />
-                              <Button
-                                disabled={
-                                  this.state.addFilmSearchVal.length === 0
-                                }
-                                alignSelf="center"
-                                type="submit"
-                                primary
-                                style={{ borderRadius: 30 }}
-                                icon={<Checkmark size="small" />}
-                                reverse
-                              />
-                            </Box>
-                          </Form>
+                          <AddTitle
+                            width={this.state.width}
+                            moviesAdded={(
+                              lotMovies: movie[],
+                              wishlistMovies: movie[]
+                            ) => this.moviesAdded(lotMovies, wishlistMovies)}
+                            parsed={true}
+                            movieList={this.state.imports}
+                            handleFinishedImport={this.handleFinishedImport}
+                          />
                         </Box>
                       )}
                     </Box>
                   )}
-                  {this.state.width > 700 && (
+                  {this.state.width > 950 && (
                     <DropButton
                       style={{ borderRadius: 25 }}
                       plain
@@ -1252,7 +1298,7 @@ export default class HomePage extends Component {
                               bottom: 'medium',
                               right: 'medium'
                             }}
-                            hoverIndicator="accent-1"
+                            hoverIndicator="neutral-4"
                             onClick={this.logOut}
                           >
                             <Text>Sign out</Text>
@@ -1263,8 +1309,14 @@ export default class HomePage extends Component {
                     />
                   )}
                 </AppBar>
-                {size === 'small' && this.state.width < 700 ? (
-                  <Box background="home" pad="small" style={{ zIndex: 10 }}>
+                {this.state.width < 950 ? (
+                  <Box
+                    background="home"
+                    pad="small"
+                    style={{ zIndex: 10 }}
+                    justify={this.state.width > 700 ? 'center' : undefined}
+                    align={this.state.width > 700 ? 'center' : undefined}
+                  >
                     <Form onSubmit={this.handleSearchToAdd}>
                       <Box
                         direction="row"
@@ -1407,6 +1459,7 @@ export default class HomePage extends Component {
                         style={{ zIndex: 10 }}
                       >
                         <FilterSearch
+                          filters={this.state.filterBy}
                           width={this.state.width}
                           allowedFilters={this.state.allowedFilters}
                           handleFilterByTag={(filters) =>
@@ -1438,7 +1491,7 @@ export default class HomePage extends Component {
                   alignContent="center"
                   flex
                 >
-                  {size === 'small' && this.state.width < 700 && (
+                  {this.state.width < 950 && (
                     <Box margin={{ top: 'small', bottom: 'small' }}>
                       <AddMovieTemplate
                         width={this.state.width}
@@ -1543,6 +1596,7 @@ export default class HomePage extends Component {
                         addFilmSearchVal: ''
                       })
                     }
+                    advSearch={() => this.setState({ showAdvSearch: true })}
                     moviesAdded={(lotMovies, wishlistMovies) =>
                       this.moviesAdded(lotMovies, wishlistMovies)
                     }

@@ -16,6 +16,7 @@ export default class LoginFacebook extends Component<LoginFacebookProps> {
       ? firebase.auth.Auth.Persistence.LOCAL
       : firebase.auth.Auth.Persistence.SESSION;
     await firebase.auth().setPersistence(type);
+    if (this.props.rememberMe) localStorage.setItem('rememberMe', 'remember');
     const result = await firebase.auth().signInWithPopup(providerFb);
     const isNew: boolean = result.additionalUserInfo!.isNewUser;
     if (isNew) {
@@ -33,7 +34,6 @@ export default class LoginFacebook extends Component<LoginFacebookProps> {
 
       localStorage.setItem('isNew', 'facebook.com');
     }
-    if (this.props.rememberMe) localStorage.setItem('rememberMe', 'remember');
     this.props.handleLogin();
   };
 

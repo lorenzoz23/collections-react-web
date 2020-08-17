@@ -9,7 +9,8 @@ import {
   TableHeader,
   TableRow,
   TableCell,
-  TableBody
+  TableBody,
+  ResponsiveContext
 } from 'grommet';
 import BeatLoader from 'react-spinners/BeatLoader';
 
@@ -142,125 +143,135 @@ export default class Import extends Component<ImportProps> {
 
   render() {
     return (
-      <Box align="center" justify="center">
-        <Button
-          label="Import"
-          onClick={this.handleImport}
-          hoverIndicator="accent-1"
-        />
-        <input
-          type="file"
-          style={{ display: 'none' }}
-          id="fileSystem"
-          onChange={this.handleImportChange}
-        />
-        {this.state.continueImportVisible && (
-          <Layer
-            position="top"
-            style={{ borderRadius: 30 }}
-            margin={{ top: 'medium' }}
-            responsive={false}
-          >
-            <Box
-              justify="center"
-              align="center"
-              background="smallLayer"
-              pad="medium"
-              round
-              width="medium"
-              margin="small"
-              gap="medium"
-            >
-              <Box align="center">
-                <Text>you selected the following file: </Text>
-                <Text weight="bold">{this.state.file.name}</Text>
-              </Box>
-              {!this.state.loading ? (
-                <Box gap="xsmall">
-                  <Button
-                    label="continue with import"
-                    primary
-                    onClick={this.parseFile}
-                  />
-                  <Button
-                    onClick={() =>
-                      this.setState({ continueImportVisible: false })
-                    }
-                    alignSelf="center"
-                    label="cancel"
-                    hoverIndicator="status-error"
-                    color="status-error"
-                  />
+      <ResponsiveContext.Consumer>
+        {(size) => (
+          <Box align="center" justify="center">
+            <Button
+              label="Import"
+              onClick={this.handleImport}
+              hoverIndicator="accent-1"
+            />
+            <input
+              type="file"
+              style={{ display: 'none' }}
+              id="fileSystem"
+              onChange={this.handleImportChange}
+            />
+            {this.state.continueImportVisible && (
+              <Layer
+                position="top"
+                style={{ borderRadius: 30 }}
+                margin={{ top: 'medium' }}
+                responsive={false}
+              >
+                <Box
+                  justify="center"
+                  align="center"
+                  background="smallLayer"
+                  pad="medium"
+                  width={size === 'small' ? 'small' : 'medium'}
+                  round
+                  margin="small"
+                  gap="medium"
+                  flex
+                >
+                  <Box align="center">
+                    <Text textAlign="center">
+                      You selected the following file:{' '}
+                    </Text>
+                    <Text weight="bold" textAlign="center">
+                      {this.state.file.name}
+                    </Text>
+                  </Box>
+                  {!this.state.loading ? (
+                    <Box gap="small">
+                      <Button
+                        label="Continue with import"
+                        primary
+                        onClick={this.parseFile}
+                      />
+                      <Button
+                        onClick={() =>
+                          this.setState({ continueImportVisible: false })
+                        }
+                        alignSelf="center"
+                        label="Cancel"
+                        hoverIndicator="status-error"
+                        color="status-error"
+                        primary={size === 'small'}
+                      />
+                    </Box>
+                  ) : (
+                    <Box align="center" justify="center">
+                      <BeatLoader
+                        size={45}
+                        margin={5}
+                        color={'#6FFFB0'}
+                        loading={this.state.loading}
+                      />
+                    </Box>
+                  )}
                 </Box>
-              ) : (
-                <Box align="center" justify="center">
-                  <BeatLoader
-                    size={45}
-                    margin={5}
-                    color={'#6FFFB0'}
-                    loading={this.state.loading}
-                  />
-                </Box>
-              )}
-            </Box>
-          </Layer>
-        )}
-        {this.state.visible && (
-          <Layer
-            position="center"
-            onClickOutside={() => this.setState({ visible: false })}
-            style={{ borderRadius: 30 }}
-            margin={{ bottom: 'medium' }}
-            responsive={false}
-          >
-            <Box
-              gap="small"
-              pad="medium"
-              round
-              align="center"
-              background="smallLayer"
-            >
-              <Text weight="bold" textAlign="center" size="large">
-                importing your film data
-              </Text>
-              <Anchor label="example csv file" onClick={this.downloadCSV} />
-              <Text textAlign="center">
-                {/* the above file is a good example of the cinelot import format: a
+              </Layer>
+            )}
+            {this.state.visible && (
+              <Layer
+                position="center"
+                onClickOutside={() => this.setState({ visible: false })}
+                style={{ borderRadius: size === 'small' ? 0 : 30 }}
+                margin={{ bottom: 'medium' }}
+                responsive
+              >
+                <Box
+                  gap="small"
+                  pad="medium"
+                  round={size === 'small' ? false : true}
+                  align="center"
+                  justify={size === 'small' ? 'center' : 'start'}
+                  background="smallLayer"
+                  flex
+                >
+                  <Text weight="bold" textAlign="center" size="large">
+                    Importing your film data
+                  </Text>
+                  <Anchor label="example csv file" onClick={this.downloadCSV} />
+                  <Text textAlign="center">
+                    {/* the above file is a good example of the cinelot import format: a
                 csv file that supports the following column titles, in any order
                 (other column titles will be ignored), where, even though all
                 column titles are optional, at least one of the first two column
                 titles must be included on the first line of your file */}
-                the above file is a good example of the cinelot import format: a
-                csv file that includes a column title for imdbIDs (support for
-                more column titles is coming)
-              </Text>
-              <Table alignSelf="center">
-                <TableHeader>
-                  <TableRow>
-                    <TableCell scope="col" border="bottom">
-                      column title
-                    </TableCell>
-                    <TableCell scope="col" border="bottom">
-                      column value
-                    </TableCell>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  <TableRow>
-                    <TableCell scope="row">
-                      <Text weight="bold">imdbID</Text>
-                    </TableCell>
-                    <TableCell>
-                      example: tt0449089 (taken from{' '}
-                      <Anchor
-                        label="https://www.imdb.com/title/tt0449089"
-                        href="https://www.imdb.com/title/tt0449089"
-                        target="_blank"
-                      />
-                      )
-                    </TableCell>
-                  </TableRow>
-                  {/* <TableRow>
+                    The above file is a good example of the cinelot import
+                    format: a csv file that includes a column title for imdbIDs
+                    (support for more column titles is coming)
+                  </Text>
+                  <Table alignSelf="center">
+                    <TableHeader>
+                      <TableRow>
+                        <TableCell scope="col" border="bottom">
+                          Column title
+                        </TableCell>
+                        <TableCell scope="col" border="bottom">
+                          Column value
+                        </TableCell>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      <TableRow>
+                        <TableCell scope="row">
+                          <Text weight="bold">imdbID</Text>
+                        </TableCell>
+                        <TableCell>
+                          Example: tt0449089 (taken from{' '}
+                          <Anchor
+                            label="https://www.imdb.com/title/tt0449089"
+                            href="https://www.imdb.com/title/tt0449089"
+                            target="_blank"
+                          />
+                          )
+                        </TableCell>
+                      </TableRow>
+                      {/* <TableRow>
                     <TableCell scope="row">
                       <Text weight="bold">title</Text>
                     </TableCell>
@@ -308,9 +319,9 @@ export default class Import extends Component<ImportProps> {
                       which you own a title)
                     </TableCell>
                   </TableRow> */}
-                </TableBody>
-              </Table>
-              {/* <Box align="center">
+                    </TableBody>
+                  </Table>
+                  {/* <Box align="center">
                 <Text weight="bold" size="small" textAlign="center">
                   note:
                 </Text>
@@ -320,15 +331,18 @@ export default class Import extends Component<ImportProps> {
                   directors) or "blu-ray, dvd, 4k-uhd" (for tags)
                 </Text>
               </Box> */}
-              <Button
-                label="select csv file"
-                onClick={this.openFileSystem}
-                hoverIndicator="brand"
-              />
-            </Box>
-          </Layer>
+                  <Button
+                    label="Select CSV file"
+                    primary={size === 'small'}
+                    onClick={this.openFileSystem}
+                    hoverIndicator="brand"
+                  />
+                </Box>
+              </Layer>
+            )}
+          </Box>
         )}
-      </Box>
+      </ResponsiveContext.Consumer>
     );
   }
 }

@@ -110,9 +110,7 @@ export default class AddMovieTemplate extends Component<AddMovieTemplateProps> {
               size: 'cover',
               position: 'center'
             }}
-            height={
-              size === 'small' && this.props.width < 700 ? 'small' : undefined
-            }
+            height={this.props.width < 950 ? 'small' : undefined}
             border={{
               size: 'medium',
               color: 'accent-1',
@@ -156,11 +154,7 @@ export default class AddMovieTemplate extends Component<AddMovieTemplateProps> {
                   }}
                   icon={
                     <SearchAdvanced
-                      size={
-                        size === 'small' && this.props.width < 700
-                          ? 'medium'
-                          : 'large'
-                      }
+                      size={this.props.width < 950 ? 'medium' : 'large'}
                     />
                   }
                   alignSelf="center"

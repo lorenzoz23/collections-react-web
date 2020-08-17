@@ -7,8 +7,8 @@ export const TooltipButton = (props: any) => {
   const [show, setShow] = useState(false);
   const ref = useRef() as RefObject<HTMLButtonElement>;
 
-  const handleClick = (size: string) => {
-    if (size === 'small' && props.width < 700) {
+  const handleClick = () => {
+    if (props.width < 950) {
       setShow(!show);
     }
   };
@@ -24,10 +24,10 @@ export const TooltipButton = (props: any) => {
             focusIndicator={props.focus}
             onMouseOver={() => setOver(true)}
             onMouseOut={() => setOver(false)}
-            onClick={() => handleClick(size)}
+            onClick={handleClick}
           />
 
-          {ref.current && over && (size !== 'small' || props.width > 700) && (
+          {ref.current && over && size !== 'small' && props.width > 950 && (
             <Drop align={{ top: 'bottom' }} target={ref.current} plain>
               <Box
                 animation="slideDown"

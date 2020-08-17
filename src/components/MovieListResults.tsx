@@ -88,7 +88,7 @@ export default class MovieListResults extends Component<MovieListResultsProps> {
                       <Box direction="row" gap="small" alignSelf="start">
                         <CheckBox
                           checked={item.checkedLot}
-                          label={size === 'small' ? 'Lot?' : 'Add film to lot?'}
+                          label={size === 'small' ? 'Lot?' : 'Add film to Lot?'}
                           onChange={() => {
                             this.props.checkedMovie(item, false);
                           }}
@@ -98,7 +98,7 @@ export default class MovieListResults extends Component<MovieListResultsProps> {
                           label={
                             size === 'small'
                               ? 'Wishlist?'
-                              : 'Add film to wishlist?'
+                              : 'Add film to Wishlist?'
                           }
                           onChange={() => {
                             this.props.checkedMovie(item, true);
@@ -117,7 +117,7 @@ export default class MovieListResults extends Component<MovieListResultsProps> {
                         <Box gap="small" align="start">
                           <Button
                             hoverIndicator="accent-1"
-                            label={size === 'small' ? 'Lot' : 'Add film to lot'}
+                            label={size === 'small' ? 'Lot' : 'Add film to Lot'}
                             onClick={() => {
                               this.props.checkedMovie(item, false);
                             }}
@@ -127,7 +127,7 @@ export default class MovieListResults extends Component<MovieListResultsProps> {
                             label={
                               size === 'small'
                                 ? 'Wishlist'
-                                : 'Add film to wishlist'
+                                : 'Add film to Wishlist'
                             }
                             onClick={() => {
                               this.props.checkedMovie(item, true);
@@ -140,6 +140,7 @@ export default class MovieListResults extends Component<MovieListResultsProps> {
                           primary={size === 'small'}
                           icon={<Next />}
                           hoverIndicator="accent-1"
+                          label={size !== 'small' ? 'Details' : undefined}
                           title="Details"
                           onClick={() =>
                             this.props.showMovieDetails(item.movie)

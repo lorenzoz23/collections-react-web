@@ -26,6 +26,7 @@ interface AddTitleProps {
   movieList?: searchResults;
   handleFinishedImport?(): void;
   handleClose?(): void;
+  advSearch?(): void;
   title?: string;
   width: number;
 }
@@ -122,7 +123,6 @@ export default class AddTitle extends Component<AddTitleProps> {
   };
 
   moviesAdded = async (lotMovies: movie[], wishlistMovies: movie[]) => {
-    if (this.props.parsed) this.props.handleFinishedImport!();
     let updatedLotMovies: movie[] = [];
     let updatedWishlistMovies: movie[] = [];
     if (lotMovies) {
@@ -133,6 +133,12 @@ export default class AddTitle extends Component<AddTitleProps> {
     }
 
     this.props.moviesAdded(updatedLotMovies, updatedWishlistMovies);
+    if (this.props.parsed) this.props.handleFinishedImport!();
+  };
+
+  advSearch = () => {
+    this.closeAddTitle();
+    this.props.advSearch!();
   };
 
   render() {
@@ -143,12 +149,15 @@ export default class AddTitle extends Component<AddTitleProps> {
             {this.props.parsed ? (
               <Layer
                 position="center"
-                responsive={
-                  size === 'small' && this.props.width < 700 ? true : false
-                }
+                responsive={this.props.width < 950 ? true : false}
                 onClickOutside={this.closeAddTitle}
+                style={{
+                  width: this.props.width < 950 ? '100%' : undefined,
+                  height: this.props.width < 950 ? '100%' : undefined
+                }}
               >
                 <MovieSearchResult
+                  width={this.props.width}
                   back={false}
                   imports={this.props.movieList}
                   closeAdd={this.props.handleFinishedImport!}
@@ -162,21 +171,24 @@ export default class AddTitle extends Component<AddTitleProps> {
               <Layer
                 style={{
                   borderRadius:
-                    (size !== 'small' && !this.state.searched) ||
-                    (size === 'small' && this.props.width > 700)
+                    size !== 'small' &&
+                    this.props.width > 950 &&
+                    !this.state.searched
                       ? 30
-                      : 0
+                      : 0,
+                  width: this.props.width < 950 ? '100%' : undefined,
+                  height: this.props.width < 950 ? '100%' : undefined
                 }}
                 position="center"
-                responsive={
-                  size === 'small' && this.props.width < 700 ? true : false
-                }
+                responsive={this.props.width < 950 ? true : false}
                 onClickOutside={this.closeAddTitle}
               >
                 {this.state.searched || this.props.title?.length! > 0 ? (
                   <MovieSearchResult
+                    width={this.props.width}
                     back={this.props.title ? false : true}
                     parsed={false}
+                    advSearch={this.advSearch}
                     title={this.props.title || this.state.searchTitle}
                     year={this.state.searchYear}
                     closeAdd={this.closeAddTitle}
@@ -189,16 +201,14 @@ export default class AddTitle extends Component<AddTitleProps> {
                 ) : (
                   <Box
                     flex
-                    fill={size === 'small' ? true : false}
+                    fill={this.props.width < 950 ? true : false}
                     pad="medium"
                     width="medium"
                     align="center"
                     justify="center"
                     overflow="auto"
                     background="layer"
-                    round={
-                      size === 'small' && this.props.width < 700 ? false : true
-                    }
+                    round={this.props.width < 950 ? false : true}
                     border={{ size: 'small', side: 'all', color: 'accent-1' }}
                   >
                     <Heading textAlign="center" level="3">
@@ -265,7 +275,7 @@ export default class AddTitle extends Component<AddTitleProps> {
                       </Form>
                     </Box>
                     <Box>
-                      {size === 'small' ? (
+                      {this.props.width < 950 ? (
                         <Box alignContent="center">
                           <Button
                             icon={<FormClose />}

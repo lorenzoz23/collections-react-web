@@ -150,7 +150,6 @@ export default class Settings extends Component<SettingsProps> {
                     fetchedWishlist={this.props.fetchedWishlist}
                     uid={this.props.uid}
                     handleParsed={(movieList) => {
-                      console.log(movieList);
                       this.props.toggleSettings();
                       this.props.handleParsed(movieList);
                     }}

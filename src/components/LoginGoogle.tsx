@@ -61,6 +61,7 @@ export default class LoginGoogle extends Component<LoginGoogleProps> {
       ? firebase.auth.Auth.Persistence.LOCAL
       : firebase.auth.Auth.Persistence.SESSION;
     await firebase.auth().setPersistence(type);
+    if (this.props.rememberMe) localStorage.setItem('rememberMe', 'remember');
     const result = await firebase.auth().signInWithPopup(providerGoogle);
 
     // The signed-in user info.
@@ -81,7 +82,6 @@ export default class LoginGoogle extends Component<LoginGoogleProps> {
 
       localStorage.setItem('isNew', 'google.com');
     }
-    if (this.props.rememberMe) localStorage.setItem('rememberMe', 'remember');
     this.props.handleLogin();
   };
 

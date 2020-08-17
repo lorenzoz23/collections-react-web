@@ -391,7 +391,7 @@ export default class MultipleAuthProviders extends Component<
         {(size) => (
           <Box>
             <Layer
-              position="bottom"
+              position={size !== 'small' ? 'center' : 'bottom'}
               style={
                 size !== 'small'
                   ? {
@@ -415,7 +415,16 @@ export default class MultipleAuthProviders extends Component<
                 pad="large"
                 gap="medium"
                 background="#213444"
-                border={{ side: 'top', size: 'small', color: 'light-2' }}
+                border={
+                  size === 'smal'
+                    ? { side: 'top', size: 'small', color: 'light-2' }
+                    : {
+                        side: 'bottom',
+                        size: 'large',
+                        color: 'accent-3',
+                        style: 'groove'
+                      }
+                }
               >
                 <Text weight="bold" textAlign="center" size="large">
                   Link your account with multiple authentification providers
@@ -440,7 +449,7 @@ export default class MultipleAuthProviders extends Component<
                     (the method you chose to sign in with when you first made an
                     account), but you can link/unlink other authentification
                     providers to your base account so you aren't stuck with only
-                    one means of signing into Cinelot
+                    one means of signing into Cinelot!
                   </Text>
                 )}
                 <Box align="center" gap="small">
@@ -468,6 +477,7 @@ export default class MultipleAuthProviders extends Component<
                   <Text color="accent-1">{this.props.user.email}</Text>
                 </Box>
                 <Box pad="medium" gap="medium" align="center">
+                  <Text weight="bold">Other providers:</Text>
                   {this.state.baseAccount !== 'password' && (
                     <CheckBox
                       onChange={(event) => {

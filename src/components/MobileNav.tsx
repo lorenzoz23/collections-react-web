@@ -11,7 +11,8 @@ import {
   FormNext,
   Configure,
   View,
-  PowerReset
+  PowerReset,
+  Multimedia
 } from 'grommet-icons';
 import Settings from './Settings';
 import { searchResults } from './MovieSearchResult';
@@ -203,14 +204,37 @@ export default class MobileNav extends Component<MobileNavProps> {
                     <Box
                       direction="row"
                       gap="medium"
+                      justify="center"
                       alignSelf="center"
-                      margin={{ top: 'large' }}
+                      margin={{
+                        top: this.props.width < 700 ? 'large' : 'none'
+                      }}
                     >
                       <ReportBug
                         uid={this.props.uid}
                         width={this.props.width}
                       />
                       <About width={this.props.width} />
+                    </Box>
+                    <Box
+                      direction="row"
+                      align="center"
+                      gap="small"
+                      margin={{ top: 'large' }}
+                      justify="center"
+                    >
+                      <Text textAlign="center" size="small">
+                        Movie data provided by:
+                      </Text>
+                      <Anchor
+                        alignSelf="center"
+                        size="small"
+                        icon={<Multimedia />}
+                        reverse
+                        href="https://www.themoviedb.org/"
+                        target="_blank"
+                        label="TMDB"
+                      />
                     </Box>
                   </Box>
                 </Box>
@@ -414,6 +438,7 @@ export default class MobileNav extends Component<MobileNavProps> {
                       gap="medium"
                       direction="row"
                       border="between"
+                      justify="center"
                     >
                       <Button
                         primary
@@ -497,7 +522,7 @@ export default class MobileNav extends Component<MobileNavProps> {
         {this.state.showSettings && (
           <Settings
             toggleSettings={() =>
-              this.setState({ showSettings: false, show: true })
+              this.setState({ showSettings: false, show: false })
             }
             wishlist={this.props.wishlist}
             uid={this.props.uid}

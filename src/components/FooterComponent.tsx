@@ -58,73 +58,63 @@ export default class FooterComponent extends Component<FooterComponentProps> {
             margin={
               mode === 'wedding'
                 ? {
-                    horizontal:
-                      size === 'small' && this.props.width < 700
-                        ? 'xlarge'
-                        : 'medium',
+                    horizontal: this.props.width < 950 ? 'xlarge' : 'medium',
                     bottom:
-                      size !== 'small'
+                      size !== 'small' && this.props.width > 950
                         ? 'xsmall'
-                        : this.props.width < 700
-                        ? 'large'
-                        : 'small'
+                        : 'large'
                   }
                 : 'none'
             }
-            justify={
-              size === 'small' && this.props.width < 700 ? 'center' : 'between'
-            }
+            justify={this.props.width < 950 ? 'center' : 'between'}
             background={{
-              color:
-                size === 'small' && this.props.width < 700 ? 'home' : 'footer',
+              color: this.props.width < 950 ? 'home' : 'footer',
               opacity: 0.9
             }}
             border={
-              size === 'small' && this.props.width < 700
+              this.props.width < 950
                 ? { color: 'accent-1', size: 'small', side: 'all' }
                 : undefined
             }
           >
-            {(size === 'small' && this.props.width > 700) ||
-              (size !== 'small' && (
-                <Box direction="row" align="center" gap="small">
-                  <Box
-                    onClick={() => {
-                      window.open(
-                        'https://www.youtube.com/watch?v=JwYX52BP2Sk',
-                        '_blank'
-                      );
-                    }}
-                  >
-                    <Clock
-                      type="digital"
-                      alignSelf="center"
-                      precision="minutes"
-                    />
-                  </Box>
-                  <About width={this.props.width} />
-                  <ReportBug uid={this.props.uid} width={this.props.width} />
-                </Box>
-              ))}
-            {(size === 'small' && this.props.width > 700) ||
-              (size !== 'small' && (
+            {this.props.width > 950 && (
+              <Box direction="row" align="center" gap="small">
                 <Box
-                  direction="row"
-                  align="center"
-                  alignContent="center"
-                  gap="small"
+                  onClick={() => {
+                    window.open(
+                      'https://www.youtube.com/watch?v=JwYX52BP2Sk',
+                      '_blank'
+                    );
+                  }}
                 >
-                  <Multimedia />
-                  <Text textAlign="center">Movie data provided by:</Text>
-                  <Anchor
+                  <Clock
+                    type="digital"
                     alignSelf="center"
-                    href="https://www.themoviedb.org/"
-                    target="_blank"
-                    label="The Movie Database (TMDB)"
+                    precision="minutes"
                   />
                 </Box>
-              ))}
-            {size === 'small' && this.props.width < 700 && (
+                <About width={this.props.width} />
+                <ReportBug uid={this.props.uid} width={this.props.width} />
+              </Box>
+            )}
+            {size !== 'small' && this.props.width > 950 && (
+              <Box
+                direction="row"
+                align="center"
+                alignContent="center"
+                gap="small"
+              >
+                <Multimedia />
+                <Text textAlign="center">Movie data provided by:</Text>
+                <Anchor
+                  alignSelf="end"
+                  href="https://www.themoviedb.org/"
+                  target="_blank"
+                  label="The Movie Database (TMDB)"
+                />
+              </Box>
+            )}
+            {this.props.width < 950 && (
               <MobileNav
                 width={this.props.width}
                 handleSort={(sortBy) => this.props.handleSort(sortBy)}

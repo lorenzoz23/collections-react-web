@@ -12,16 +12,6 @@ interface LoginEmailProps {
   rememberMe: boolean;
 }
 
-const container = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.5
-    }
-  }
-};
-
 export default class LoginEmail extends Component<LoginEmailProps> {
   state = {
     email: '',
@@ -75,13 +65,7 @@ export default class LoginEmail extends Component<LoginEmailProps> {
               </Tab>
             </Tabs>
             <Box align="center" pad="small">
-              <motion.div
-                whileTap={{ scale: 0.9 }}
-                // variants={container}
-                // initial="hidden"
-                // animate="show"
-                // transition={{ ease: 'easeOut', duration: 2 }}
-              >
+              <motion.div whileTap={{ scale: 0.9 }}>
                 <CheckBox
                   label="Remember me?"
                   checked={this.state.rememberMe}

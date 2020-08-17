@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { CSVLink } from 'react-csv';
-import { Box, Button, Layer, Text } from 'grommet';
+import { Box, Button, Layer, Text, ResponsiveContext } from 'grommet';
 import firebase from 'firebase';
 import 'firebase/database';
 
@@ -16,17 +16,17 @@ interface ExportProps {
 
 const movieCsvData = [
   [
-    'tMDBID',
-    'name',
-    'plot',
-    'date',
-    'rating',
-    'runtime',
-    'genre',
-    'starCount',
-    'poster',
-    'backdrops',
-    'wishlist'
+    'TMDBID',
+    'Name',
+    'Plot',
+    'Date',
+    'Rating',
+    'Runtime',
+    'Genre',
+    'StarCount',
+    'Poster',
+    'Backdrops',
+    'Wishlist'
   ]
 ];
 
@@ -111,49 +111,57 @@ export default class Export extends Component<ExportProps> {
   render() {
     const name: string = this.props.name.replace(' ', '-');
     return (
-      <Box align="center" justify="center">
-        <Button
-          label="Export"
-          hoverIndicator="accent-1"
-          onClick={async () => {
-            await this.handleExport();
-          }}
-        />
-        {this.state.visible && (
-          <Layer
-            position="bottom"
-            onClickOutside={() => this.setState({ visible: false })}
-            style={{ borderRadius: 30 }}
-            margin={{ bottom: 'medium' }}
-            responsive={false}
-          >
-            <Box
-              gap="small"
-              pad="medium"
-              round
-              align="center"
-              background="smallLayer"
-            >
-              <Text weight="bold" textAlign="center">
-                pressing continue will export a single csv file encompassing all
-                the films in both your lot and wishlist
-              </Text>
-              <Text textAlign="center">is this ok?</Text>
-              <CSVLink
-                data={movieCsvData}
-                filename={'cinelot-movie-data-' + name + '.csv'}
+      <ResponsiveContext.Consumer>
+        {(size) => (
+          <Box align="center" justify="center">
+            <Button
+              label="Export"
+              hoverIndicator="accent-1"
+              onClick={async () => {
+                await this.handleExport();
+              }}
+            />
+            {this.state.visible && (
+              <Layer
+                position="bottom"
+                onClickOutside={() => this.setState({ visible: false })}
+                style={{
+                  borderRadius: size !== 'small' ? 30 : undefined,
+                  width: size === 'small' ? '100%' : undefined
+                }}
+                margin={{ bottom: size !== 'small' ? 'medium' : 'none' }}
+                responsive={false}
               >
-                <Button
-                  label="continue with export"
-                  onClick={() => this.setState({ visible: false })}
-                  primary
-                  hoverIndicator="accent-1"
-                />
-              </CSVLink>
-            </Box>
-          </Layer>
+                <Box
+                  gap="small"
+                  pad="medium"
+                  round={size !== 'small'}
+                  align="center"
+                  background="smallLayer"
+                  flex
+                >
+                  <Text weight="bold" textAlign="center">
+                    Pressing continue will export a single csv file encompassing
+                    all the films in both your lot and wishlist
+                  </Text>
+                  <Text textAlign="center">is this ok?</Text>
+                  <CSVLink
+                    data={movieCsvData}
+                    filename={'Cinelot-Movie-Data-' + name + '.csv'}
+                  >
+                    <Button
+                      label="Continue with export"
+                      onClick={() => this.setState({ visible: false })}
+                      primary
+                      hoverIndicator="accent-1"
+                    />
+                  </CSVLink>
+                </Box>
+              </Layer>
+            )}
+          </Box>
         )}
-      </Box>
+      </ResponsiveContext.Consumer>
     );
   }
 }

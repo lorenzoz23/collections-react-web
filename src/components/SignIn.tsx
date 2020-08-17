@@ -8,7 +8,7 @@ import {
   ResponsiveContext,
   Anchor
 } from 'grommet';
-import { Next, Previous, Erase, Login } from 'grommet-icons';
+import { Previous, Erase, Login } from 'grommet-icons';
 import firebase from 'firebase/app';
 import 'firebase/auth';
 import { motion } from 'framer-motion';
@@ -226,7 +226,7 @@ export default class SignIn extends Component<SignInProps> {
                     icon={<Previous />}
                     title="Back"
                     style={{ borderRadius: 30 }}
-                    hoverIndicator="accent-1"
+                    hoverIndicator="accent-3"
                     size={size === 'small' ? 'small' : 'medium'}
                   />
                   <Button

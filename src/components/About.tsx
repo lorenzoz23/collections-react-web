@@ -27,17 +27,23 @@ export default class About extends Component<AboutProps> {
               hoverIndicator={{ color: 'accent-3', opacity: 'strong' }}
               style={{ borderRadius: 30 }}
               title="About Cinelot"
-              label={this.props.width < 700 ? 'About Cinelot' : undefined}
+              label={this.props.width < 950 ? 'About Cinelot' : undefined}
               color="neutral-3"
-              primary={size === 'small'}
+              primary={this.props.width < 950}
               icon={<CircleInformation />}
+              reverse
               onClick={() => this.setState({ showAbout: true })}
             />
             {this.state.showAbout && (
               <Layer
                 position="center"
+                responsive={this.props.width < 950 ? true : false}
                 onClickOutside={() => this.setState({ showAbout: false })}
-                style={{ borderRadius: 30 }}
+                style={{
+                  borderRadius: 30,
+                  width: this.props.width < 950 ? '100%' : undefined,
+                  height: this.props.width < 950 ? '100%' : undefined
+                }}
               >
                 <Box
                   align="center"
@@ -70,7 +76,7 @@ export default class About extends Component<AboutProps> {
                     your wishlist!
                   </Paragraph>
 
-                  {size === 'small' && (
+                  {this.props.width < 950 && (
                     <Box round>
                       <Button
                         style={{ borderRadius: 30 }}

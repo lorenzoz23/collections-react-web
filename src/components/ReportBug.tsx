@@ -80,12 +80,13 @@ export default class ReportBug extends Component<ReportBugProps> {
         {(size) => (
           <Box direction="row">
             <Button
-              primary={this.props.width < 700 && size === 'small'}
+              primary={this.props.width < 950}
               hoverIndicator={{ color: 'accent-1', opacity: 'strong' }}
               style={{ borderRadius: 30 }}
               color="neutral-4"
               title="Report a Bug"
-              label={this.props.width < 700 ? 'Report a Bug' : undefined}
+              reverse
+              label={this.props.width < 950 ? 'Report a Bug' : undefined}
               icon={<Bug />}
               onClick={() => this.setState({ showLayer: true })}
             />
@@ -97,7 +98,11 @@ export default class ReportBug extends Component<ReportBugProps> {
                     showLayer: false
                   })
                 }
-                responsive={this.props.width < 750 ? true : false}
+                style={{
+                  width: this.props.width < 950 ? '100%' : undefined,
+                  height: this.props.width < 950 ? '100%' : undefined
+                }}
+                responsive={this.props.width < 950 ? true : false}
               >
                 <Box
                   margin="xsmall"
@@ -174,7 +179,7 @@ export default class ReportBug extends Component<ReportBugProps> {
                         title="Send email"
                         type="submit"
                         color="status-ok"
-                        size="small"
+                        size={size === 'small' ? 'small' : undefined}
                         icon={<Send />}
                         label={size !== 'small' ? 'Send' : undefined}
                         reverse
@@ -184,7 +189,7 @@ export default class ReportBug extends Component<ReportBugProps> {
                         title="Reset fields"
                         type="reset"
                         color="status-warning"
-                        size="small"
+                        size={size === 'small' ? 'small' : undefined}
                         icon={<Refresh />}
                         label={size !== 'small' ? 'Reset' : undefined}
                         reverse
@@ -193,7 +198,7 @@ export default class ReportBug extends Component<ReportBugProps> {
                         primary
                         title="Cancel"
                         color="status-critical"
-                        size="small"
+                        size={size === 'small' ? 'small' : undefined}
                         icon={<FormClose />}
                         label={size !== 'small' ? 'Cancel' : undefined}
                         reverse

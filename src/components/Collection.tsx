@@ -134,7 +134,7 @@ export default class Collection extends Component<CollectionProps> {
             gap="small"
             pad={size === 'small' ? 'small' : 'none'}
           >
-            {size !== 'small' && this.props.width > 700 && (
+            {size !== 'small' && this.props.width > 950 && (
               <Box
                 pad="large"
                 background={{ color: 'brand', opacity: 'strong' }}
@@ -179,18 +179,20 @@ export default class Collection extends Component<CollectionProps> {
         : this.props.movies;
     const numMovies: number = moviesToMap.length;
     let numRows: number = 0;
-    if (size === 'medium' && this.props.width < 1000) {
+    if (size === 'medium' && numMovies % 4 === 0) {
       numRows = Math.ceil(numMovies / columns[size].length) + 1;
     } else {
-      if (numMovies % 6 === 0 && this.props.width > 700) {
+      if (numMovies % 6 === 0 && this.props.width > 950) {
         numRows = Math.ceil(numMovies / columns[size].length) + 1;
       } else numRows = Math.ceil(numMovies / columns[size].length);
     }
 
     let i: number = 0;
     for (i = 0; i < numRows; i++) {
-      if (size === 'small' && this.props.width < 700) {
-        rows.push('small');
+      if (this.props.width < 950) {
+        if (this.props.width < 700) {
+          rows.push('small');
+        } else rows.push('medium');
       } else rows.push('medium');
     }
 
@@ -222,13 +224,14 @@ export default class Collection extends Component<CollectionProps> {
   // };
 
   showMovie = (movie: movie) => {
+    let rand: number = 0;
+    if (this.props.width < 950) {
+      rand = Math.floor(Math.random() * movie.backDrop.length + 1);
+    } else rand = Math.floor(Math.random() * movie.backDrop.length);
     this.setState({
       movieDetailsVisible: true,
       movieToShow: movie,
-      randBackDrop: Math.floor(
-        Math.random() *
-          Math.floor(movie.backDrop?.length > 0 ? movie.backDrop.length + 1 : 1)
-      )
+      randBackDrop: rand
     });
   };
 
@@ -308,16 +311,14 @@ export default class Collection extends Component<CollectionProps> {
 
   movieCollection = (size: string) => {
     let col: string[] = [];
-    if (size === 'medium' && this.props.width < 1000) {
-      col = columns[size].slice(0, 4);
-    } else if (size === 'small' && this.props.width < 350) {
-      col = columns[size].slice(0, 2);
+    if (size === 'medium' && this.props.width < 950) {
+      col = columns[size].slice(0, 3);
     } else {
       col = columns[size];
     }
     let gridMovies = [];
 
-    if (size !== 'small' || (size === 'small' && this.props.width > 700)) {
+    if (this.props.width > 950) {
       gridMovies.push(
         <AddMovieTemplate
           width={this.props.width}
@@ -373,7 +374,7 @@ export default class Collection extends Component<CollectionProps> {
                 : this.movieCollection(size)}
               {this.state.movieDetailsVisible ? (
                 <Layer
-                  responsive={size !== 'small' ? false : true}
+                  responsive={this.props.width > 950 ? false : true}
                   onClickOutside={() =>
                     this.setState({
                       movieDetailsVisible: false
@@ -381,7 +382,9 @@ export default class Collection extends Component<CollectionProps> {
                   }
                   position="center"
                   style={{
-                    borderRadius: size !== 'small' ? 30 : 0
+                    borderRadius: size !== 'small' ? 30 : 0,
+                    width: this.props.width < 950 ? '100%' : undefined,
+                    height: this.props.width < 950 ? '100%' : undefined
                   }}
                 >
                   <SingleMovieView

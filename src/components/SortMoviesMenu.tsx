@@ -36,10 +36,10 @@ export default class SortMoviesMenu extends Component<SortMoviesMenuProps> {
     return (
       <ResponsiveContext.Consumer>
         {(size) => (
-          <Box margin={{ left: this.props.width > 700 ? 'medium' : 'none' }}>
-            {size === 'small' && this.props.width < 700 ? (
+          <Box margin={{ left: this.props.width > 950 ? 'medium' : 'none' }}>
+            {this.props.width < 950 ? (
               <Box background="light-2">
-                {this.state.showSortLayer && this.props.width < 700 ? (
+                {this.state.showSortLayer && this.props.width < 950 ? (
                   <Box
                     gap="xsmall"
                     border="between"
@@ -47,7 +47,6 @@ export default class SortMoviesMenu extends Component<SortMoviesMenuProps> {
                   >
                     {sortlabels.map((item) => (
                       <Box
-                        //margin={{ vertical: 'small', right: 'small' }}
                         pad={{
                           left: 'xsmall',
                           top: 'small',
@@ -104,7 +103,7 @@ export default class SortMoviesMenu extends Component<SortMoviesMenuProps> {
             ) : (
               <Menu
                 color={this.props.sortBy.length > 0 ? 'accent-1' : undefined}
-                label={this.props.sortBy === '' ? 'Sort' : 'Active Sort'}
+                label={this.props.sortBy === '' ? 'Sort' : 'Active'}
                 style={{ borderRadius: 10 }}
                 primary={this.props.sortBy !== ''}
                 alignSelf="center"
@@ -112,13 +111,7 @@ export default class SortMoviesMenu extends Component<SortMoviesMenuProps> {
                 hoverIndicator="accent-1"
                 title="Sort films by..."
                 dropAlign={{ top: 'bottom', left: 'right' }}
-                icon={
-                  <Sort
-                    color={
-                      this.props.sortBy.length > 0 ? 'status-ok' : undefined
-                    }
-                  />
-                }
+                icon={<Sort />}
                 items={[
                   {
                     label: 'Title (Asc)',

@@ -28,10 +28,10 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
   render() {
     const numGenre = this.props.movie.genre.length;
     const mode = localStorage.getItem('visualModeValue') || 'wedding';
-    const images: string[] = [
-      ...this.props.movie.backDrop,
-      this.props.movie.poster
-    ];
+    const images: string[] =
+      this.props.width! < 950
+        ? [...this.props.movie.backDrop, this.props.movie.poster]
+        : [...this.props.movie.backDrop];
 
     return (
       <ResponsiveContext.Consumer>
@@ -40,25 +40,28 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
             gap="medium"
             pad="small"
             background="movieSearchResult"
-            round={size === 'small' ? false : true}
+            round={this.props.width! < 950 ? false : true}
             justify="center"
             flex
           >
             <Box
-              direction={size === 'small' ? 'column' : 'row'}
-              gap={size === 'small' ? 'none' : 'medium'}
+              direction={this.props.width! < 950 ? 'column' : 'row'}
+              gap={this.props.width! < 950 ? 'none' : 'medium'}
               margin={{ bottom: 'small' }}
               // height={{
-              //   max: size !== 'small' ? 'medium' : undefined,
-              //   min: size !== 'small' ? 'medium' : undefined
+              //   max: this.props.width! > 950 ? 'medium' : undefined,
+              //   min: this.props.width! > 950 ? 'medium' : undefined
               // }}
-              height={size !== 'small' ? 'medium' : undefined}
+              height={this.props.width! > 950 ? 'medium' : undefined}
               width={{
-                min: size !== 'small' && !this.props.add ? 'large' : undefined
+                min:
+                  this.props.width! > 950 && !this.props.add
+                    ? 'large'
+                    : undefined
               }}
               justify="center"
             >
-              {size === 'small' && (
+              {this.props.width! < 950 && (
                 <Box
                   style={{
                     position: 'fixed',
@@ -92,7 +95,7 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                   /> */}
                 </Box>
               )}
-              {size === 'small' && !this.props.add && (
+              {this.props.width! < 950 && !this.props.add && (
                 <Box
                   style={{
                     position: 'fixed',
@@ -127,7 +130,9 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
               <Box align="center" alignSelf="center" overflow="hidden">
                 <Heading
                   color={
-                    size === 'small' && mode === 'solid' ? 'black' : undefined
+                    this.props.width! < 950 && mode === 'solid'
+                      ? 'black'
+                      : undefined
                   }
                   level="2"
                   textAlign="center"
@@ -138,10 +143,10 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                   <Box gap="small">
                     <Text
                       weight="bold"
-                      size={size === 'small' ? 'small' : 'medium'}
+                      size={this.props.width! < 950 ? 'small' : 'medium'}
                       textAlign="center"
                       color={
-                        size === 'small' && mode === 'solid'
+                        this.props.width! < 950 && mode === 'solid'
                           ? 'black'
                           : undefined
                       }
@@ -150,12 +155,12 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                     </Text>
                     <Text
                       margin={{
-                        horizontal: size === 'small' ? 'small' : 'none'
+                        horizontal: this.props.width! < 950 ? 'small' : 'none'
                       }}
                       size="small"
                       textAlign="center"
                       color={
-                        size === 'small' && mode === 'solid'
+                        this.props.width! < 950 && mode === 'solid'
                           ? 'black'
                           : undefined
                       }
@@ -166,10 +171,10 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                 ) : (
                   <Box gap="small">
                     <Box
-                      gap={size !== 'small' ? 'medium' : 'none'}
+                      gap={this.props.width! > 950 ? 'medium' : 'none'}
                       justify="center"
-                      border={size !== 'small' ? 'between' : undefined}
-                      direction={size !== 'small' ? 'row' : 'column'}
+                      border={this.props.width! > 950 ? 'between' : undefined}
+                      direction={this.props.width! > 950 ? 'row' : 'column'}
                     >
                       <Box direction="row" gap="xsmall" justify="center">
                         {this.props.movie.genre.map(
@@ -177,9 +182,11 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                             <Text
                               weight="bold"
                               key={genre}
-                              size={size === 'small' ? 'small' : 'medium'}
+                              size={
+                                this.props.width! < 950 ? 'small' : 'medium'
+                              }
                               color={
-                                size === 'small' && mode === 'solid'
+                                this.props.width! < 950 && mode === 'solid'
                                   ? 'black'
                                   : undefined
                               }
@@ -192,9 +199,9 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                       <Box direction="row" gap="small" justify="center">
                         <Text
                           weight="bold"
-                          size={size === 'small' ? 'small' : 'medium'}
+                          size={this.props.width! < 950 ? 'small' : 'medium'}
                           color={
-                            size === 'small' && mode === 'solid'
+                            this.props.width! < 950 && mode === 'solid'
                               ? 'black'
                               : undefined
                           }
@@ -204,9 +211,9 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                         <Text
                           weight="bold"
                           title="Rating"
-                          size={size === 'small' ? 'small' : 'medium'}
+                          size={this.props.width! < 950 ? 'small' : 'medium'}
                           color={
-                            size === 'small' && mode === 'solid'
+                            this.props.width! < 950 && mode === 'solid'
                               ? 'black'
                               : undefined
                           }
@@ -215,9 +222,9 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                         </Text>
                         <Text
                           weight="bold"
-                          size={size === 'small' ? 'small' : 'medium'}
+                          size={this.props.width! < 950 ? 'small' : 'medium'}
                           color={
-                            size === 'small' && mode === 'solid'
+                            this.props.width! < 950 && mode === 'solid'
                               ? 'black'
                               : undefined
                           }
@@ -230,12 +237,12 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                       size="small"
                       textAlign="center"
                       color={
-                        size === 'small' && mode === 'solid'
+                        this.props.width! < 950 && mode === 'solid'
                           ? 'black'
                           : undefined
                       }
                       margin={{
-                        horizontal: size === 'small' ? 'small' : 'none'
+                        horizontal: this.props.width! < 950 ? 'small' : 'none'
                       }}
                     >
                       {this.props.movie.plot}
@@ -264,7 +271,7 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                 )}
               </Box>
             </Box>
-            {size !== 'small' && (
+            {this.props.width! > 950 && (
               <Box
                 style={{
                   position: 'fixed',
@@ -277,11 +284,7 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
               >
                 <Image
                   fit="cover"
-                  src={
-                    this.props.movie.backDrop![
-                      this.props.add ? 0 : this.props.rand!
-                    ]
-                  }
+                  src={this.props.add ? images[0] : images[this.props.rand!]}
                   opacity={mode === 'solid' ? '0.2' : '0.3'}
                   style={
                     this.props.add ? { borderRadius: 0 } : { borderRadius: 25 }
@@ -294,11 +297,11 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                 align="center"
                 alignSelf="center"
                 style={
-                  size === 'small'
+                  this.props.width! < 950
                     ? { position: 'fixed', bottom: 0, left: 0, width: '100%' }
                     : { position: 'fixed', bottom: 0, right: 0, width: '100%' }
                 }
-                pad={size === 'small' ? 'medium' : 'small'}
+                pad={this.props.width! < 950 ? 'medium' : 'small'}
               >
                 <Button
                   title="Back"
@@ -312,7 +315,7 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                 justify="between"
                 alignSelf="end"
                 style={
-                  size === 'small'
+                  this.props.width! < 950
                     ? {
                         position: 'fixed',
                         bottom: 0,
@@ -328,16 +331,16 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                         zIndex: 2
                       }
                 }
-                pad={size !== 'small' ? 'small' : 'none'}
+                pad={this.props.width! > 950 ? 'small' : 'none'}
               >
-                {size === 'small' && (
+                {this.props.width! < 950 && (
                   <Button
                     title="Back"
                     icon={<Previous />}
                     onClick={() => this.props.closeDetailView!()}
                   />
                 )}
-                {size !== 'small' && (
+                {this.props.width! > 950 && (
                   <SelectMultiple
                     placeholder={
                       this.props.wishlist
@@ -364,9 +367,9 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                   gap="xsmall"
                   align="center"
                   alignSelf="end"
-                  pad={size !== 'small' ? 'small' : 'none'}
+                  pad={this.props.width! > 950 ? 'small' : 'none'}
                   style={
-                    size !== 'small'
+                    this.props.width! > 950
                       ? {
                           position: 'fixed',
                           bottom: 0,
@@ -408,7 +411,7 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                           }}
                           disabled={this.props.movie.starCount !== -1}
                           label={
-                            this.props.width! > 700 &&
+                            this.props.width! > 950 &&
                             (this.props.movie.starCount !== -1 ||
                               this.state.watched === 1)
                               ? 'Watched'

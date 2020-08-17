@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { Box, Button, ResponsiveContext, Text } from 'grommet';
-import { Close, Previous } from 'grommet-icons';
+import { Box, Button, ResponsiveContext, Text, Anchor } from 'grommet';
+import { Close, Previous, SearchAdvanced } from 'grommet-icons';
 import SyncLoader from 'react-spinners/SyncLoader';
 
 import { movie, AppBar } from './HomePage';
@@ -9,12 +9,14 @@ import MovieListResults from './MovieListResults';
 
 interface MovieSearchResultProps {
   title?: string;
+  width: number;
   year?: string;
   parsed: boolean;
   back: boolean;
   imports?: searchResults;
   closeAdd(): void;
   closeResult?(): void;
+  advSearch?(): void;
   moviesAdded(lotMovies: movie[], wishlistMovies: movie[]): void;
 }
 
@@ -254,7 +256,7 @@ export default class MovieSearchResult extends Component<
               alignContent="start"
               background="movieSearchResult"
               height={{
-                max: size !== 'small' ? 'medium' : undefined
+                max: this.props.width > 950 ? 'medium' : undefined
               }}
               flex
             >
@@ -280,14 +282,25 @@ export default class MovieSearchResult extends Component<
                     style={{ position: 'fixed', top: 0, right: 0, left: 0 }}
                     fill="horizontal"
                     background="movieSearchResultHeader"
-                    justify={!this.props.back ? 'end' : 'between'}
+                    justify="between"
                   >
-                    {this.props.back && (
+                    {this.props.back ? (
                       <Button
                         title="Back"
                         icon={<Previous />}
                         onClick={() => this.props.closeResult!()}
                       />
+                    ) : (
+                      !this.props.parsed && (
+                        <Anchor
+                          reverse
+                          margin="small"
+                          alignSelf="center"
+                          label="Advanced Search?"
+                          onClick={this.props.advSearch}
+                          icon={<SearchAdvanced />}
+                        />
+                      )
                     )}
                     {this.props.parsed && (
                       <Box
@@ -298,26 +311,34 @@ export default class MovieSearchResult extends Component<
                           horizontal: this.props.parsed ? 'small' : 'none'
                         }}
                       >
-                        <Text weight="bold">import</Text>
+                        <Text
+                          weight="bold"
+                          size={size !== 'small' ? 'large' : undefined}
+                        >
+                          The Importer
+                        </Text>
                         {this.state.numToAdd > 0 && (
-                          <Box
-                            gap={size === 'small' ? 'none' : 'xsmall'}
-                            direction="row"
-                          >
+                          <Box gap="xsmall" direction="row">
                             <Button
-                              label={this.state.numToAdd}
+                              label={
+                                size !== 'small'
+                                  ? 'Click to add ' + this.state.numToAdd
+                                  : 'Add ' + this.state.numToAdd
+                              }
                               primary
-                              size="small"
+                              size={size === 'small' ? 'small' : undefined}
                               hoverIndicator="accent-1"
                               alignSelf="center"
                               onClick={this.moviesToAdd}
                             />
                             <Button
                               primary
+                              size={size === 'small' ? 'small' : undefined}
                               color="deleteMovie"
-                              size="small"
                               alignSelf="center"
-                              label="clear selection"
+                              label={
+                                size !== 'small' ? 'Clear selection' : 'Clear'
+                              }
                               onClick={this.clearSelectedMovies}
                             />
                           </Box>

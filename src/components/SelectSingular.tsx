@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Button, Box, Select, Text } from 'grommet';
-import { FormClose, Star, Multimedia } from 'grommet-icons';
+import { FormClose, Star, Multimedia, Tag, View } from 'grommet-icons';
 
 interface SelectSingularProps {
   tags: string[];
@@ -89,7 +89,9 @@ export default class SelectSingular extends Component<SelectSingularProps> {
             ? 'accent-4'
             : this.props.placeholder.includes('genre')
             ? 'accent-3'
-            : undefined
+            : this.props.placeholder.includes('tag')
+            ? 'accent-1'
+            : 'accent-2'
         }}
       >
         <Select
@@ -98,7 +100,11 @@ export default class SelectSingular extends Component<SelectSingularProps> {
               <Star color="plain" />
             ) : this.props.placeholder.includes('genre') ? (
               <Multimedia color="accent-3" />
-            ) : undefined
+            ) : this.props.placeholder.includes('tag') ? (
+              <Tag color="accent-1" />
+            ) : (
+              <View color="accent-2" />
+            )
           }
           closeOnChange={true}
           focusIndicator={this.props.plain ? false : true}

@@ -31,7 +31,7 @@ export default class Preferences extends Component<PreferencesProps> {
               background="light-2"
               border={{
                 side: 'all',
-                size: 'medium',
+                size: 'large',
                 color: 'accent-3',
                 style: 'outset'
               }}
@@ -64,6 +64,13 @@ export default class Preferences extends Component<PreferencesProps> {
                     label="Your ratings"
                     reverse
                     onChange={() => this.props.handlePrefChange(2)}
+                  />
+                  <CheckBox
+                    toggle
+                    checked={this.props.allowedFilters[3]}
+                    label="Watched"
+                    reverse
+                    onChange={() => this.props.handlePrefChange(3)}
                   />
                 </Box>
               </Box>
