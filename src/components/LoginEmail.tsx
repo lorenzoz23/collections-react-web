@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
-import { ResponsiveContext, Box, Tabs, Tab, CheckBox } from 'grommet';
+import { ResponsiveContext, Box, Tabs, Tab } from 'grommet';
 
 import SignIn from './SignIn';
 import SignUp from './SignUp';
-import { motion } from 'framer-motion';
 
 interface LoginEmailProps {
   handleLogin(): void;
