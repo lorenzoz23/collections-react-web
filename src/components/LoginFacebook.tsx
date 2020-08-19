@@ -6,17 +6,12 @@ import 'firebase/auth';
 
 interface LoginFacebookProps {
   handleLogin(): void;
-  rememberMe: boolean;
 }
 
 export default class LoginFacebook extends Component<LoginFacebookProps> {
   signInWithFb = async () => {
     const providerFb = new firebase.auth.FacebookAuthProvider();
-    const type: string = this.props.rememberMe
-      ? firebase.auth.Auth.Persistence.LOCAL
-      : firebase.auth.Auth.Persistence.SESSION;
-    await firebase.auth().setPersistence(type);
-    if (this.props.rememberMe) localStorage.setItem('rememberMe', 'remember');
+    await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
     const result = await firebase.auth().signInWithPopup(providerFb);
     const isNew: boolean = result.additionalUserInfo!.isNewUser;
     if (isNew) {

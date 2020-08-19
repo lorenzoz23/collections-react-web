@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ResponsiveContext, Box, Button, CheckBox } from 'grommet';
+import { ResponsiveContext, Box, Button } from 'grommet';
 import { motion } from 'framer-motion';
 import { MailOption } from 'grommet-icons';
 
@@ -13,22 +13,7 @@ interface LoginButtonProps {
 
 export default class LoginButtons extends Component<LoginButtonProps> {
   state = {
-    show: false,
-    rememberMe: false,
-    newUser: false,
-    signInType: ''
-  };
-
-  componentDidMount = () => {
-    const remember = this.getInitialState();
-    this.setState({ rememberMe: remember === null ? false : true });
-    if (remember) {
-      this.props.handleLogin();
-    }
-  };
-
-  getInitialState = () => {
-    return localStorage.getItem('rememberMe');
+    show: false
   };
 
   goBack = () => {
@@ -46,10 +31,6 @@ export default class LoginButtons extends Component<LoginButtonProps> {
               <LoginEmail
                 goBack={this.goBack}
                 handleLogin={this.props.handleLogin}
-                rememberMe={this.state.rememberMe}
-                handleRememberMe={(checked: boolean) =>
-                  this.setState({ rememberMe: checked })
-                }
               />
             ) : (
               <motion.div
@@ -73,25 +54,8 @@ export default class LoginButtons extends Component<LoginButtonProps> {
                       }}
                     />
                   </Box>
-                  <LoginGoogle
-                    handleLogin={this.props.handleLogin}
-                    rememberMe={this.state.rememberMe}
-                  />
-                  <LoginFacebook
-                    handleLogin={this.props.handleLogin}
-                    rememberMe={this.state.rememberMe}
-                  />
-                  <Box align="center">
-                    <motion.div whileTap={{ scale: 0.9 }}>
-                      <CheckBox
-                        label="Remember me?"
-                        checked={this.state.rememberMe}
-                        onChange={(event) =>
-                          this.setState({ rememberMe: event.target.checked })
-                        }
-                      />
-                    </motion.div>
-                  </Box>
+                  <LoginGoogle handleLogin={this.props.handleLogin} />
+                  <LoginFacebook handleLogin={this.props.handleLogin} />
                 </Box>
               </motion.div>
             )}

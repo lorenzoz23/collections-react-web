@@ -18,7 +18,6 @@ const variants = {
 
 interface SignUpProps {
   handleUserSignUp(email: string, password: string): void;
-  rememberMe: boolean;
 }
 export default class SignUp extends Component<SignUpProps> {
   state = {
@@ -36,19 +35,14 @@ export default class SignUp extends Component<SignUpProps> {
   };
 
   handleSignUp = () => {
-    const type: string = this.props.rememberMe
-      ? firebase.auth.Auth.Persistence.LOCAL
-      : firebase.auth.Auth.Persistence.SESSION;
     firebase
       .auth()
-      .setPersistence(type)
+      .setPersistence(firebase.auth.Auth.Persistence.LOCAL)
       .then(() => {
         firebase
           .auth()
           .createUserWithEmailAndPassword(this.state.email, this.state.password)
           .then((result) => {
-            if (this.props.rememberMe)
-              localStorage.setItem('rememberMe', 'remember');
             const user = firebase.auth().currentUser!;
             const isNew: boolean = result.additionalUserInfo!.isNewUser;
             if (isNew) {

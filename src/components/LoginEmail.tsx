@@ -7,9 +7,7 @@ import { motion } from 'framer-motion';
 
 interface LoginEmailProps {
   handleLogin(): void;
-  handleRememberMe(checked: boolean): void;
   goBack(): void;
-  rememberMe: boolean;
 }
 
 export default class LoginEmail extends Component<LoginEmailProps> {
@@ -17,8 +15,7 @@ export default class LoginEmail extends Component<LoginEmailProps> {
     email: '',
     password: '',
     activeIndex: 0,
-    created: false,
-    rememberMe: this.props.rememberMe
+    created: false
   };
 
   handleUserSignUp = (email: string, password: string) => {
@@ -46,13 +43,9 @@ export default class LoginEmail extends Component<LoginEmailProps> {
                 <SignIn
                   goBack={this.props.goBack}
                   email={this.state.email}
-                  handleRememberMe={(checked: boolean) =>
-                    this.props.handleRememberMe(checked)
-                  }
                   password={this.state.password}
                   handleLogin={this.props.handleLogin}
                   created={this.state.created}
-                  rememberMe={this.state.rememberMe}
                 />
               </Tab>
               <Tab title="Sign Up">
@@ -60,22 +53,9 @@ export default class LoginEmail extends Component<LoginEmailProps> {
                   handleUserSignUp={(email, password) =>
                     this.handleUserSignUp(email, password)
                   }
-                  rememberMe={this.state.rememberMe}
                 />
               </Tab>
             </Tabs>
-            <Box align="center" pad="small">
-              <motion.div whileTap={{ scale: 0.9 }}>
-                <CheckBox
-                  label="Remember me?"
-                  checked={this.state.rememberMe}
-                  onChange={(event) => {
-                    this.setState({ rememberMe: event.target.checked });
-                    this.props.handleRememberMe(event.target.checked);
-                  }}
-                />
-              </motion.div>
-            </Box>
           </Box>
         )}
       </ResponsiveContext.Consumer>

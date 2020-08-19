@@ -32,11 +32,9 @@ const container = {
 interface SignInProps {
   handleLogin(): void;
   goBack(): void;
-  handleRememberMe(checked: boolean): void;
   email: string;
   password: string;
   created: boolean;
-  rememberMe: boolean;
 }
 
 export default class SignIn extends Component<SignInProps> {
@@ -58,19 +56,14 @@ export default class SignIn extends Component<SignInProps> {
     if (this.state.created) {
       this.props.handleLogin();
     } else {
-      const type: string = this.props.rememberMe
-        ? firebase.auth.Auth.Persistence.LOCAL
-        : firebase.auth.Auth.Persistence.SESSION;
       firebase
         .auth()
-        .setPersistence(type)
+        .setPersistence(firebase.auth.Auth.Persistence.LOCAL)
         .then(() => {
           firebase
             .auth()
             .signInWithEmailAndPassword(email, password)
             .then(() => {
-              if (this.props.rememberMe)
-                localStorage.setItem('rememberMe', 'remember');
               this.props.handleLogin();
             })
             .catch((error: any) => {

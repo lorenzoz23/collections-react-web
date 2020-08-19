@@ -202,9 +202,8 @@ export default class HomePage extends Component {
 
   componentDidMount = async () => {
     console.log('home mounted');
-    const remember = localStorage.getItem('rememberMe');
-    console.log(remember, this.state.uid);
-    if (this.state.uid === '' && !remember) {
+    console.log(this.state.uid);
+    if (this.state.uid === '') {
       this.setState({ invalidRoute: true });
     } else {
       document.title = 'Your Lot | Cinelot';
@@ -425,7 +424,6 @@ export default class HomePage extends Component {
       .then(() => {
         // Sign-out successful.
         console.log('success');
-        localStorage.removeItem('rememberMe');
         this.setState({
           loggedIn: false
         });
