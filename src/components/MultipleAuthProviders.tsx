@@ -528,6 +528,12 @@ export default class MultipleAuthProviders extends Component<
                   </Box>
                 </Box>
                 {!showAuthProviders.includes('old') && (
+                  <Text size="small" textAlign="center">
+                    Note: You can always link/unlink providers at any time
+                    within settings
+                  </Text>
+                )}
+                {!showAuthProviders.includes('old') && (
                   <Button
                     style={{ borderRadius: 30 }}
                     primary
@@ -539,12 +545,6 @@ export default class MultipleAuthProviders extends Component<
                       this.props.close();
                     }}
                   />
-                )}
-                {!showAuthProviders.includes('old') && (
-                  <Text size="small" textAlign="center">
-                    Note: You can always link/unlink providers at any time
-                    within settings
-                  </Text>
                 )}
               </Box>
             </Layer>

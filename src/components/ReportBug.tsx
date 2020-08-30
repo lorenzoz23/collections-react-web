@@ -119,7 +119,7 @@ export default class ReportBug extends Component<ReportBugProps> {
                   <Bug size="large" />
                   <Form
                     value={this.state.formValue}
-                    onChange={(nextValue: React.SetStateAction<{}>) =>
+                    onChange={(nextValue: any) =>
                       this.formChange(nextValue)
                     }
                     onReset={() =>

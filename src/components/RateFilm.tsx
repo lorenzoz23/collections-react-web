@@ -105,7 +105,7 @@ export default class RateFilm extends Component<RateFilmProps> {
   };
 
   render() {
-    const mode = localStorage.getItem('visualModeValue') || 'wedding';
+    const mode = localStorage.getItem('visualMode') || 'wedding';
     return (
       <ResponsiveContext.Consumer>
         {(size) => (

@@ -39,7 +39,6 @@ import Settings from './Settings';
 import AddTitle from './AddTitle';
 import Collection from './Collection';
 import FooterComponent from './FooterComponent';
-import EditFilters from './EditFilters';
 import { searchResults } from './MovieSearchResult';
 import Notification from './Notification';
 import SortMoviesMenu from './SortMoviesMenu';
@@ -529,7 +528,7 @@ export default class HomePage extends Component {
             goodNotification: true
           },
           () => {
-            setTimeout(this.onNotificationClose, 4000);
+            setTimeout(this.onNotificationClose, 2000);
           }
         );
       });
@@ -549,7 +548,7 @@ export default class HomePage extends Component {
             : 'Switched to Lot View'
         },
         () => {
-          setTimeout(this.onNotificationClose, 4000);
+          setTimeout(this.onNotificationClose, 2000);
         }
       );
     }
@@ -1083,8 +1082,9 @@ export default class HomePage extends Component {
   };
 
   render() {
-    const title = this.state.showWishlist ? 'Your Wishlist' : 'Your Lot';
-    const mode = localStorage.getItem('visualModeValue') || 'wedding';
+    const title =
+      'Cinelot | ' + (this.state.showWishlist ? 'Your Wishlist' : 'Your Lot');
+    const mode = localStorage.getItem('visualMode') || 'wedding';
     return (
       <Router>
         {!this.state.loggedIn || this.state.invalidRoute ? (
@@ -1107,6 +1107,7 @@ export default class HomePage extends Component {
                         }
                       : { vertical: 'xsmall' }
                   }
+                  //pad={{ vertical: 'xsmall', left: 'small' }}
                   border={{
                     side: 'bottom',
                     color: 'lotBorder',
@@ -1165,9 +1166,9 @@ export default class HomePage extends Component {
                                 this.state.addFilmSearchVal.length === 0
                               }
                               hoverIndicator="accent-1"
-                              label="Done"
                               alignSelf="center"
                               type="submit"
+                              style={{ display: 'none' }}
                               icon={<Checkmark />}
                               reverse
                             />
@@ -1244,9 +1245,13 @@ export default class HomePage extends Component {
                       alignSelf={size !== 'small' ? 'end' : 'center'}
                       hoverIndicator="brand"
                       margin={{ right: size !== 'small' ? 'small' : 'none' }}
+                      onMouseOver={() =>
+                        this.setState({ userProfileClicked: true })
+                      }
                       open={
                         this.state.userProfileClicked &&
-                        !this.state.showSettings
+                        !this.state.showSettings &&
+                        !this.state.showPrefs
                       }
                       onClose={() =>
                         this.setState({ userProfileClicked: false })
@@ -1279,7 +1284,7 @@ export default class HomePage extends Component {
                               left: 'small',
                               top: 'medium',
                               bottom: 'medium',
-                              right: 'medium'
+                              right: 'small'
                             }}
                             hoverIndicator="accent-1"
                             onClick={this.toggleSettings}
@@ -1294,7 +1299,22 @@ export default class HomePage extends Component {
                               left: 'small',
                               top: 'medium',
                               bottom: 'medium',
-                              right: 'medium'
+                              right: 'small'
+                            }}
+                            hoverIndicator="accent-3"
+                            onClick={() => this.setState({ showPrefs: true })}
+                          >
+                            <Text>Preferences</Text>
+                            <Configure color="brand" />
+                          </Box>
+                          <Box
+                            direction="row"
+                            justify="between"
+                            pad={{
+                              left: 'small',
+                              top: 'medium',
+                              bottom: 'medium',
+                              right: 'small'
                             }}
                             hoverIndicator="neutral-4"
                             onClick={this.logOut}
@@ -1345,12 +1365,23 @@ export default class HomePage extends Component {
                     </Form>
                   </Box>
                 ) : (
-                  <Box>
+                  <Box
+                    background="#314759"
+                    border={
+                      !this.state.showFilters
+                        ? {
+                            side: 'bottom',
+                            color: 'lotBorder',
+                            size: 'small'
+                          }
+                        : undefined
+                    }
+                  >
                     <Box
-                      direction="row"
-                      justify="between"
                       align="center"
-                      background="#314759"
+                      direction="row"
+                      gap="small"
+                      width={{ max: '35%' }}
                       style={{ zIndex: 10 }}
                       pad={{
                         left: 'medium',
@@ -1358,93 +1389,52 @@ export default class HomePage extends Component {
                         top: 'xsmall',
                         bottom: 'xsmall'
                       }}
-                      border={
-                        !this.state.showFilters
-                          ? {
-                              side: 'bottom',
-                              color: 'lotBorder',
-                              size: 'small'
-                            }
-                          : undefined
-                      }
                     >
-                      <Box align="center" direction="row" gap="small">
-                        <TextInput
-                          value={this.state.searchVal}
-                          placeholder={
-                            size !== 'small'
-                              ? `Search your ${
-                                  this.state.showWishlist
-                                    ? this.state.wishlist.length
-                                    : this.state.movies.length
-                                } ${
-                                  this.state.movies.length === 1
-                                    ? 'film'
-                                    : 'films'
-                                }...`
-                              : this.state.showWishlist
-                              ? 'Your Wishlist'
-                              : 'Your Lot'
-                          }
-                          icon={<Search />}
-                          onChange={(event) =>
-                            this.handleSearch(event.target.value)
-                          }
-                        />
-                        <Button
-                          alignSelf="center"
-                          icon={<Filter />}
-                          color={
-                            this.state.showFilters ? 'neutral-4' : undefined
-                          }
-                          label={this.state.showFilters ? 'Hide' : 'Filters'}
-                          reverse
-                          hoverIndicator={
-                            this.state.showFilters ? 'neutral-4' : 'layer'
-                          }
-                          primary={this.state.showFilters}
-                          focusIndicator={false}
-                          title="Filter your search"
-                          onClick={() =>
-                            this.setState({
-                              showFilters: !this.state.showFilters
-                            })
-                          }
-                        />
-                        <SortMoviesMenu
-                          width={this.state.width}
-                          sortBy={this.state.sortBy}
-                          handleSort={(sortBy) => this.handleSort(sortBy)}
-                        />
-                      </Box>
-                      <Box
-                        direction="row"
-                        align="center"
-                        gap="medium"
-                        border="between"
-                      >
-                        <Button
-                          primary
-                          icon={<Configure />}
-                          label="Preferences"
-                          reverse={size !== 'small'}
-                          onClick={() => {
-                            this.setState({ showPrefs: true });
-                          }}
-                        />
-                        <EditFilters
-                          wishlist={this.state.showWishlist}
-                          width={this.state.width}
-                          uid={this.state.uid}
-                          tags={this.state.tags}
-                          handleTagDelete={(tags) => this.handleTagDelete(tags)}
-                          handleUpdatedTags={(updatedTags) =>
-                            this.handleUpdatedTags(updatedTags)
-                          }
-                          handleTagAdded={(tag) => this.handleTagAdded(tag)}
-                          handleResetFilters={this.handleResetFilters}
-                        />
-                      </Box>
+                      <TextInput
+                        value={this.state.searchVal}
+                        placeholder={
+                          size !== 'small'
+                            ? `Search your ${
+                                this.state.showWishlist
+                                  ? this.state.wishlist.length
+                                  : this.state.movies.length
+                              } ${
+                                this.state.movies.length === 1
+                                  ? 'film'
+                                  : 'films'
+                              }...`
+                            : this.state.showWishlist
+                            ? 'Your Wishlist'
+                            : 'Your Lot'
+                        }
+                        icon={<Search />}
+                        onChange={(event) =>
+                          this.handleSearch(event.target.value)
+                        }
+                      />
+                      <Button
+                        alignSelf="center"
+                        icon={<Filter />}
+                        color={this.state.showFilters ? 'neutral-4' : undefined}
+                        label={this.state.showFilters ? 'Hide' : 'Filters'}
+                        reverse
+                        hoverIndicator={
+                          this.state.showFilters ? 'neutral-4' : 'layer'
+                        }
+                        primary={this.state.showFilters}
+                        focusIndicator={false}
+                        title="Filter your search"
+                        onClick={() =>
+                          this.setState({
+                            showFilters: !this.state.showFilters
+                          })
+                        }
+                      />
+                      <SortMoviesMenu
+                        width={this.state.width}
+                        sortBy={this.state.sortBy}
+                        handleSort={(sortBy) => this.handleSort(sortBy)}
+                      />
                     </Box>
                     {this.state.showFilters && (
                       <Box
@@ -1453,7 +1443,6 @@ export default class HomePage extends Component {
                           color: 'lotBorder',
                           size: 'small'
                         }}
-                        background="#314759"
                         style={{ zIndex: 10 }}
                       >
                         <FilterSearch
@@ -1485,7 +1474,14 @@ export default class HomePage extends Component {
                 )}
                 <Box
                   overflow={{ horizontal: 'hidden' }}
-                  background="home"
+                  background={{
+                    color: '#1A252E',
+                    image:
+                      // https://coolbackgrounds.io/images/backgrounds/index/compute-ea4c57a4.png
+                      // https://coolbackgrounds.io/images/backgrounds/black/black-trianglify-b6181ec2.jpg
+                      'url(https://coolbackgrounds.io/images/backgrounds/index/gulf-dec0ccde.svg)',
+                    opacity: 'medium'
+                  }}
                   alignContent="center"
                   flex
                 >
@@ -1636,6 +1632,16 @@ export default class HomePage extends Component {
                     }
                     handlePrefChange={(index) => this.handlePrefChanged(index)}
                     onClose={() => this.setState({ showPrefs: false })}
+                    wishlist={this.state.showWishlist}
+                    width={this.state.width}
+                    uid={this.state.uid}
+                    tags={this.state.tags}
+                    handleTagDelete={(tags) => this.handleTagDelete(tags)}
+                    handleUpdatedTags={(updatedTags) =>
+                      this.handleUpdatedTags(updatedTags)
+                    }
+                    handleTagAdded={(tag) => this.handleTagAdded(tag)}
+                    handleResetFilters={this.handleResetFilters}
                   />
                 )}
                 {this.state.showAuthProviders && (

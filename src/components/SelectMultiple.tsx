@@ -190,6 +190,7 @@ export default class SelectMultiple extends Component<SelectMultipleProps> {
               )}
             {this.props.save && this.state.tagsChanged && (
               <Button
+                primary
                 alignSelf="center"
                 hoverIndicator="accent-1"
                 icon={

@@ -44,7 +44,7 @@ export default class LoginGoogle extends Component<LoginGoogleProps> {
               primary
               color="#CDFEE2"
               size={size === 'small' ? 'medium' : 'large'}
-              label="Continue with Google"
+              label="Google"
               icon={<Google color="plain" />}
               reverse
               onClick={async () => await this.popup()}

@@ -536,6 +536,16 @@ export default class MobileNav extends Component<MobileNavProps> {
         )}
         {this.state.showPrefs && (
           <Preferences
+            wishlist={this.props.wishlist}
+            width={this.props.width}
+            uid={this.props.uid}
+            tags={this.props.mediaTags}
+            handleTagDelete={(tags) => this.props.handleTagDelete(tags)}
+            handleUpdatedTags={(updatedTags) =>
+              this.props.handleUpdatedTags(updatedTags)
+            }
+            handleTagAdded={(tag) => this.props.handleTagAdded(tag)}
+            handleResetFilters={this.props.handleResetFilters}
             sortBy={this.props.sortBy}
             saveSortedOrder={this.props.saveSortedOrder}
             allowedFilters={this.props.allowedFilters}

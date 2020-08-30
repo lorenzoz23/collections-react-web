@@ -274,6 +274,7 @@ export default class MovieSearchResult extends Component<
                     wishlist={true}
                     add={true}
                     closeDetailView={this.closeDetailView}
+                    width={this.props.width}
                   />
                 </Box>
               ) : (

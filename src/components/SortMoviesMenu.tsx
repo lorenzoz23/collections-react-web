@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Menu, ResponsiveContext, Box, Text, Button } from 'grommet';
+import { ResponsiveContext, Box, Text, Button, DropButton } from 'grommet';
 import { Sort, FormNext, FormPrevious } from 'grommet-icons';
 
 const sortlabels = [
@@ -101,74 +101,58 @@ export default class SortMoviesMenu extends Component<SortMoviesMenuProps> {
                 )}
               </Box>
             ) : (
-              <Menu
-                color={this.props.sortBy.length > 0 ? 'accent-1' : undefined}
-                label={this.props.sortBy === '' ? 'Sort' : 'Active'}
-                style={{ borderRadius: 10 }}
-                primary={this.props.sortBy !== ''}
-                alignSelf="center"
-                justifyContent="center"
-                hoverIndicator="accent-1"
+              <DropButton
                 title="Sort films by..."
+                primary={this.props.sortBy !== ''}
+                color={this.props.sortBy.length > 0 ? 'accent-1' : undefined}
+                style={{ borderRadius: 25 }}
+                alignSelf="center"
+                hoverIndicator={
+                  this.props.sortBy.length > 0 ? undefined : 'neutral-3'
+                }
+                label={
+                  <Box
+                    direction="row"
+                    align="center"
+                    gap="small"
+                    background={{ dark: true }}
+                  >
+                    <Text textAlign="center">
+                      {this.props.sortBy === '' ? 'Sort' : 'Active'}
+                    </Text>
+                    <Sort
+                      color={
+                        this.props.sortBy.length > 0 ? 'dark-2' : undefined
+                      }
+                    />
+                  </Box>
+                }
                 dropAlign={{ top: 'bottom', left: 'right' }}
-                icon={<Sort />}
-                items={[
-                  {
-                    label: 'Title (Asc)',
-                    onClick: () => this.handleSort('nameAsc'),
-                    hoverIndicator: 'accent-1'
-                  },
-                  {
-                    label: 'Title (Desc)',
-                    onClick: () => this.handleSort('nameDesc'),
-                    hoverIndicator: 'accent-1'
-                  },
-                  {
-                    label: 'Runtime (Asc)',
-                    onClick: () => this.handleSort('runtimeAsc'),
-                    hoverIndicator: 'accent-1'
-                  },
-                  {
-                    label: 'Runtime (Desc)',
-                    onClick: () => this.handleSort('runtimeDesc'),
-                    hoverIndicator: 'accent-1'
-                  },
-                  {
-                    label: 'MPAA Rating (G - NC17)',
-                    onClick: () => this.handleSort('mpaaAsc'),
-                    hoverIndicator: 'accent-1'
-                  },
-                  {
-                    label: 'MPAA Rating (NC17 - G)',
-                    onClick: () => this.handleSort('mpaaDesc'),
-                    hoverIndicator: 'accent-1'
-                  },
-                  {
-                    label: 'Star Count (Asc)',
-                    onClick: () => this.handleSort('starCountAsc'),
-                    hoverIndicator: 'accent-1'
-                  },
-                  {
-                    label: 'Star Count (Desc)',
-                    onClick: () => this.handleSort('starCountDesc'),
-                    hoverIndicator: 'accent-1'
-                  },
-                  {
-                    label: 'Year Released (Asc)',
-                    onClick: () => this.handleSort('yearAsc'),
-                    hoverIndicator: 'accent-1'
-                  },
-                  {
-                    label: 'Year Released (Desc)',
-                    onClick: () => this.handleSort('yearDesc'),
-                    hoverIndicator: 'accent-1'
-                  },
-                  {
-                    label: 'Reset (Original Order)',
-                    onClick: () => this.handleSort(''),
-                    hoverIndicator: 'brand'
-                  }
-                ]}
+                dropContent={
+                  <Box background="light-2">
+                    {sortlabels.map((item) => (
+                      <Box
+                        key={item.label}
+                        direction="row"
+                        justify="between"
+                        pad={{
+                          left: 'small',
+                          top: 'medium',
+                          bottom: 'medium',
+                          right: 'medium'
+                        }}
+                        hoverIndicator={
+                          item.label === 'Reset (Original Order)'
+                            ? 'brand'
+                            : 'accent-1'
+                        }
+                        onClick={() => this.handleSort(item.sortBy)}
+                      >
+                        <Text>{item.label}</Text>
+                      </Box>
+                    ))}
+                  </Box>
+                }
               />
             )}
           </Box>

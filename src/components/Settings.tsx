@@ -39,13 +39,13 @@ export default class Settings extends Component<SettingsProps> {
   };
 
   componentDidMount = () => {
-    const mode = localStorage.getItem('visualModeValue') || 'wedding';
+    const mode = localStorage.getItem('visualMode') || 'wedding';
     this.setState({ theme: mode });
   };
 
   handleThemeChange = (mode: string) => {
     const newMode = mode === 'Wedding on a Tuesday' ? 'wedding' : mode;
-    localStorage.setItem('visualModeValue', newMode);
+    localStorage.setItem('visualMode', newMode);
     this.setState({
       theme: newMode
     });
@@ -66,6 +66,7 @@ export default class Settings extends Component<SettingsProps> {
   };
 
   render() {
+    console.log(localStorage.getItem('visualMode'));
     return (
       <ResponsiveContext.Consumer>
         {(size) => (
@@ -158,13 +159,6 @@ export default class Settings extends Component<SettingsProps> {
                 <Box gap="xsmall" align="center">
                   <Text weight="bold">Theme</Text>
                   <Select
-                    // disabled={
-                    //   this.state.theme === 'gradient'
-                    //     ? [0]
-                    //     : this.state.theme === 'solid'
-                    //     ? [1]
-                    //     : [2]
-                    // }
                     disabled={[0, 1, 2]}
                     icon={<Magic />}
                     value={

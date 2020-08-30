@@ -126,14 +126,16 @@ export default class AddMovieTemplate extends Component<AddMovieTemplateProps> {
               style={{ zIndex: 1 }}
             >
               <Box
-                margin="xsmall"
+                margin="xxsmall"
                 animation={{ type: 'slideDown', duration: 1000 }}
                 pad={size !== 'small' ? 'small' : 'medium'}
                 background={{ color: 'brand', opacity: 'strong' }}
                 elevation="medium"
-                round={{ size: size !== 'small' ? 'large' : 'xlarge' }}
+                style={{ borderTopLeftRadius: 40, borderTopRightRadius: 40 }}
+                round={{ corner: 'bottom', size: 'xlarge' }}
                 gap="xsmall"
                 onClick={() => {
+                  this.setState({ visible: true });
                   this.setState({ rand: this.getRandom() });
                 }}
                 border={

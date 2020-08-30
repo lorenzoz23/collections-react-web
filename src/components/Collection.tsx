@@ -114,17 +114,23 @@ export default class Collection extends Component<CollectionProps> {
 
   emptyState = (size: string) => {
     return (
-      <Box align="center" justify={size === 'small' ? 'start' : 'center'} flex>
+      <Box
+        align="center"
+        justify={size === 'small' ? 'start' : 'center'}
+        flex
+        background={{ dark: true }}
+      >
         {this.props.searchList.length === 0 &&
         this.props.searchVal.length > 0 ? (
           <Box
             align="center"
             gap="small"
             pad={size === 'small' ? 'small' : 'none'}
+            background={{ dark: true }}
           >
-            <Text textAlign="center">
-              No such title present in your{' '}
-              {this.props.wishlist ? 'wishlist' : 'lot'}
+            <Text textAlign="center" color="light-2">
+              No such title present in your
+              {this.props.wishlist ? ' wishlist' : ' lot'}
             </Text>
             <Dislike size="large" />
           </Box>
@@ -133,7 +139,13 @@ export default class Collection extends Component<CollectionProps> {
             align="center"
             gap="small"
             pad={size === 'small' ? 'small' : 'none'}
+            background={{ dark: true }}
           >
+            <Text textAlign="center" color="light-2">
+              Looks like you have no films in your
+              {this.props.wishlist ? ' wishlist' : ' lot'}
+            </Text>
+            <Aed size="large" color="neutral-4" />
             {size !== 'small' && this.props.width > 950 && (
               <Box
                 pad="large"
@@ -141,6 +153,8 @@ export default class Collection extends Component<CollectionProps> {
                 align="center"
                 gap="small"
                 round="large"
+                margin="small"
+                onClick={this.props.showAdvSearch}
                 border={{ side: 'all', size: 'small', color: 'accent-1' }}
               >
                 <Text textAlign="center" weight="bold" size="xlarge">
@@ -156,12 +170,7 @@ export default class Collection extends Component<CollectionProps> {
                 />
               </Box>
             )}
-            <Text textAlign="center">
-              Looks like you have no films in your
-              {this.props.wishlist ? ' wishlist' : ' lot'}
-            </Text>
-            <Aed size="large" color="neutral-4" />
-            <Text textAlign="center">
+            <Text textAlign="center" color="light-2">
               Click the search button above or search bar at the top of the
               screen to add one!
             </Text>
@@ -368,7 +377,12 @@ export default class Collection extends Component<CollectionProps> {
       return (
         <ResponsiveContext.Consumer>
           {(size) => (
-            <Box justify="start" flex alignContent="center">
+            <Box
+              justify="start"
+              flex
+              alignContent="center"
+              background={{ dark: true }}
+            >
               {moviesToMap.length === 0
                 ? this.emptyState(size)
                 : this.movieCollection(size)}

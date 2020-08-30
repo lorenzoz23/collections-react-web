@@ -42,7 +42,7 @@ export default class FooterComponent extends Component<FooterComponentProps> {
   };
 
   render() {
-    const mode = localStorage.getItem('visualModeValue') || 'wedding';
+    const mode = localStorage.getItem('visualMode') || 'wedding';
     return (
       <ResponsiveContext.Consumer>
         {(size) => (
@@ -107,6 +107,7 @@ export default class FooterComponent extends Component<FooterComponentProps> {
                 <Multimedia />
                 <Text textAlign="center">Movie data provided by:</Text>
                 <Anchor
+                  size="medium"
                   alignSelf="end"
                   href="https://www.themoviedb.org/"
                   target="_blank"

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ResponsiveContext, Box, Heading } from 'grommet';
+import { ResponsiveContext, Box, Heading, Text } from 'grommet';
 import {
   BrowserRouter as Router,
   Redirect,
@@ -10,10 +10,10 @@ import { motion } from 'framer-motion';
 import GridLoader from 'react-spinners/GridLoader';
 
 import HomePage from './HomePage';
-import LoginButtons from './LoginButtons';
 
 import firebase from 'firebase/app';
 import 'firebase/auth';
+import LoginPopup from './LoginPopup';
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_GOOGLE_FIREBASE_CONFIG_API_KEY,
@@ -27,6 +27,11 @@ const firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 firebase.auth().useDeviceLanguage();
+
+const urls = [
+  'https://image.tmdb.org/t/p/original/g6R1OT7ETBLGLeUJOE0pOiAFHcI.jpg',
+  'https://image.tmdb.org/t/p/original/kKTPv9LKKs5L3oO1y5FNObxAPWI.jpg'
+];
 
 export default class Login extends Component {
   state = {
@@ -105,7 +110,11 @@ export default class Login extends Component {
             ) : (
               <Box
                 flex
-                background="home"
+                background={{
+                  color: 'home',
+                  image: `url(${urls[Math.floor(Math.random() * 2)]})`,
+                  opacity: 'weak'
+                }}
                 style={{
                   background:
                     'radial-gradient(circle, rgba(27,50,163,1) 0%, rgba(143,38,59,1) 100%)'
@@ -122,7 +131,10 @@ export default class Login extends Component {
               >
                 <Box
                   alignSelf={this.state.width < 500 ? 'center' : 'start'}
-                  pad={{ left: this.state.width >= 500 ? 'medium' : 'none' }}
+                  pad={{
+                    left: this.state.width >= 500 ? 'medium' : 'none',
+                    top: this.state.width >= 500 ? 'medium' : 'none'
+                  }}
                 >
                   <motion.div
                     drag
@@ -133,12 +145,17 @@ export default class Login extends Component {
                       bottom: this.state.width >= 500 ? 500 : 50
                     }}
                   >
-                    <Heading color="#FF6C88">Cinelot</Heading>
+                    <Heading color="#FF6C88" textAlign="start" margin="none">
+                      Cinelot
+                    </Heading>
+                    <Text textAlign="start" color="#FF6C88" weight="bold">
+                      Your film collection on the go
+                    </Text>
                   </motion.div>
                 </Box>
                 {!this.state.loading ? (
                   <Box align="center" justify="center">
-                    <LoginButtons handleLogin={this.handleLogin} />
+                    <LoginPopup handleLogin={this.handleLogin} />
                   </Box>
                 ) : (
                   <Box align="center" justify="center">
@@ -161,8 +178,8 @@ export default class Login extends Component {
                         bottom: 10
                       }}
                     >
-                      <Heading color="#FF6C88" level="2">
-                        Your film collection on the go
+                      <Heading color="#FF6C88" level="2" textAlign="end">
+                        Add, update, maintain, and search your collection
                       </Heading>
                     </motion.div>
                   </Box>

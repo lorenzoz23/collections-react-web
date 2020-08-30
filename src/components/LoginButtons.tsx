@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ResponsiveContext, Box, Button } from 'grommet';
+import { ResponsiveContext, Box, Button, Text } from 'grommet';
 import { motion } from 'framer-motion';
 import { MailOption } from 'grommet-icons';
 
@@ -41,12 +41,15 @@ export default class LoginButtons extends Component<LoginButtonProps> {
                   stiffness: 100
                 }}
               >
-                <Box gap="medium">
+                <Box gap="medium" alignContent="center">
+                  <Text textAlign="center" weight="bold" size="large">
+                    Continue with...
+                  </Text>
                   <Box>
                     <Button
                       primary
                       size={size === 'small' ? 'medium' : 'large'}
-                      label="Continue with Email"
+                      label="Email"
                       icon={<MailOption />}
                       reverse
                       onClick={() => {

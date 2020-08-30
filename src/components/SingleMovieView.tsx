@@ -26,8 +26,9 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
     watched: this.props.movie.watched
   };
   render() {
+    console.log(this.props.movie);
     const numGenre = this.props.movie.genre.length;
-    const mode = localStorage.getItem('visualModeValue') || 'wedding';
+    const mode = localStorage.getItem('visualMode') || 'wedding';
     const images: string[] =
       this.props.width! < 950
         ? [...this.props.movie.backDrop, this.props.movie.poster]

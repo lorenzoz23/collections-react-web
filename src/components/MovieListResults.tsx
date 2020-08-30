@@ -116,7 +116,8 @@ export default class MovieListResults extends Component<MovieListResultsProps> {
                       <Box gap="medium" alignSelf="start" direction="row">
                         <Box gap="small" align="start">
                           <Button
-                            hoverIndicator="accent-1"
+                            color="brand"
+                            hoverIndicator="brand"
                             label={size === 'small' ? 'Lot' : 'Add film to Lot'}
                             onClick={() => {
                               this.props.checkedMovie(item, false);
@@ -135,11 +136,11 @@ export default class MovieListResults extends Component<MovieListResultsProps> {
                           />
                         </Box>
                         <Button
+                          color="accent-3"
                           style={{ borderRadius: 30 }}
                           alignSelf="end"
                           primary={size === 'small'}
                           icon={<Next />}
-                          hoverIndicator="accent-1"
                           label={size !== 'small' ? 'Details' : undefined}
                           title="Details"
                           onClick={() =>

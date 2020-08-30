@@ -105,21 +105,31 @@ const themeWeird = {
         color: 'accent-1'
       }
     }
+  },
+  checkBox: {
+    hover: {
+      border: {
+        color: {
+          dark: 'white',
+          light: 'accent-1'
+        }
+      }
+    }
   }
 };
 
 export default class App extends Component {
   state = {
-    visualModeValue: ''
+    visualMode: ''
   };
 
   componentDidMount = () => {
     const mode = this.getInitialState();
-    this.setState({ visualModeValue: mode });
+    this.setState({ visualMode: mode });
   };
 
   getInitialState = () => {
-    const mode = localStorage.getItem('visualModeValue') || 'wedding';
+    const mode = localStorage.getItem('visualMode') || 'wedding';
     return mode;
   };
 
@@ -128,9 +138,9 @@ export default class App extends Component {
       <Router>
         <Grommet
           theme={
-            this.state.visualModeValue === 'gradient'
+            this.state.visualMode === 'gradient'
               ? themeGradient
-              : this.state.visualModeValue === 'solid'
+              : this.state.visualMode === 'solid'
               ? themeSolid
               : themeWeird
           }
