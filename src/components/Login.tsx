@@ -145,10 +145,10 @@ export default class Login extends Component {
                       bottom: this.state.width >= 500 ? 500 : 50
                     }}
                   >
-                    <Heading color="#FF6C88" textAlign="start" margin="none">
+                    <Heading color="#FF6C88" textAlign={this.state.width < 500 ? 'center' : 'start'} margin="none">
                       Cinelot
                     </Heading>
-                    <Text textAlign="start" color="#FF6C88" weight="bold">
+                    <Text textAlign={this.state.width < 500 ? 'center' : 'start'} color="#FF6C88" weight="bold">
                       Your film collection on the go
                     </Text>
                   </motion.div>
