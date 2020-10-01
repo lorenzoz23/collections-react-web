@@ -42,6 +42,7 @@ export default class LoginPopup extends Component<LoginPopupProps> {
               <Layer
                 position="center"
                 style={{ borderRadius: 30 }}
+                responsive={false}
                 onClickOutside={() => this.setState({ show: false })}
               >
                 <Box
