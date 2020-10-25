@@ -194,12 +194,12 @@ export default class SelectMultiple extends Component<SelectMultipleProps> {
                 alignSelf="center"
                 hoverIndicator="accent-1"
                 icon={
-                  size === 'small' && this.props.width! < 400 ? (
+                  size === 'small' && this.props.width! < 950 ? (
                     <CloudUpload />
                   ) : undefined
                 }
                 label={
-                  size === 'small' && this.props.width! < 400
+                  size === 'small' && this.props.width! < 950
                     ? undefined
                     : 'Save tags'
                 }

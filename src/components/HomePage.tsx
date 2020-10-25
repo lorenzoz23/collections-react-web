@@ -1243,7 +1243,6 @@ export default class HomePage extends Component {
                       style={{ borderRadius: 25 }}
                       plain
                       alignSelf={size !== 'small' ? 'end' : 'center'}
-                      hoverIndicator="brand"
                       margin={{ right: size !== 'small' ? 'small' : 'none' }}
                       onMouseOver={() =>
                         this.setState({ userProfileClicked: true })
@@ -1380,8 +1379,8 @@ export default class HomePage extends Component {
                     <Box
                       align="center"
                       direction="row"
-                      gap="small"
-                      width={{ max: '35%' }}
+                      gap="medium"
+                      width={{ max: '45%' }}
                       style={{ zIndex: 10 }}
                       pad={{
                         left: 'medium',

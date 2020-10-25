@@ -121,6 +121,7 @@ export default class RateFilm extends Component<RateFilmProps> {
               title="Rate film"
               label={this.state.rateLabel}
               hoverIndicator={mode === 'solid' ? 'accent-1' : 'neutral-3'}
+              primary={size === 'small'}
               onClick={this.rateFilm}
             />
             {this.state.showRate && (
