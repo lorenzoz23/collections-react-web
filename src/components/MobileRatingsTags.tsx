@@ -54,7 +54,7 @@ export default class MobileRatingsTags extends Component<
   renderTag = (tag: string) => {
     let same: boolean = false;
     this.state.selectedFilters.forEach((filter) => {
-      if (filter.name === tag && filter.type === 'ratings') {
+      if (filter.name === tag && filter.type === 'starCount') {
         same = true;
       }
     });
@@ -62,7 +62,7 @@ export default class MobileRatingsTags extends Component<
     return (
       <Button
         key={tag}
-        onClick={() => this.handleTagSelected(tag, 'ratings')}
+        onClick={() => this.handleTagSelected(tag, 'starCount')}
         focusIndicator={false}
       >
         <Box

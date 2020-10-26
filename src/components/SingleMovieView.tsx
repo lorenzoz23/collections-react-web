@@ -188,9 +188,8 @@ export default class SingleMovieView extends Component<SingleMovieViewProps> {
                   }}
                   disabled={this.props.movie.starCount !== -1}
                   label={
-                    this.props.width! > 950 &&
-                    (this.props.movie.starCount !== -1 ||
-                      this.state.watched === 1)
+                    this.props.movie.starCount !== -1 ||
+                    this.state.watched === 1
                       ? 'Watched'
                       : 'Unwatched'
                   }
