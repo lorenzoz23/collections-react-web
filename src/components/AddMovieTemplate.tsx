@@ -72,6 +72,7 @@ const randomMovieBackDrops = [
 interface AddMovieTemplateProps {
   rand: number;
   width: number;
+  watchedPref: number;
   moviesAdded(lotMovies: movie[], wishlistMovies: movie[]): void;
 }
 
@@ -165,6 +166,7 @@ export default class AddMovieTemplate extends Component<AddMovieTemplateProps> {
             </Drop>
             {this.state.visible && (
               <AddTitle
+                watchedPref={this.props.watchedPref}
                 width={this.props.width}
                 handleClose={() =>
                   this.setState({ visible: false, rand: this.getRandom() })

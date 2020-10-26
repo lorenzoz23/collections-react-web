@@ -34,6 +34,8 @@ interface FooterComponentProps {
   handleSaveOrderChange(checked: boolean): void;
   handlePrefChanged(index: number): void;
   saveSortedOrder: boolean;
+  watchedPref: number;
+  handleWatchedPrefChange(checked: boolean): void;
 }
 
 export default class FooterComponent extends Component<FooterComponentProps> {
@@ -117,6 +119,10 @@ export default class FooterComponent extends Component<FooterComponentProps> {
             )}
             {this.props.width < 950 && (
               <MobileNav
+                handleWatchedPrefChange={(checked) =>
+                  this.props.handleWatchedPrefChange(checked)
+                }
+                watchedPref={this.props.watchedPref}
                 width={this.props.width}
                 handleSort={(sortBy) => this.props.handleSort(sortBy)}
                 sortBy={this.props.sortBy}

@@ -122,6 +122,7 @@ export default class HomePage extends Component {
     showPrefs: boolean;
     showAdvSearch: boolean;
     showAuthProviders: boolean;
+    watchedPref: number;
   } = {
     uid: '',
     name: '',
@@ -156,7 +157,8 @@ export default class HomePage extends Component {
     allowedFilters: [true, true, true, true],
     showPrefs: false,
     showAdvSearch: false,
-    showAuthProviders: false
+    showAuthProviders: false,
+    watchedPref: 1
   };
 
   constructor(props: any) {
@@ -195,7 +197,8 @@ export default class HomePage extends Component {
       allowedFilters: [true, true, true, true],
       showPrefs: false,
       showAdvSearch: false,
-      showAuthProviders: false
+      showAuthProviders: false,
+      watchedPref: 1
     };
   }
 
@@ -234,6 +237,7 @@ export default class HomePage extends Component {
         showRatings,
         showWatched
       ];
+      const watchedPref = +(localStorage.getItem('watched') || '1');
 
       const genres = await this.getAllGenres();
 
@@ -264,7 +268,7 @@ export default class HomePage extends Component {
             tags: movie.tags || [],
             watched: movie.watched
           };
-          lot.push(entry);
+          lot.unshift(entry);
         });
 
         this.setState({
@@ -274,6 +278,7 @@ export default class HomePage extends Component {
           allowedFilters: allowed,
           tags: tags,
           loading: false,
+          watchedPref: watchedPref,
           showAuthProviders: !showAuthProviders.includes('old') ? true : false,
           uid: uid,
           allGenres: genres,
@@ -323,7 +328,7 @@ export default class HomePage extends Component {
         if (!ids.includes(lotMovies[i].id, 0)) {
           const newMovieRef = collectionRef.push();
           newMovieRef.set({ movie: lotMovies[i] });
-          newLot.push(lotMovies[i]);
+          newLot.unshift(lotMovies[i]);
         } else lotRepeats++;
       }
     }
@@ -334,7 +339,7 @@ export default class HomePage extends Component {
         if (!ids.includes(wishlistMovies[i].id, 0)) {
           const newMovieRef = wishlistRef.push();
           newMovieRef.set({ movie: wishlistMovies[i] });
-          newWishlist.push(wishlistMovies[i]);
+          newWishlist.unshift(wishlistMovies[i]);
         } else wishlistRepeats++;
       }
     }
@@ -516,7 +521,7 @@ export default class HomePage extends Component {
             tags: movie.tags || [],
             watched: movie.watched
           };
-          wishlistMovies.push(entry);
+          wishlistMovies.unshift(entry);
         });
         this.setState(
           {
@@ -730,7 +735,7 @@ export default class HomePage extends Component {
           wishlist: newMovies,
           notification: true,
           notificationText: `${
-            tags.length > 1 ? 'tags' : 'tag'
+            tags.length > 1 ? 'Tags' : 'Tag'
           } successfully added to ${updatedMovie.name}!`,
           goodNotification: true
         },
@@ -744,7 +749,7 @@ export default class HomePage extends Component {
           movies: newMovies,
           notification: true,
           notificationText: `${
-            tags.length > 1 ? 'tags' : 'tag'
+            tags.length > 1 ? 'Tags' : 'Tag'
           } successfully added to ${updatedMovie.name}!`,
           goodNotification: true
         },
@@ -881,7 +886,7 @@ export default class HomePage extends Component {
       {
         notification: true,
         notificationText: `${
-          tags.length > 1 ? 'tags' : 'tag'
+          tags.length > 1 ? 'Tags' : 'Tag'
         } successfully deleted`,
         goodNotification: true
       },
@@ -1060,6 +1065,11 @@ export default class HomePage extends Component {
     }
   };
 
+  handleWatchedPrefChange = (checked: boolean) => {
+    localStorage.setItem('watched', checked ? '1' : '0');
+    this.setState({ watchedPref: checked ? 1 : 0 });
+  };
+
   handleParsed = (movieList: searchResults) => {
     this.setState({
       parsed: true,
@@ -1178,6 +1188,7 @@ export default class HomePage extends Component {
                       {this.state.parsed && (
                         <Box>
                           <AddTitle
+                            watchedPref={this.state.watchedPref}
                             width={this.state.width}
                             moviesAdded={(
                               lotMovies: movie[],
@@ -1225,6 +1236,7 @@ export default class HomePage extends Component {
                       {this.state.parsed && (
                         <Box>
                           <AddTitle
+                            watchedPref={this.state.watchedPref}
                             width={this.state.width}
                             moviesAdded={(
                               lotMovies: movie[],
@@ -1375,6 +1387,7 @@ export default class HomePage extends Component {
                           }
                         : undefined
                     }
+                    style={{ zIndex: 10 }}
                   >
                     <Box
                       align="center"
@@ -1487,6 +1500,7 @@ export default class HomePage extends Component {
                   {this.state.width < 950 && (
                     <Box margin={{ top: 'small', bottom: 'small' }}>
                       <AddMovieTemplate
+                        watchedPref={this.state.watchedPref}
                         width={this.state.width}
                         key={0}
                         moviesAdded={(
@@ -1498,6 +1512,7 @@ export default class HomePage extends Component {
                     </Box>
                   )}
                   <Collection
+                    watchedPref={this.state.watchedPref}
                     handleWatched={(movie) => this.handleWatched(movie)}
                     handleTransfer={(movie) => this.handleTransfer(movie)}
                     wishlist={this.state.showWishlist}
@@ -1537,6 +1552,10 @@ export default class HomePage extends Component {
                   }}
                 >
                   <FooterComponent
+                    handleWatchedPrefChange={(checked) =>
+                      this.handleWatchedPrefChange(checked)
+                    }
+                    watchedPref={this.state.watchedPref}
                     handleSearch={(searchVal) => this.handleSearch(searchVal)}
                     wishlist={this.state.showWishlist}
                     uid={this.state.uid}
@@ -1581,6 +1600,7 @@ export default class HomePage extends Component {
                 </Box>
                 {this.state.tmdbSearched && (
                   <AddTitle
+                    watchedPref={this.state.watchedPref}
                     width={this.state.width}
                     title={this.state.addFilmSearchVal}
                     handleClose={() =>
@@ -1597,6 +1617,7 @@ export default class HomePage extends Component {
                 )}
                 {this.state.showAdvSearch && (
                   <AddTitle
+                    watchedPref={this.state.watchedPref}
                     width={this.state.width}
                     handleClose={() =>
                       this.setState({
@@ -1623,6 +1644,10 @@ export default class HomePage extends Component {
                 )}
                 {this.state.showPrefs && (
                   <Preferences
+                    handleWatchedPrefChange={(checked) =>
+                      this.handleWatchedPrefChange(checked)
+                    }
+                    watchedPref={this.state.watchedPref}
                     sortBy={this.state.sortBy}
                     saveSortedOrder={this.state.saveSortedOrder}
                     allowedFilters={this.state.allowedFilters}

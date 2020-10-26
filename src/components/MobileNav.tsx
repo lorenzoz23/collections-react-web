@@ -42,6 +42,7 @@ interface MobileNavProps {
   fetchedWishlist: boolean;
   logOut(): void;
   width: number;
+  watchedPref: number;
   mediaTags: string[];
   genreTags: string[];
   ratings: string[];
@@ -53,6 +54,7 @@ interface MobileNavProps {
   handleTagAdded(tag: string): void;
   handleSaveOrderChange(checked: boolean): void;
   handlePrefChanged(index: number): void;
+  handleWatchedPrefChange(checked: boolean): void;
   saveSortedOrder: boolean;
 }
 
@@ -536,6 +538,10 @@ export default class MobileNav extends Component<MobileNavProps> {
         )}
         {this.state.showPrefs && (
           <Preferences
+            handleWatchedPrefChange={(checked) =>
+              this.props.handleWatchedPrefChange(checked)
+            }
+            watchedPref={this.props.watchedPref}
             wishlist={this.props.wishlist}
             width={this.props.width}
             uid={this.props.uid}

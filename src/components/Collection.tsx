@@ -34,6 +34,7 @@ interface CollectionProps {
   filterBy: filter[];
   tags: string[];
   rand: number;
+  watchedPref: number;
   handleWatched(movie: movie): void;
 }
 
@@ -330,6 +331,7 @@ export default class Collection extends Component<CollectionProps> {
     if (this.props.width > 950) {
       gridMovies.push(
         <AddMovieTemplate
+          watchedPref={this.props.watchedPref}
           width={this.props.width}
           key={0}
           moviesAdded={(lotMovies: movie[], wishlistMovies: movie[]) =>

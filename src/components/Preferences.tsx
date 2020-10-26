@@ -14,10 +14,12 @@ interface PreferencesProps {
   uid: string;
   width: number;
   wishlist: boolean;
+  watchedPref: number;
   handleTagDelete(tags: number[]): void;
   handleUpdatedTags(tags: string[]): void;
   handleTagAdded(tag: string): void;
   handleResetFilters(): void;
+  handleWatchedPrefChange(checked: boolean): void;
 }
 
 export default class Preferences extends Component<PreferencesProps> {
@@ -58,10 +60,12 @@ export default class Preferences extends Component<PreferencesProps> {
                   </Text>
                   <CheckBox
                     toggle
-                    checked={this.props.allowedFilters[0]}
+                    checked={this.props.watchedPref === 1 ? true : false}
                     label="Watched"
                     reverse
-                    onChange={() => this.props.handlePrefChange(0)}
+                    onChange={(event) =>
+                      this.props.handleWatchedPrefChange(event.target.checked)
+                    }
                   />
                 </Box>
               </Box>

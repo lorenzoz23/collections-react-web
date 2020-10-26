@@ -29,6 +29,7 @@ interface AddTitleProps {
   advSearch?(): void;
   title?: string;
   width: number;
+  watchedPref: number;
 }
 
 export default class AddTitle extends Component<AddTitleProps> {
@@ -111,6 +112,7 @@ export default class AddTitle extends Component<AddTitleProps> {
           }
         } else break;
       }
+      movies[n].watched = this.props.watchedPref;
       movies[n].rating = rating;
       movies[n].runtime = data.runtime;
       movies[n].genre = data.genres.map((genre: any) => {
